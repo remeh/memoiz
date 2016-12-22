@@ -1,4 +1,4 @@
-// TVGame Backend - Logger.
+// Scratche Backend - Logger.
 //
 // Logger helpers.
 //
