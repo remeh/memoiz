@@ -32,8 +32,9 @@ CREATE TABLE "card" (
     "uid" text NOT NULL,
     "user_uid" text NOT NULL,
 
-    "text" text,
+    "text" text NOT NULL DEFAULT '',
     "position" int NOT NULL DEFAULT 0,
+    "state" text NOT NULL DEFAULT 'CardActive',
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now()
@@ -55,3 +56,8 @@ INSERT INTO "db_schema" VALUES (
     1,
     now()
 );
+
+----------------------
+
+insert into "user" (uid) values ('12341234-1234-1234-1234-123412341234');
+insert into "card" (uid,user_uid,text) values ('abcdabcd-abcd-abcd-abcd-abcdabcdabcd','12341234-1234-1234-1234-123412341234', 'Text of a card');

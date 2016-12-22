@@ -2,6 +2,19 @@ package cards
 
 import "remy.io/scratche/uuid"
 
+type CardState string
+
+func (c CardState) String() string {
+	return string(c)
+}
+
+var (
+	// CardActive is an active card of the user.
+	CardActive CardState = "CardActive"
+	// CardArchived has been archived by the user.
+	CardArchived CardState = "CardArchived"
+)
+
 // SimpleCard only contains necessary fields
 // to represent a card.
 type SimpleCard struct {

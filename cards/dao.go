@@ -15,15 +15,6 @@ type CardsDAO struct {
 	DB *sql.DB
 }
 
-type CardState string
-
-const (
-	// CardActive is an active card of the   user.
-	CardActive = "CardActive"
-	// CardArchived has been archived by the user.
-	CardArchived = "CardArchived"
-)
-
 // ----------------------
 
 var dao *CardsDAO
@@ -53,6 +44,30 @@ func (d *CardsDAO) InitStmt() error {
 // GetByUser returns the cards of the given user.
 func (d *CardsDAO) GetByUser(uid string, state CardState) ([]SimpleCard, error) {
 	rv := make([]SimpleCard, 0)
+
+	rows, err := d.DB.Query(`
+		SELECT "uid", "text", "position"
+		FROM "card"
+		WHERE
+			"user_uid" = $1
+			AND
+			"state" = $2
+	`, uid, state.String())
+
+	if err != nil || rows == nil {
+		return rv, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var sc SimpleCard
+
+		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position); err != nil {
+			return rv, err
+		}
+
+		rv = append(rv, sc)
+	}
 
 	return rv, nil
 }

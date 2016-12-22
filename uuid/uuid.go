@@ -52,15 +52,15 @@ func New() UUID {
 }
 
 func (u *UUID) Scan(value interface{}) error {
-	s, ok := value.(string)
+	s, ok := value.([]byte)
 
 	if !ok {
-		return fmt.Errorf("Gender must be scanned from []byte")
+		return fmt.Errorf("UUID must be scanned from string")
 	}
 
 	// parse the value
 
-	if v, err := Parse(s); err != nil {
+	if v, err := Parse(string(s)); err != nil {
 		return err
 	} else {
 		*u = v
