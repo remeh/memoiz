@@ -1,0 +1,43 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "iIUYZyoanCQQTUaWsu8b+iOSPt4=",
+			"path": "github.com/gorilla/context",
+			"revision": "215affda49addc4c8ef7e2534915df2c8c35c6cd",
+			"revisionTime": "2014-12-17T16:02:51Z"
+		},
+		{
+			"checksumSHA1": "8jXj6IMkk1B0LdIYgVG5Vn01/NU=",
+			"path": "github.com/gorilla/mux",
+			"revision": "ee1815431e497d3850809578c93ab6705f1a19f7",
+			"revisionTime": "2015-08-20T05:15:06Z"
+		},
+		{
+			"checksumSHA1": "Ncf0ItwKAuTF5eNkGW+Pk78pwzM=",
+			"path": "github.com/lib/pq",
+			"revision": "b269bd035a727d6c1081f76e7a239a1b00674c40",
+			"revisionTime": "2015-08-05T09:05:26Z"
+		},
+		{
+			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "b269bd035a727d6c1081f76e7a239a1b00674c40",
+			"revisionTime": "2015-08-05T09:05:26Z"
+		},
+		{
+			"checksumSHA1": "ayRaLmkRnALRhJ4UwpKIHk9kfXo=",
+			"path": "github.com/pborman/uuid",
+			"revision": "cccd189d45f7ac3368a0d127efb7f4d08ae0b655",
+			"revisionTime": "2015-08-24T21:28:02Z"
+		},
+		{
+			"checksumSHA1": "AQDPLXf0sUEcPv6xvzy0Fb+79kw=",
+			"path": "github.com/vrischmann/envconfig",
+			"revision": "e4f615d158ed2bea636ca576237d177becd0207b",
+			"revisionTime": "2015-08-18T07:29:23Z"
+		}
+	],
+	"rootPath": "remy.io/scratche"
+}
