@@ -52,6 +52,7 @@ func (d *CardsDAO) GetByUser(uid string, state CardState) ([]SimpleCard, error) 
 			"user_uid" = $1
 			AND
 			"state" = $2
+		ORDER BY "position" DESC
 	`, uid, state.String())
 
 	if err != nil || rows == nil {

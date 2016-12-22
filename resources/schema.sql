@@ -61,3 +61,5 @@ INSERT INTO "db_schema" VALUES (
 
 insert into "user" (uid) values ('12341234-1234-1234-1234-123412341234');
 insert into "card" (uid,user_uid,text) values ('abcdabcd-abcd-abcd-abcd-abcdabcdabcd','12341234-1234-1234-1234-123412341234', 'Text of a card');
+insert into "card" (uid,user_uid,text) values ('1bcdabcd-abcd-abcd-abcd-abcdabcdabcd','12341234-1234-1234-1234-123412341234', 'Text of another card');
+insert into "card" (uid,user_uid,text) values ('2bcdabcd-abcd-abcd-abcd-abcdabcdabcd','12341234-1234-1234-1234-123412341234', 'Your bones don''t break, mine do. That''s clear. Your cells react to bacteria and viruses differently than mine. You don''t get sick, I do. That''s also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown.');
