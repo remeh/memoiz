@@ -46,4 +46,5 @@ func declareApiRoutes(s *Server) {
 	// ----------------------
 
 	s.AddApi("/1.0/cards", log(cards.Get{}), "GET")
+	s.AddApi("/1.0/cards", log(cards.Post{}), "POST")
 }

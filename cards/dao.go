@@ -85,9 +85,10 @@ func (d *CardsDAO) New(userUid uuid.UUID, text string) (SimpleCard, error) {
 
 	if err := d.DB.QueryRow(`
 		INSERT INTO "card"
-		("uid", "user_uid", "text")
-		VALUES
-		($1, $2, $3)
+		("uid", "user_uid", "text", "position")
+		SELECT $1, $2, $3, max("position")+1
+		FROM "card"
+		WHERE "user_uid" = $2
 		RETURNING "position"
 	`, uid.String(), userUid.String(), text).Scan(&rv.Position); err != nil {
 		return rv, fmt.Errorf("cards.New: %v", err)
