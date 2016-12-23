@@ -7,6 +7,7 @@ package cards
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
@@ -101,14 +102,14 @@ func (d *CardsDAO) New(userUid uuid.UUID, text string) (SimpleCard, error) {
 // Delete sets the deletion time of the given card in database
 // and changes the state of the card.
 func (d *CardsDAO) Delete(uid uuid.UUID, t time.Time) error {
-	if err := d.DB.Exec(`
+	if _, err := d.DB.Exec(`
 		UPDATE "card"
 		SET
 			"deletion_time" = $1
 		WHERE
 			"uid" = $2
 	`, t, uid.String()); err != nil {
-		return rv, fmt.Errorf("cards.Delete: %v", err)
+		return fmt.Errorf("cards.Delete: %v", err)
 	}
 	return nil
 }
