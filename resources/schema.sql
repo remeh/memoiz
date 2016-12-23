@@ -19,6 +19,7 @@ CREATE TABLE "user" (
     "phone" text NOT NULL DEFAULT '',
     "address" text NOT NULL DEFAULT '',
     "timezone" text NOT NULL DEFAULT '',
+
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now()
 );
@@ -37,7 +38,8 @@ CREATE TABLE "card" (
     "state" text NOT NULL DEFAULT 'CardActive',
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
-    "last_update" timestamp with time zone NOT NULL DEFAULT now()
+    "last_update" timestamp with time zone NOT NULL DEFAULT now(),
+    "deletion_time" timestamp with time zone
 );
 
 CREATE UNIQUE INDEX ON "card" ("uid");

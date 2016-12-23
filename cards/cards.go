@@ -13,6 +13,8 @@ var (
 	CardActive CardState = "CardActive"
 	// CardArchived has been archived by the user.
 	CardArchived CardState = "CardArchived"
+	// CardDeleted is used when the user has deleted the card.
+	CardDeleted CardState = "CardDeleted"
 )
 
 // SimpleCard only contains necessary fields

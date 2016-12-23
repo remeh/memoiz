@@ -6,9 +6,11 @@ package cards
 
 import (
 	"database/sql"
+	"fmt"
 
 	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
+	"remy.io/scratche/uuid"
 )
 
 type CardsDAO struct {
@@ -71,4 +73,42 @@ func (d *CardsDAO) GetByUser(uid string, state CardState) ([]SimpleCard, error) 
 	}
 
 	return rv, nil
+}
+
+// New creates a new card for the given user
+// and returns its ID + position.
+func (d *CardsDAO) New(userUid uuid.UUID, text string) (SimpleCard, error) {
+	var rv SimpleCard
+
+	uid := uuid.New()
+
+	if err := d.DB.QueryRow(`
+		INSERT INTO "card"
+		("uid", "user_uid", "text")
+		VALUES
+		($1, $2, $3)
+		RETURNING "position"
+	`, uid.String(), userUid.String(), text).Scan(&rv.Position); err != nil {
+		return rv, fmt.Errorf("cards.New: %v", err)
+	}
+
+	rv.Uid = uid
+	rv.Text = text
+
+	return rv, nil
+}
+
+// Delete sets the deletion time of the given card in database
+// and changes the state of the card.
+func (d *CardsDAO) Delete(uid uuid.UUID, t time.Time) error {
+	if err := d.DB.Exec(`
+		UPDATE "card"
+		SET
+			"deletion_time" = $1
+		WHERE
+			"uid" = $2
+	`, t, uid.String()); err != nil {
+		return rv, fmt.Errorf("cards.Delete: %v", err)
+	}
+	return nil
 }
