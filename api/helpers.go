@@ -43,7 +43,7 @@ func ReadJsonBody(r *http.Request, object interface{}) error {
 	data, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		return fmt.Errorf("in ReadJsonBody: %s", err.Error())
+		return fmt.Errorf("ReadJsonBody: %s", err.Error())
 	}
 
 	return json.Unmarshal(data, object)
