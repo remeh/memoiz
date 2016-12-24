@@ -6,6 +6,7 @@ package uuid
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pborman/uuid"
 )
@@ -75,4 +76,11 @@ func (u UUID) MarshalJSON() ([]byte, error) {
 	return uuid.UUID(u).MarshalJSON()
 }
 
-// NOTE(remy): we'll probably need to implements UnmarshalJSON
+func (u *UUID) UnmarshalJSON(data []byte) error {
+	uid, err := Parse(strings.Trim(string(data), "\""))
+	if err != nil {
+		return err
+	}
+	*u = uid
+	return nil
+}
