@@ -44,8 +44,31 @@ func (d *CardsDAO) InitStmt() error {
 	return err
 }
 
+// Update updates the text of the given
+// card. It also updates the last_update time.
+func (d *CardsDAO) UpdateText(uid, owner uuid.UUID, text string, t time.Time) (SimpleCard, error) {
+	var position int
+
+	if err := d.DB.QueryRow(`
+		UPDATE "card"
+		SET
+			"text" = $1, "last_update" = $2
+		WHERE
+			"uid" = $3 AND "owner_uid" = $4
+		RETURNING "position"
+	`, text, t, uid.String(), owner.String()).Scan(&position); err != nil {
+		return SimpleCard{}, err
+	}
+
+	return SimpleCard{
+		Uid:      uid,
+		Text:     text,
+		Position: position,
+	}, nil
+}
+
 // GetByUser returns the cards of the given user.
-func (d *CardsDAO) GetByUser(uid string, state CardState) ([]SimpleCard, error) {
+func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, error) {
 	rv := make([]SimpleCard, 0)
 
 	rows, err := d.DB.Query(`
@@ -56,7 +79,7 @@ func (d *CardsDAO) GetByUser(uid string, state CardState) ([]SimpleCard, error) 
 			AND
 			"state" = $2
 		ORDER BY "position" DESC
-	`, uid, state.String())
+	`, uid.String(), state.String())
 
 	if err != nil || rows == nil {
 		return rv, err
@@ -78,19 +101,19 @@ func (d *CardsDAO) GetByUser(uid string, state CardState) ([]SimpleCard, error) 
 
 // New creates a new card for the given user
 // and returns its ID + position.
-func (d *CardsDAO) New(userUid uuid.UUID, text string) (SimpleCard, error) {
+func (d *CardsDAO) New(userUid uuid.UUID, text string, t time.Time) (SimpleCard, error) {
 	var rv SimpleCard
 
 	uid := uuid.New()
 
 	if err := d.DB.QueryRow(`
 		INSERT INTO "card"
-		("uid", "owner_uid", "text", "position")
-		SELECT $1, $2, $3, max("position")+1
+		("uid", "owner_uid", "text", "position", "creation_time", "last_update")
+		SELECT $1, $2, $3, coalesce(max("position"),0)+1, $4, $4
 		FROM "card"
 		WHERE "owner_uid" = $2
 		RETURNING "position"
-	`, uid.String(), userUid.String(), text).Scan(&rv.Position); err != nil {
+	`, uid.String(), userUid.String(), text, t).Scan(&rv.Position); err != nil {
 		return rv, fmt.Errorf("cards.New: %v", err)
 	}
 
@@ -134,6 +157,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 		SELECT "position" FROM "card"
 		WHERE "uid" = $1 AND "owner_uid" = $2 FOR UPDATE`,
 		left.String(), owner.String()).Scan(&lp); err != nil {
+		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't retrieve left card pos: %v", err)
 	}
 
@@ -141,6 +165,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 		SELECT "position" FROM "card"
 		WHERE "uid" = $1 AND "owner_uid" = $2 FOR UPDATE`,
 		right.String(), owner.String()).Scan(&rp); err != nil {
+		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't retrieve right card pos: %v", err)
 	}
 
@@ -151,6 +176,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 		UPDATE "card" SET "position" = $1
 		WHERE "uid" = $2 AND "owner_uid" = $3`,
 		rp, left.String(), owner.String()); err != nil {
+		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't update left card pos: %v", err)
 	}
 
@@ -158,6 +184,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 		UPDATE "card" SET "position" = $1
 		WHERE "uid" = $2 AND "owner_uid" = $3`,
 		lp, right.String(), owner.String()); err != nil {
+		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't update right card pos: %v", err)
 	}
 
@@ -165,6 +192,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 	// ----------------------
 
 	if err = tx.Commit(); err != nil {
+		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't commit transaction: %v", err)
 	}
 

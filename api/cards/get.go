@@ -13,7 +13,7 @@ type Get struct {
 func (c Get) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uid := api.ReadUser(r)
 
-	cs, err := cards.DAO().GetByUser(uid.String(), cards.CardActive)
+	cs, err := cards.DAO().GetByUser(uid, cards.CardActive)
 
 	if err != nil {
 		api.RenderErrJson(w, err)

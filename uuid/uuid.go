@@ -53,20 +53,33 @@ func New() UUID {
 }
 
 func (u *UUID) Scan(value interface{}) error {
+	// from []byte
 	s, ok := value.([]byte)
 
-	if !ok {
-		return fmt.Errorf("UUID must be scanned from string")
+	if ok {
+		// parse the value
+		if v, err := Parse(string(s)); err != nil {
+			return err
+		} else {
+			*u = v
+			return nil
+		}
 	}
 
-	// parse the value
+	// from string
+	str, ok := value.(string)
 
-	if v, err := Parse(string(s)); err != nil {
-		return err
-	} else {
-		*u = v
-		return nil
+	if ok {
+		// parse the value
+		if v, err := Parse(str); err != nil {
+			return err
+		} else {
+			*u = v
+			return nil
+		}
 	}
+
+	return fmt.Errorf("UUID must be scanned from string/[]byte")
 }
 
 // json
