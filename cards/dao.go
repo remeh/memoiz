@@ -56,7 +56,7 @@ func (d *CardsDAO) UpdateText(uid, owner uuid.UUID, text string, t time.Time) (S
 		WHERE
 			"uid" = $3 AND "owner_uid" = $4
 		RETURNING "position"
-	`, text, t, uid.String(), owner.String()).Scan(&position); err != nil {
+	`, text, t, uid, owner).Scan(&position); err != nil {
 		return SimpleCard{}, err
 	}
 
@@ -79,7 +79,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, erro
 			AND
 			"state" = $2
 		ORDER BY "position" DESC
-	`, uid.String(), state.String())
+	`, uid, state)
 
 	if err != nil || rows == nil {
 		return rv, err
@@ -113,7 +113,7 @@ func (d *CardsDAO) New(userUid uuid.UUID, text string, t time.Time) (SimpleCard,
 		FROM "card"
 		WHERE "owner_uid" = $2
 		RETURNING "position"
-	`, uid.String(), userUid.String(), text, t).Scan(&rv.Position); err != nil {
+	`, uid, userUid, text, t).Scan(&rv.Position); err != nil {
 		return rv, fmt.Errorf("cards.New: %v", err)
 	}
 
@@ -134,7 +134,7 @@ func (d *CardsDAO) Delete(uid, owner uuid.UUID, t time.Time) error {
 			"uid" = $2
 			AND
 			"owner_uid" = $3
-	`, t, uid.String(), owner.String()); err != nil {
+	`, t, uid, owner); err != nil {
 		return fmt.Errorf("cards.Delete: %v", err)
 	}
 	return nil
@@ -156,7 +156,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 	if err = tx.QueryRow(`
 		SELECT "position" FROM "card"
 		WHERE "uid" = $1 AND "owner_uid" = $2 FOR UPDATE`,
-		left.String(), owner.String()).Scan(&lp); err != nil {
+		left, owner).Scan(&lp); err != nil {
 		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't retrieve left card pos: %v", err)
 	}
@@ -164,7 +164,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 	if err = tx.QueryRow(`
 		SELECT "position" FROM "card"
 		WHERE "uid" = $1 AND "owner_uid" = $2 FOR UPDATE`,
-		right.String(), owner.String()).Scan(&rp); err != nil {
+		right, owner).Scan(&rp); err != nil {
 		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't retrieve right card pos: %v", err)
 	}
@@ -175,7 +175,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 	if _, err := tx.Exec(`
 		UPDATE "card" SET "position" = $1
 		WHERE "uid" = $2 AND "owner_uid" = $3`,
-		rp, left.String(), owner.String()); err != nil {
+		rp, left, owner); err != nil {
 		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't update left card pos: %v", err)
 	}
@@ -183,7 +183,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 	if _, err := tx.Exec(`
 		UPDATE "card" SET "position" = $1
 		WHERE "uid" = $2 AND "owner_uid" = $3`,
-		lp, right.String(), owner.String()); err != nil {
+		lp, right, owner); err != nil {
 		tx.Rollback()
 		return fmt.Errorf("cards.SwitchPosition: can't update right card pos: %v", err)
 	}
