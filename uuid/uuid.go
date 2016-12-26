@@ -5,6 +5,7 @@
 package uuid
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"strings"
 
@@ -80,6 +81,10 @@ func (u *UUID) Scan(value interface{}) error {
 	}
 
 	return fmt.Errorf("UUID must be scanned from string/[]byte")
+}
+
+func (u UUID) Value() (driver.Value, error) {
+	return driver.Value(u.String()), nil
 }
 
 // json
