@@ -1,0 +1,46 @@
+package mind
+
+import (
+	"remy.io/scratche/log"
+	"remy.io/scratche/uuid"
+)
+
+type Analyzer interface {
+	Fetch(string) error
+	Analyze() (Categories, error)
+	Store() error
+}
+
+func Analyze(uid uuid.UUID, text string) {
+	if uuid.IsNil(uid) || len(text) == 0 {
+		return
+	}
+
+	var a Analyzer
+	var err error
+	var cats Categories
+
+	// TODO(remy): if the text is too long, should not be
+	// useful to call Google Knowledge Graph
+	a = &Bing{}
+
+	if err = a.Fetch(text); err != nil {
+		log.Error("Analyze/Fetch:", err)
+		return
+	}
+
+	if cats, err = a.Analyze(); err != nil {
+		log.Error("Analyze/Analyze:", err)
+		return
+	}
+
+	if err = a.Store(); err != nil {
+		log.Error("Analyze/Store:", err)
+		return
+	}
+
+	if len(cats) == 0 || cats[0] == Unknown {
+		return
+	}
+
+}

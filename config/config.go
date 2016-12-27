@@ -35,6 +35,8 @@ type Configuration struct {
 	ResDir string `envconfig:"RES,default=resources/"`
 	// Connection string
 	ConnString string `envconfig:"CONN,default=host=/var/run/postgresql sslmode=disable user=scratche dbname=scratche password=scratche"`
+	// Azure Web search api key
+	BingApiKey string `envconfig:"BING"`
 }
 
 // readConfig reads in the environment var

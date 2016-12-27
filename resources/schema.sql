@@ -36,6 +36,7 @@ CREATE TABLE "card" (
     "text" text NOT NULL DEFAULT '',
     "position" int NOT NULL DEFAULT 0,
     "state" text NOT NULL DEFAULT 'CardActive',
+    "category" int NOT NULL DEFAULT 0,
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now(),
@@ -44,6 +45,16 @@ CREATE TABLE "card" (
 
 CREATE UNIQUE INDEX ON "card" ("uid");
 ALTER TABLE "card" ADD CONSTRAINT "card_owner_uid" FOREIGN KEY ("owner_uid") REFERENCES "user" ("uid") MATCH FULL;
+
+-- Domains
+
+CREATE TABLE "domain" (
+   "domain" text NOT NULL,
+   "category" int NOT NULL DEFAULT 0,
+   "weight" int NOT NULL DEFAULT 0
+);
+
+CREATE UNIQUE INDEX ON "domain" ("domain", "category");
 
 -- DB Schema
 

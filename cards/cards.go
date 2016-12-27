@@ -1,11 +1,19 @@
 package cards
 
-import "remy.io/scratche/uuid"
+import (
+	"database/sql/driver"
+
+	"remy.io/scratche/uuid"
+)
 
 type CardState string
 
 func (c CardState) String() string {
 	return string(c)
+}
+
+func (c CardState) Value() (driver.Value, error) {
+	return driver.Value(c.String()), nil
 }
 
 var (

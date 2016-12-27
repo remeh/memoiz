@@ -1,12 +1,12 @@
 package cards
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
 	"remy.io/scratche/api"
 	"remy.io/scratche/cards"
+	"remy.io/scratche/mind"
 	"remy.io/scratche/uuid"
 )
 
@@ -28,13 +28,10 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var sc cards.SimpleCard
 
-	fmt.Println(string(body.CardUid))
-
 	if uuid.IsNil(body.CardUid) {
-		println("new")
 		sc, err = cards.DAO().New(uid, body.Text, time.Now())
+		go mind.Analyze(uid, body.Text)
 	} else {
-		println("update")
 		sc, err = cards.DAO().UpdateText(body.CardUid, uid, body.Text, time.Now())
 	}
 
