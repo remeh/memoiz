@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"remy.io/scratche/config"
+	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
 
 	"github.com/buger/jsonparser"
@@ -80,18 +81,21 @@ func (b *Bing) Fetch(text string) error {
 	jsonparser.ArrayEach(webPages, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		d, _, _, _ := jsonparser.Get(value, "displayUrl")
 		if url, err := url.Parse(strings.Replace(string(d), `\/`, "/", -1)); err == nil {
-			b.domains = append(b.domains, b.extractDomain(url.Host))
+			if len(url.Host) == 0 {
+				b.domains = append(b.domains, b.extractDomain(url.Path))
+			} else {
+				b.domains = append(b.domains, b.extractDomain(url.Host))
+			}
 		}
 	})
 
-	fmt.Println("Fetch:", b.text)
 	return nil
 }
 
 func (b *Bing) Analyze() (Categories, error) {
 	cat, err := b.guessByDomains()
 	if err != nil {
-		fmt.Println(b.domains)
+		log.Debug("domains:", b.domains)
 		return Categories{Unknown}, fmt.Errorf("Bing.Analyze: %v", err)
 	}
 
@@ -102,7 +106,10 @@ func (b *Bing) Analyze() (Categories, error) {
 
 func (b *Bing) Store() error {
 	// TODO(remy): store the score for this guess
-	fmt.Printf("Bing decided that '%s' is '%v'\n", b.text, b.categories)
+	log.Debug("Bing decided that '", b.text, "' is '", b.categories, "'")
+	if b.categories[0] == Unknown {
+		log.Debug("domains:", b.domains)
+	}
 	// not implemented
 	return nil
 }
@@ -110,7 +117,7 @@ func (b *Bing) Store() error {
 // ----------------------
 
 // rxDomain retrieves only the domain (removing the TLD)
-var rxDomain *regexp.Regexp = regexp.MustCompile(`([a-zA-Z0-9]*)\.[a-zA-Z0-9]*$`)
+var rxDomain *regexp.Regexp = regexp.MustCompile(`([a-zA-Z0-9]*)\.[a-zA-Z0-9]*\/`)
 
 // guessByDomains retrieve the Category which seems to represent
 // the best the given card.
@@ -128,6 +135,8 @@ func (b *Bing) guessByDomains() (Category, error) {
 		}
 	}
 	inClause += ")"
+
+	fmt.Println(b.domains)
 
 	var params []interface{} = make([]interface{}, len(b.domains))
 	for i := range params {
@@ -147,7 +156,11 @@ func (b *Bing) guessByDomains() (Category, error) {
 		DESC
 		LIMIT 1
 		`, inClause), params...).Scan(&cat, &weight); err != nil {
-		return Unknown, err
+		return Unknown, fmt.Errorf("can't categorize: %v : %v", b.domains, err)
+	}
+
+	if weight < 250 {
+		return Unknown, nil
 	}
 
 	return cat, nil
@@ -155,12 +168,15 @@ func (b *Bing) guessByDomains() (Category, error) {
 
 // buildUrl returns the URL to call Bing API.
 func (b *Bing) buildUrl() string {
-	return fmt.Sprintf("%s&q=%s", BingUrl, url.QueryEscape(b.text))
+	return fmt.Sprintf("%s&count=30&q=%s", BingUrl, url.QueryEscape(b.text))
 }
 
 // extractDomain extracts the domain from the given URL.
 func (b *Bing) extractDomain(url string) string {
-	str := rxDomain.FindStringSubmatch(strings.ToLower(url))
+	// NOTE(remy): we add the / for the regexp
+	// NOTE(remy): we take only the first match, this is why
+	// I don't use FindAllStringSubmatch
+	str := rxDomain.FindStringSubmatch(strings.ToLower(url) + "/")
 	if len(str) == 2 {
 		return str[1]
 	}

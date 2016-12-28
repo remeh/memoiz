@@ -30,7 +30,7 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if uuid.IsNil(body.CardUid) {
 		sc, err = cards.DAO().New(uid, body.Text, time.Now())
-		go mind.Analyze(uid, body.Text)
+		go mind.Analyze(sc.Uid, body.Text)
 	} else {
 		sc, err = cards.DAO().UpdateText(body.CardUid, uid, body.Text, time.Now())
 	}

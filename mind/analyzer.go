@@ -2,6 +2,7 @@ package mind
 
 import (
 	"remy.io/scratche/log"
+	"remy.io/scratche/storage"
 	"remy.io/scratche/uuid"
 )
 
@@ -43,4 +44,12 @@ func Analyze(uid uuid.UUID, text string) {
 		return
 	}
 
+	// update the card
+	if _, err := storage.DB().Exec(`
+		UPDATE "card"
+		SET "category" = $1
+		WHERE "uid" = $2
+	`, cats[0], uid); err != nil {
+		log.Error("mind.Analyze:", err)
+	}
 }
