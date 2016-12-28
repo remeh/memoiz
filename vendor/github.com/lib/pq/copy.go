@@ -13,6 +13,7 @@ var (
 	errBinaryCopyNotSupported     = errors.New("pq: only text format supported for COPY")
 	errCopyToNotSupported         = errors.New("pq: COPY TO is not supported")
 	errCopyNotSupportedOutsideTxn = errors.New("pq: COPY is only allowed inside a transaction")
+	errCopyInProgress             = errors.New("pq: COPY in progress")
 )
 
 // CopyIn creates a COPY FROM statement which can be prepared with
@@ -215,9 +216,7 @@ func (ci *copyin) Exec(v []driver.Value) (r driver.Result, err error) {
 	}
 
 	if len(v) == 0 {
-		err = ci.Close()
-		ci.closed = true
-		return nil, err
+		return nil, ci.Close()
 	}
 
 	numValues := len(v)
@@ -240,9 +239,10 @@ func (ci *copyin) Exec(v []driver.Value) (r driver.Result, err error) {
 }
 
 func (ci *copyin) Close() (err error) {
-	if ci.closed {
-		return errCopyInClosed
+	if ci.closed { // Don't do anything, we're already closed
+		return nil
 	}
+	ci.closed = true
 
 	if ci.cn.bad {
 		return driver.ErrBadConn
@@ -259,6 +259,7 @@ func (ci *copyin) Close() (err error) {
 	}
 
 	<-ci.done
+	ci.cn.inCopy = false
 
 	if ci.isErrorSet() {
 		err = ci.err

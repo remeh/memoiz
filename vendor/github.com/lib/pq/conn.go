@@ -3,15 +3,12 @@ package pq
 import (
 	"bufio"
 	"crypto/md5"
-	"crypto/tls"
-	"crypto/x509"
 	"database/sql"
 	"database/sql/driver"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"os"
 	"os/user"
@@ -32,6 +29,10 @@ var (
 	ErrSSLNotSupported           = errors.New("pq: SSL is not enabled on the server")
 	ErrSSLKeyHasWorldPermissions = errors.New("pq: Private key file has group or world access. Permissions should be u=rw (0600) or less.")
 	ErrCouldNotDetectUsername    = errors.New("pq: Could not detect default username. Please provide one explicitly.")
+
+	errUnexpectedReady = errors.New("unexpected ReadyForQuery")
+	errNoRowsAffected  = errors.New("no RowsAffected available after the empty statement")
+	errNoLastInsertId  = errors.New("no LastInsertId available after the empty statement")
 )
 
 type drv struct{}
@@ -115,6 +116,9 @@ type conn struct {
 	// Whether to always send []byte parameters over as binary.  Enables single
 	// round-trip mode for non-prepared Query calls.
 	binaryParameters bool
+
+	// If true this connection is in the middle of a COPY
+	inCopy bool
 }
 
 // Handle driver-side settings in parsed connection string.
@@ -141,6 +145,80 @@ func (c *conn) handleDriverSettings(o values) (err error) {
 		return err
 	}
 	return nil
+}
+
+func (c *conn) handlePgpass(o values) {
+	// if a password was supplied, do not process .pgpass
+	_, ok := o["password"]
+	if ok {
+		return
+	}
+	filename := os.Getenv("PGPASSFILE")
+	if filename == "" {
+		// XXX this code doesn't work on Windows where the default filename is
+		// XXX %APPDATA%\postgresql\pgpass.conf
+		user, err := user.Current()
+		if err != nil {
+			return
+		}
+		filename = filepath.Join(user.HomeDir, ".pgpass")
+	}
+	fileinfo, err := os.Stat(filename)
+	if err != nil {
+		return
+	}
+	mode := fileinfo.Mode()
+	if mode&(0x77) != 0 {
+		// XXX should warn about incorrect .pgpass permissions as psql does
+		return
+	}
+	file, err := os.Open(filename)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(io.Reader(file))
+	hostname := o.Get("host")
+	ntw, _ := network(o)
+	port := o.Get("port")
+	db := o.Get("dbname")
+	username := o.Get("user")
+	// From: https://github.com/tg/pgpass/blob/master/reader.go
+	getFields := func(s string) []string {
+		fs := make([]string, 0, 5)
+		f := make([]rune, 0, len(s))
+
+		var esc bool
+		for _, c := range s {
+			switch {
+			case esc:
+				f = append(f, c)
+				esc = false
+			case c == '\\':
+				esc = true
+			case c == ':':
+				fs = append(fs, string(f))
+				f = f[:0]
+			default:
+				f = append(f, c)
+			}
+		}
+		return append(fs, string(f))
+	}
+	for scanner.Scan() {
+		line := scanner.Text()
+		if len(line) == 0 || line[0] == '#' {
+			continue
+		}
+		split := getFields(line)
+		if len(split) != 5 {
+			continue
+		}
+		if (split[0] == "*" || split[0] == hostname || (split[0] == "localhost" && (hostname == "" || ntw == "unix"))) && (split[1] == "*" || split[1] == port) && (split[2] == "*" || split[2] == db) && (split[3] == "*" || split[3] == username) {
+			o["password"] = split[4]
+			return
+		}
+	}
 }
 
 func (c *conn) writeBuf(b byte) *writeBuf {
@@ -234,6 +312,7 @@ func DialOpen(d Dialer, name string) (_ driver.Conn, err error) {
 	if err != nil {
 		return nil, err
 	}
+	cn.handlePgpass(o)
 
 	cn.c, err = dial(d, o)
 	if err != nil {
@@ -287,7 +366,7 @@ func network(o values) (string, string) {
 		return "unix", sockPath
 	}
 
-	return "tcp", host + ":" + o.Get("port")
+	return "tcp", net.JoinHostPort(host, o.Get("port"))
 }
 
 type values map[string]string
@@ -523,11 +602,16 @@ func (cn *conn) simpleExec(q string) (res driver.Result, commandTag string, err 
 			res, commandTag = cn.parseComplete(r.string())
 		case 'Z':
 			cn.processReadyForQuery(r)
+			if res == nil && err == nil {
+				err = errUnexpectedReady
+			}
 			// done
 			return
 		case 'E':
 			err = parseError(r)
-		case 'T', 'D', 'I':
+		case 'I':
+			res = emptyRows
+		case 'T', 'D':
 			// ignore any results
 		default:
 			cn.bad = true
@@ -538,8 +622,6 @@ func (cn *conn) simpleExec(q string) (res driver.Result, commandTag string, err 
 
 func (cn *conn) simpleQuery(q string) (res *rows, err error) {
 	defer cn.errRecover(&err)
-
-	st := &stmt{cn: cn, name: ""}
 
 	b := cn.writeBuf('Q')
 	b.string(q)
@@ -557,13 +639,12 @@ func (cn *conn) simpleQuery(q string) (res *rows, err error) {
 				cn.bad = true
 				errorf("unexpected message %q in simple query execution", t)
 			}
-			res = &rows{
-				cn:       cn,
-				colNames: st.colNames,
-				colTyps:  st.colTyps,
-				colFmts:  st.colFmts,
-				done:     true,
+			if res == nil {
+				res = &rows{
+					cn: cn,
+				}
 			}
+			res.done = true
 		case 'Z':
 			cn.processReadyForQuery(r)
 			// done
@@ -592,6 +673,20 @@ func (cn *conn) simpleQuery(q string) (res *rows, err error) {
 			errorf("unknown response for simple query: %q", t)
 		}
 	}
+}
+
+type noRows struct{}
+
+var emptyRows noRows
+
+var _ driver.Result = noRows{}
+
+func (noRows) LastInsertId() (int64, error) {
+	return 0, errNoLastInsertId
+}
+
+func (noRows) RowsAffected() (int64, error) {
+	return 0, errNoRowsAffected
 }
 
 // Decides which column formats to use for a prepared statement.  The input is
@@ -671,31 +766,40 @@ func (cn *conn) Prepare(q string) (_ driver.Stmt, err error) {
 	defer cn.errRecover(&err)
 
 	if len(q) >= 4 && strings.EqualFold(q[:4], "COPY") {
-		return cn.prepareCopyIn(q)
+		s, err := cn.prepareCopyIn(q)
+		if err == nil {
+			cn.inCopy = true
+		}
+		return s, err
 	}
 	return cn.prepareTo(q, cn.gname()), nil
 }
 
 func (cn *conn) Close() (err error) {
-	if cn.bad {
-		return driver.ErrBadConn
-	}
+	// Skip cn.bad return here because we always want to close a connection.
 	defer cn.errRecover(&err)
+
+	// Ensure that cn.c.Close is always run. Since error handling is done with
+	// panics and cn.errRecover, the Close must be in a defer.
+	defer func() {
+		cerr := cn.c.Close()
+		if err == nil {
+			err = cerr
+		}
+	}()
 
 	// Don't go through send(); ListenerConn relies on us not scribbling on the
 	// scratch buffer of this connection.
-	err = cn.sendSimpleMessage('X')
-	if err != nil {
-		return err
-	}
-
-	return cn.c.Close()
+	return cn.sendSimpleMessage('X')
 }
 
 // Implement the "Queryer" interface
 func (cn *conn) Query(query string, args []driver.Value) (_ driver.Rows, err error) {
 	if cn.bad {
 		return nil, driver.ErrBadConn
+	}
+	if cn.inCopy {
+		return nil, errCopyInProgress
 	}
 	defer cn.errRecover(&err)
 
@@ -893,26 +997,11 @@ func (cn *conn) recv1() (t byte, r *readBuf) {
 }
 
 func (cn *conn) ssl(o values) {
-	verifyCaOnly := false
-	tlsConf := tls.Config{}
-	switch mode := o.Get("sslmode"); mode {
-	case "require", "":
-		tlsConf.InsecureSkipVerify = true
-	case "verify-ca":
-		// We must skip TLS's own verification since it requires full
-		// verification since Go 1.3.
-		tlsConf.InsecureSkipVerify = true
-		verifyCaOnly = true
-	case "verify-full":
-		tlsConf.ServerName = o.Get("host")
-	case "disable":
+	upgrade := ssl(o)
+	if upgrade == nil {
+		// Nothing to do
 		return
-	default:
-		errorf(`unsupported sslmode %q; only "require" (default), "verify-full", and "disable" supported`, mode)
 	}
-
-	cn.setupSSLClientCertificates(&tlsConf, o)
-	cn.setupSSLCA(&tlsConf, o)
 
 	w := cn.writeBuf(0)
 	w.int32(80877103)
@@ -928,114 +1017,7 @@ func (cn *conn) ssl(o values) {
 		panic(ErrSSLNotSupported)
 	}
 
-	client := tls.Client(cn.c, &tlsConf)
-	if verifyCaOnly {
-		cn.verifyCA(client, &tlsConf)
-	}
-	cn.c = client
-}
-
-// verifyCA carries out a TLS handshake to the server and verifies the
-// presented certificate against the effective CA, i.e. the one specified in
-// sslrootcert or the system CA if sslrootcert was not specified.
-func (cn *conn) verifyCA(client *tls.Conn, tlsConf *tls.Config) {
-	err := client.Handshake()
-	if err != nil {
-		panic(err)
-	}
-	certs := client.ConnectionState().PeerCertificates
-	opts := x509.VerifyOptions{
-		DNSName:       client.ConnectionState().ServerName,
-		Intermediates: x509.NewCertPool(),
-		Roots:         tlsConf.RootCAs,
-	}
-	for i, cert := range certs {
-		if i == 0 {
-			continue
-		}
-		opts.Intermediates.AddCert(cert)
-	}
-	_, err = certs[0].Verify(opts)
-	if err != nil {
-		panic(err)
-	}
-}
-
-// This function sets up SSL client certificates based on either the "sslkey"
-// and "sslcert" settings (possibly set via the environment variables PGSSLKEY
-// and PGSSLCERT, respectively), or if they aren't set, from the .postgresql
-// directory in the user's home directory.  If the file paths are set
-// explicitly, the files must exist.  The key file must also not be
-// world-readable, or this function will panic with
-// ErrSSLKeyHasWorldPermissions.
-func (cn *conn) setupSSLClientCertificates(tlsConf *tls.Config, o values) {
-	var missingOk bool
-
-	sslkey := o.Get("sslkey")
-	sslcert := o.Get("sslcert")
-	if sslkey != "" && sslcert != "" {
-		// If the user has set an sslkey and sslcert, they *must* exist.
-		missingOk = false
-	} else {
-		// Automatically load certificates from ~/.postgresql.
-		user, err := user.Current()
-		if err != nil {
-			// user.Current() might fail when cross-compiling.  We have to
-			// ignore the error and continue without client certificates, since
-			// we wouldn't know where to load them from.
-			return
-		}
-
-		sslkey = filepath.Join(user.HomeDir, ".postgresql", "postgresql.key")
-		sslcert = filepath.Join(user.HomeDir, ".postgresql", "postgresql.crt")
-		missingOk = true
-	}
-
-	// Check that both files exist, and report the error or stop, depending on
-	// which behaviour we want.  Note that we don't do any more extensive
-	// checks than this (such as checking that the paths aren't directories);
-	// LoadX509KeyPair() will take care of the rest.
-	keyfinfo, err := os.Stat(sslkey)
-	if err != nil && missingOk {
-		return
-	} else if err != nil {
-		panic(err)
-	}
-	_, err = os.Stat(sslcert)
-	if err != nil && missingOk {
-		return
-	} else if err != nil {
-		panic(err)
-	}
-
-	// If we got this far, the key file must also have the correct permissions
-	kmode := keyfinfo.Mode()
-	if kmode != kmode&0600 {
-		panic(ErrSSLKeyHasWorldPermissions)
-	}
-
-	cert, err := tls.LoadX509KeyPair(sslcert, sslkey)
-	if err != nil {
-		panic(err)
-	}
-	tlsConf.Certificates = []tls.Certificate{cert}
-}
-
-// Sets up RootCAs in the TLS configuration if sslrootcert is set.
-func (cn *conn) setupSSLCA(tlsConf *tls.Config, o values) {
-	if sslrootcert := o.Get("sslrootcert"); sslrootcert != "" {
-		tlsConf.RootCAs = x509.NewCertPool()
-
-		cert, err := ioutil.ReadFile(sslrootcert)
-		if err != nil {
-			panic(err)
-		}
-
-		ok := tlsConf.RootCAs.AppendCertsFromPEM(cert)
-		if !ok {
-			errorf("couldn't parse pem in sslrootcert")
-		}
-	}
+	cn.c = upgrade(cn.c)
 }
 
 // isDriverSetting returns true iff a setting is purely for configuring the
@@ -1385,10 +1367,21 @@ func (rs *rows) Next(dest []driver.Value) (err error) {
 				dest[i] = decode(&conn.parameterStatus, rs.rb.next(l), rs.colTyps[i], rs.colFmts[i])
 			}
 			return
+		case 'T':
+			rs.colNames, rs.colFmts, rs.colTyps = parsePortalRowDescribe(&rs.rb)
+			return io.EOF
 		default:
 			errorf("unexpected message after execute: %q", t)
 		}
 	}
+}
+
+func (rs *rows) HasNextResultSet() bool {
+	return !rs.done
+}
+
+func (rs *rows) NextResultSet() error {
+	return nil
 }
 
 // QuoteIdentifier quotes an "identifier" (e.g. a table or a column name) to be
@@ -1633,6 +1626,9 @@ func (cn *conn) readExecuteResponse(protocolState string) (res driver.Result, co
 			res, commandTag = cn.parseComplete(r.string())
 		case 'Z':
 			cn.processReadyForQuery(r)
+			if res == nil && err == nil {
+				err = errUnexpectedReady
+			}
 			return res, commandTag, err
 		case 'E':
 			err = parseError(r)
@@ -1640,6 +1636,9 @@ func (cn *conn) readExecuteResponse(protocolState string) (res driver.Result, co
 			if err != nil {
 				cn.bad = true
 				errorf("unexpected %q after error %s", t, err)
+			}
+			if t == 'I' {
+				res = emptyRows
 			}
 			// ignore any results
 		default:
@@ -1719,7 +1718,7 @@ func parseEnviron(env []string) (out map[string]string) {
 			accrue("user")
 		case "PGPASSWORD":
 			accrue("password")
-		case "PGPASSFILE", "PGSERVICE", "PGSERVICEFILE", "PGREALM":
+		case "PGSERVICE", "PGSERVICEFILE", "PGREALM":
 			unsupported()
 		case "PGOPTIONS":
 			accrue("options")

@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "VadeGPSSCviJGQjTCtUuH3rPK3w=",
+			"path": "github.com/buger/jsonparser",
+			"revision": "42b84a5caf12249d724445a0be7df0272f30b9a9",
+			"revisionTime": "2016-12-16T13:12:46Z"
+		},
+		{
 			"checksumSHA1": "iIUYZyoanCQQTUaWsu8b+iOSPt4=",
 			"path": "github.com/gorilla/context",
 			"revision": "215affda49addc4c8ef7e2534915df2c8c35c6cd",
@@ -15,16 +21,16 @@
 			"revisionTime": "2015-08-20T05:15:06Z"
 		},
 		{
-			"checksumSHA1": "Ncf0ItwKAuTF5eNkGW+Pk78pwzM=",
+			"checksumSHA1": "e+1BYI9y5LUyfSC+lwQF0AXP5sA=",
 			"path": "github.com/lib/pq",
-			"revision": "b269bd035a727d6c1081f76e7a239a1b00674c40",
-			"revisionTime": "2015-08-05T09:05:26Z"
+			"revision": "5bf161122cd640c2a5a2c1d7fa49ea9befff31dd",
+			"revisionTime": "2016-12-20T09:00:36Z"
 		},
 		{
 			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
 			"path": "github.com/lib/pq/oid",
-			"revision": "b269bd035a727d6c1081f76e7a239a1b00674c40",
-			"revisionTime": "2015-08-05T09:05:26Z"
+			"revision": "5bf161122cd640c2a5a2c1d7fa49ea9befff31dd",
+			"revisionTime": "2016-12-20T09:00:36Z"
 		},
 		{
 			"checksumSHA1": "ayRaLmkRnALRhJ4UwpKIHk9kfXo=",
