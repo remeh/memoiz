@@ -3,8 +3,10 @@ CREATE USER scratche WITH UNENCRYPTED PASSWORD 'scratche';
 CREATE DATABASE "scratche";
 GRANT ALL ON DATABASE "scratche" TO "scratche";
 
--- Switch to the scratche db as the scratche user.
+-- Switch to the scratche db
 \connect "scratche";
+CREATE EXTENSION fuzzystrmatch; -- create the fuzzy match ext
+-- Now connect as the scratche user.
 set role "scratche";
 
 -- User
@@ -46,7 +48,11 @@ CREATE TABLE "card" (
 CREATE UNIQUE INDEX ON "card" ("uid");
 ALTER TABLE "card" ADD CONSTRAINT "card_owner_uid" FOREIGN KEY ("owner_uid") REFERENCES "user" ("uid") MATCH FULL;
 
+----------------------
 -- Domains
+-- Use by Bing to analyze the content of a card
+-- by assigning Category to domains.
+----------------------
 
 CREATE TABLE "domain" (
    "domain" text NOT NULL,
@@ -56,7 +62,24 @@ CREATE TABLE "domain" (
 
 CREATE UNIQUE INDEX ON "domain" ("domain", "category");
 
+-- DomainResult
+-- Analyzes results computed using domains.
+
+CREATE TABLE "domain_result" (
+    "uid" text NOT NULL,
+    "card_text" text NOT NULL DEFAULT '',
+    "category" int[] NOT NULL,
+    "domains" text[] NOT NULL,
+    "creation_time" timestamp with time zone DEFAULT now()
+);
+
+CREATE UNIQUE INDEX ON "domain_result" ("uid");
+CREATE INDEX ON "domain_result" ("card_text");
+CREATE INDEX ON "domain_result" ("category");
+
+----------------------
 -- DB Schema
+----------------------
 
 CREATE TABLE "db_schema" (
     "version" int NOT NULL DEFAULT 0,
