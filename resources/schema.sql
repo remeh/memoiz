@@ -70,12 +70,38 @@ CREATE TABLE "domain_result" (
     "card_text" text NOT NULL DEFAULT '',
     "category" int[] NOT NULL,
     "domains" text[] NOT NULL,
+    "weight" int NOT NULL DEFAULT 0,
     "creation_time" timestamp with time zone DEFAULT now()
 );
 
 CREATE UNIQUE INDEX ON "domain_result" ("uid");
 CREATE INDEX ON "domain_result" ("card_text");
 CREATE INDEX ON "domain_result" ("category");
+
+----------------------
+-- KGType
+-- Matching
+----------------------
+
+CREATE TABLE "kg_type" (
+    "type" text NOT NULL,
+    "category" int NOT NULL DEFAULT 0
+);
+
+CREATE UNIQUE INDEX ON "kg_type" ("type");
+
+CREATE TABLE "kg_result" (
+    "uid" text NOT NULL,
+    "card_text" text NOT NULL DEFAULT '',
+    "types" text DEFAULT '',
+    "description" text DEFAULT '',
+    "category" int[] NOT NULL,
+    "creation_time" timestamp with time zone DEFAULT now()
+);
+
+CREATE UNIQUE INDEX ON "kg_result" ("uid");
+CREATE INDEX ON "kg_result" ("card_text");
+CREATE INDEX ON "kg_result" ("category");
 
 ----------------------
 -- DB Schema

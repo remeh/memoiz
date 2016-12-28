@@ -29,6 +29,13 @@ type Bing struct {
 	text       string
 	domains    []string
 	categories Categories
+	weight     int
+}
+
+func (b *Bing) TryCache(text string) (bool, error) {
+	// TODO(remy): not implemented
+	b.categories = Categories{Unknown}
+	return false, nil
 }
 
 func (b *Bing) Fetch(text string) error {
@@ -95,14 +102,14 @@ func (b *Bing) Fetch(text string) error {
 	return nil
 }
 
-func (b *Bing) Analyze() (Categories, error) {
+func (b *Bing) Analyze() error {
 	cat, err := b.guessByDomains()
 	if err != nil {
 		log.Debug("Bing.Analyze: %v", err)
 	}
 	b.categories = Categories{cat}
 
-	return b.categories, nil
+	return nil
 }
 
 func (b *Bing) Store() error {
@@ -111,17 +118,21 @@ func (b *Bing) Store() error {
 	// store
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "domain_result"
-		("uid", "card_text", "category", "domains", "creation_time")
+		("uid", "card_text", "category", "domains", "weight", "creation_time")
 		VALUES
-		($1, $2, $3, $4, $5)
-	`, uid, b.text, pq.Array(b.categories), pq.Array(b.domains), time.Now()); err != nil {
+		($1, $2, $3, $4, $5, $6)
+	`, uid, b.text, pq.Array(b.categories), pq.Array(b.domains), b.weight, time.Now()); err != nil {
 		return err
 	}
 
 	// some log
-	log.Debug("Bing decided that '", b.text, "' is '", b.categories, "'")
+	log.Debug("Bing decided that '", b.text, "' is '", b.categories, "' (weight:", b.weight, ")")
 
 	return nil
+}
+
+func (b *Bing) Categories() Categories {
+	return b.categories
 }
 
 // ----------------------
@@ -172,6 +183,8 @@ func (b *Bing) guessByDomains() (Category, error) {
 	if weight < 150 {
 		return Unknown, nil
 	}
+
+	b.weight = weight
 
 	return cat, nil
 }

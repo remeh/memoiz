@@ -1,15 +1,19 @@
 package mind
 
 import (
+	"strings"
+
 	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
 	"remy.io/scratche/uuid"
 )
 
 type Analyzer interface {
+	TryCache(string) (bool, error)
 	Fetch(string) error
-	Analyze() (Categories, error)
+	Analyze() error
 	Store() error
+	Categories() Categories
 }
 
 func Analyze(uid uuid.UUID, text string) {
@@ -19,19 +23,42 @@ func Analyze(uid uuid.UUID, text string) {
 
 	var a Analyzer
 	var err error
-	var cats Categories
 
-	// TODO(remy): try from the cache "domain_result" first
-	// TODO(remy): if the text is too long, should not be
-	// useful to call Google Knowledge Graph
+	// choose the first analyzer to launch
+	// ----------------------
+
+	spaces := strings.Count(text, " ")
+
 	a = &Kg{}
 
-	if err = a.Fetch(text); err != nil {
-		log.Error("Analyze/Fetch:", err)
+	// do not use Google KG if it has too many spaces
+	if spaces > 4 {
+		a = &Bing{}
+	}
+
+	// don't even bother to analyze something which looks
+	// like a complete not
+	if spaces > 10 {
+		a = &Stub{}
+	}
+
+	// apply the analyze
+	// ----------------------
+
+	found, err := a.TryCache(text)
+	if err != nil {
+		log.Error("Analyze/TryCache:", err)
 		return
 	}
 
-	if cats, err = a.Analyze(); err != nil {
+	if !found {
+		if err = a.Fetch(text); err != nil {
+			log.Error("Analyze/Fetch:", err)
+			return
+		}
+	}
+
+	if err = a.Analyze(); err != nil {
 		log.Error("Analyze/Analyze:", err)
 		return
 	}
@@ -41,7 +68,11 @@ func Analyze(uid uuid.UUID, text string) {
 		return
 	}
 
-	if len(cats) == 0 || cats[0] == Unknown {
+	// update the Card if anything has been found
+	// ----------------------
+
+	cats := a.Categories()
+	if cats == nil || len(cats) == 0 || cats[0] == Unknown {
 		return
 	}
 

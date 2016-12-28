@@ -6,10 +6,15 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/buger/jsonparser"
+	"github.com/lib/pq"
 
 	"remy.io/scratche/config"
+	"remy.io/scratche/log"
+	"remy.io/scratche/storage"
+	"remy.io/scratche/uuid"
 )
 
 const (
@@ -22,16 +27,23 @@ type Kg struct {
 	text        string
 	types       []string
 	description string
+	categories  Categories
+}
+
+func (k *Kg) TryCache(text string) (bool, error) {
+	// TODO(remy): not implemented
+	k.categories = Categories{Unknown}
+	return false, nil
 }
 
 func (k *Kg) Fetch(text string) error {
-	// TODO(remy): test text for amount of spaces
 
 	var req *http.Request
 	var resp *http.Response
 	var err error
 
 	k.text = text
+	k.categories = Categories{Unknown}
 
 	// http request to Bing
 	// ----------------------
@@ -39,8 +51,6 @@ func (k *Kg) Fetch(text string) error {
 	if req, err = http.NewRequest("GET", k.buildUrl(), nil); err != nil {
 		return err
 	}
-
-	fmt.Println(k.buildUrl())
 
 	cli := &http.Client{}
 	if resp, err = cli.Do(req); err != nil {
@@ -80,22 +90,63 @@ func (k *Kg) Fetch(text string) error {
 		result, _, _, _ := jsonparser.Get(value, "result")
 		t, _, _, _ := jsonparser.Get(result, "@type")
 		jsonparser.ArrayEach(t, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-			k.types = append(k.types, strings.ToLower(string(value)))
+			// ignore "Thing" and "Person" too vague
+			str := string(value)
+			if str != "Thing" && str != "Person" {
+				k.types = append(k.types, strings.ToLower(string(value)))
+			}
 		})
 	})
 
 	return nil
 }
 
-func (k *Kg) Analyze() (Categories, error) {
-	fmt.Println(k.description)
-	fmt.Println(k.types)
-	return Categories{Unknown}, nil
+func (k *Kg) Analyze() error {
+	if len(k.types) == 0 {
+		return nil
+	}
+
+	// TODO(remy): use the description
+	var c Category
+
+	if err := storage.DB().QueryRow(`
+		SELECT "category"
+		FROM "kg_type"
+		WHERE
+			"type" = $1
+	`, k.types[0]).Scan(&c); err != nil {
+		fmt.Println(err)
+		c = Unknown
+	}
+
+	k.categories = Categories{c}
+	return nil
 }
 
 func (k *Kg) Store() error {
+	uid := uuid.New()
+
+	// store
+	if _, err := storage.DB().Exec(`
+		INSERT INTO "kg_result"
+		("uid", "card_text", "types", "description", "category", "creation_time")
+		VALUES
+		($1, $2, $3, $4, $5, $6)
+	`, uid, k.text, pq.Array(k.types), k.description, pq.Array(k.categories), time.Now()); err != nil {
+		return err
+	}
+
+	// some log
+	log.Debug("Kg decided that '", k.text, "' is '", k.categories)
+
 	return nil
 }
+
+func (k *Kg) Categories() Categories {
+	return k.categories
+}
+
+// ----------------------
 
 func (k *Kg) buildUrl() string {
 	return fmt.Sprintf("%s?limit=1&query=%s&key=%s", KgUrl, url.QueryEscape(k.text), config.Config.KgApiKey)
