@@ -7,12 +7,15 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"remy.io/scratche/config"
 	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
+	"remy.io/scratche/uuid"
 
 	"github.com/buger/jsonparser"
+	"github.com/lib/pq"
 )
 
 const (
@@ -95,22 +98,29 @@ func (b *Bing) Fetch(text string) error {
 func (b *Bing) Analyze() (Categories, error) {
 	cat, err := b.guessByDomains()
 	if err != nil {
-		log.Debug("domains:", b.domains)
-		return Categories{Unknown}, fmt.Errorf("Bing.Analyze: %v", err)
+		log.Debug("Bing.Analyze: %v", err)
 	}
-
 	b.categories = Categories{cat}
 
-	return b.categories, err
+	return b.categories, nil
 }
 
 func (b *Bing) Store() error {
-	// TODO(remy): store the score for this guess
-	log.Debug("Bing decided that '", b.text, "' is '", b.categories, "'")
-	if b.categories[0] == Unknown {
-		log.Debug("domains:", b.domains)
+	uid := uuid.New()
+
+	// store
+	if _, err := storage.DB().Exec(`
+		INSERT INTO "domain_result"
+		("uid", "card_text", "category", "domains", "creation_time")
+		VALUES
+		($1, $2, $3, $4, $5)
+	`, uid, b.text, pq.Array(b.categories), pq.Array(b.domains), time.Now()); err != nil {
+		return err
 	}
-	// not implemented
+
+	// some log
+	log.Debug("Bing decided that '", b.text, "' is '", b.categories, "'")
+
 	return nil
 }
 
@@ -159,7 +169,7 @@ func (b *Bing) guessByDomains() (Category, error) {
 		return Unknown, fmt.Errorf("can't categorize: %v : %v", b.domains, err)
 	}
 
-	if weight < 250 {
+	if weight < 150 {
 		return Unknown, nil
 	}
 

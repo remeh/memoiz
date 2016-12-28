@@ -21,9 +21,10 @@ func Analyze(uid uuid.UUID, text string) {
 	var err error
 	var cats Categories
 
+	// TODO(remy): try from the cache "domain_result" first
 	// TODO(remy): if the text is too long, should not be
 	// useful to call Google Knowledge Graph
-	a = &Bing{}
+	a = &Kg{}
 
 	if err = a.Fetch(text); err != nil {
 		log.Error("Analyze/Fetch:", err)
