@@ -13,9 +13,8 @@ INSERT INTO "domain" VALUES ('allocine', 9, 50);
 INSERT INTO "domain" VALUES ('hbo', 5, 20); -- movie
 INSERT INTO "domain" VALUES ('hbo', 9, 75); -- serie
 
--- Miramax
-INSERT INTO "domain" VALUES ('miramax', 5, 75); -- movie
-INSERT INTO "domain" VALUES ('miramax', 9, 25); -- serie
+INSERT INTO "domain" VALUES ('film', 5, 50); -- movie
+INSERT INTO "domain" VALUES ('film', 9, 50); -- serie
 
 -- Hulu
 INSERT INTO "domain" VALUES ('hulu', 5, 50);
@@ -25,15 +24,34 @@ INSERT INTO "domain" VALUES ('hulu', 9, 50);
 INSERT INTO "domain" VALUES ('imdb', 5, 50);
 INSERT INTO "domain" VALUES ('imdb', 9, 50);
 
+INSERT INTO "domain" VALUES ('imdbmovies', 5, 50);
+INSERT INTO "domain" VALUES ('imdbmovies', 9, 50);
+
 INSERT INTO "domain" VALUES ('iwannawatch', 5, 50);
 INSERT INTO "domain" VALUES ('iwannawatch', 9, 50);
+
+INSERT INTO "domain" VALUES ('justwatch', 5, 50);
+INSERT INTO "domain" VALUES ('justwatch', 9, 50);
+
+INSERT INTO "domain" VALUES ('locafilm', 5, 50); -- movie
+INSERT INTO "domain" VALUES ('locafilm', 9, 50); -- serie
+
+-- Miramax
+INSERT INTO "domain" VALUES ('miramax', 5, 75); -- movie
+INSERT INTO "domain" VALUES ('miramax', 9, 25); -- serie
 
 -- Moviefone
 INSERT INTO "domain" VALUES ('moviefone', 5, 50);
 INSERT INTO "domain" VALUES ('moviefone', 9, 50);
 
-INSERT INTO "domain" VALUES ('movies', 5, 100);
-INSERT INTO "domain" VALUES ('movies', 9, 100);
+INSERT INTO "domain" VALUES ('movie4k', 5, 50);
+INSERT INTO "domain" VALUES ('movie4k', 9, 50);
+
+INSERT INTO "domain" VALUES ('movies', 5, 50);
+INSERT INTO "domain" VALUES ('movies', 9, 50);
+
+INSERT INTO "domain" VALUES ('movieshub', 5, 50);
+INSERT INTO "domain" VALUES ('movieshub', 9, 50);
 
 INSERT INTO "domain" VALUES ('moviefull-hd', 5, 100);
 INSERT INTO "domain" VALUES ('moviefull-hd', 9, 100);
@@ -47,6 +65,9 @@ INSERT INTO "domain" VALUES ('skstream', 9, 50);
 
 INSERT INTO "domain" VALUES ('sharetv', 5, 50);
 INSERT INTO "domain" VALUES ('sharetv', 9, 50);
+
+INSERT INTO "domain" VALUES ('streaming', 5, 50);
+INSERT INTO "domain" VALUES ('streaming', 9, 50);
 
 INSERT INTO "domain" VALUES ('streamingy', 5, 50);
 INSERT INTO "domain" VALUES ('streamingy', 9, 50);
@@ -62,6 +83,9 @@ INSERT INTO "domain" VALUES ('tvseries', 9, 50);
 -- TVGuide
 INSERT INTO "domain" VALUES ('tvguide', 5, 50);
 INSERT INTO "domain" VALUES ('tvguide', 9, 50);
+
+INSERT INTO "domain" VALUES ('ustream', 5, 50);
+INSERT INTO "domain" VALUES ('ustream', 9, 50);
 
 -- USA Network 
 INSERT INTO "domain" VALUES ('usanetwork', 5, 40); -- movie
@@ -143,6 +167,8 @@ INSERT INTO "domain" VALUES ('azlyrics', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('bandcamp', 6, 100);
 
+INSERT INTO "domain" VALUES ('chords', 6, 100); -- music
+
 INSERT INTO "domain" VALUES ('concertboom', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('deezer', 6, 100); -- music
@@ -152,6 +178,8 @@ INSERT INTO "domain" VALUES ('discogs', 6, 100); -- music
 INSERT INTO "domain" VALUES ('guitar', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('guitaretab', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('musicnotes', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('myspace', 6, 100); -- music
 
@@ -163,9 +191,13 @@ INSERT INTO "domain" VALUES ('lyricsfreak', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('lyricsmode', 6, 100); -- music
 
+INSERT INTO "domain" VALUES ('lyrics007', 6, 100); -- music
+
 INSERT INTO "domain" VALUES ('pandora', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('songkick', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('songfacts', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('songlyrics', 6, 100); -- music
 
