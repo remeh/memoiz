@@ -3,6 +3,7 @@ package cards
 import (
 	"database/sql/driver"
 
+	"remy.io/scratche/mind"
 	"remy.io/scratche/uuid"
 )
 
@@ -28,7 +29,8 @@ var (
 // SimpleCard only contains necessary fields
 // to represent a card.
 type SimpleCard struct {
-	Uid      uuid.UUID `json:"uid"`
-	Text     string    `json:"text"`
-	Position int       `json:"position"`
+	Uid      uuid.UUID     `json:"uid"`
+	Text     string        `json:"text"`
+	Position int           `json:"position"`
+	Category mind.Category `json:"category"`
 }

@@ -90,9 +90,9 @@ func (k *Kg) Fetch(text string) error {
 		result, _, _, _ := jsonparser.Get(value, "result")
 		t, _, _, _ := jsonparser.Get(result, "@type")
 		jsonparser.ArrayEach(t, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-			// ignore "Thing" and "Person" too vague
+			// ignore "Thing" too vague
 			str := string(value)
-			if str != "Thing" && str != "Person" {
+			if str != "Thing" {
 				k.types = append(k.types, strings.ToLower(string(value)))
 			}
 		})

@@ -72,7 +72,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, erro
 	rv := make([]SimpleCard, 0)
 
 	rows, err := d.DB.Query(`
-		SELECT "uid", "text", "position"
+		SELECT "uid", "text", "position", "category"
 		FROM "card"
 		WHERE
 			"owner_uid" = $1
@@ -89,7 +89,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, erro
 	for rows.Next() {
 		var sc SimpleCard
 
-		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position); err != nil {
+		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &sc.Category); err != nil {
 			return rv, err
 		}
 

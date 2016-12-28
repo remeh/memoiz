@@ -41,3 +41,12 @@ func (c *Category) Scan(src interface{}) error {
 func (c Category) Value() (driver.Value, error) {
 	return driver.Value(int64(c)), nil
 }
+
+// json
+// ----------------------
+
+func (c Category) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, c.String())), nil
+}
+
+// TODO(remy): UnmarshalJSON

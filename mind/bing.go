@@ -105,7 +105,7 @@ func (b *Bing) Fetch(text string) error {
 func (b *Bing) Analyze() error {
 	cat, err := b.guessByDomains()
 	if err != nil {
-		log.Debug("Bing.Analyze: %v", err)
+		log.Debug("Bing.Analyze:", err)
 	}
 	b.categories = Categories{cat}
 
