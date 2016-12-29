@@ -185,6 +185,12 @@ INSERT INTO "domain" VALUES ('myspace', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('metrolyrics', 6, 100); -- music
 
+INSERT INTO "domain" VALUES ('napster', 6, 60); -- music
+INSERT INTO "domain" VALUES ('napster', 5, 10); -- movie
+INSERT INTO "domain" VALUES ('napster', 9, 10); -- serie
+INSERT INTO "domain" VALUES ('napster', 10, 10); -- video
+INSERT INTO "domain" VALUES ('napster', 11, 10); -- video game
+
 INSERT INTO "domain" VALUES ('last', 6, 100); -- last.fm music
 
 INSERT INTO "domain" VALUES ('lyricsfreak', 6, 100); -- music
@@ -216,3 +222,29 @@ INSERT INTO "domain" VALUES ('tunein', 6, 100); -- music
 INSERT INTO "domain" VALUES ('vagalume', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('vevo', 6, 100); -- music
+
+----------------------
+-- Place
+----------------------
+
+INSERT INTO "domain" VALUES ('booking', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('ebookers', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('lastminute', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('leclercvoyages', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('michelin', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('routard', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('tourisme', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('tripadvisor', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('viamichelin', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('voyage', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('wikivoyage', 8, 100); -- place
