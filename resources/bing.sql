@@ -121,7 +121,11 @@ INSERT INTO "domain" VALUES ('enix', 11, 100); -- video game
 INSERT INTO "domain" VALUES ('jeuxvideo', 11, 100); -- video game
 INSERT INTO "domain" VALUES ('jeuxvideos', 11, 100); -- video game
 
+INSERT INTO "domain" VALUES ('gamesdeal', 11, 100); -- video game
+
 INSERT INTO "domain" VALUES ('gamefaqs', 11, 100); -- video game
+
+INSERT INTO "domain" VALUES ('gameplanet', 11, 100); -- video game
 
 INSERT INTO "domain" VALUES ('gamespot', 11, 100); -- video game
 
@@ -142,6 +146,13 @@ INSERT INTO "domain" VALUES ('pcgamer', 11, 100); -- video game
 
 INSERT INTO "domain" VALUES ('pcworld', 11, 100); -- video game
 
+INSERT INTO "domain" VALUES ('playstation', 11, 100); -- video game
+
+INSERT INTO "domain" VALUES ('priceminister', 11, 100); -- video game
+
+INSERT INTO "domain" VALUES ('startselect', 11, 100); -- video game
+
+INSERT INTO "domain" VALUES ('steamcommunity', 11, 100); -- video game
 INSERT INTO "domain" VALUES ('steampowered', 11, 100); -- video game
 
 INSERT INTO "domain" VALUES ('twitch', 11, 100); -- video game
