@@ -13,9 +13,11 @@ type SwitchPosition struct {
 }
 
 func (c SwitchPosition) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// TODO(remy): auth
 	uid := api.ReadUser(r)
 
-	// TODO(remy): auth
+	// read parameters
+	// ----------------------
 
 	var body struct {
 		LeftUid  uuid.UUID `json:"l"`
@@ -26,6 +28,16 @@ func (c SwitchPosition) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		api.RenderBadParameters(w)
 		return
 	}
+
+	// test parameters
+	// ----------------------
+
+	if body.LeftUid.IsNil() || body.RightUid.IsNil() {
+		api.RenderBadParameters(w)
+		return
+	}
+
+	// ----------------------
 
 	if err := cards.DAO().SwitchPosition(body.LeftUid, body.RightUid, uid, time.Now()); err != nil {
 		api.RenderErrJson(w, err)

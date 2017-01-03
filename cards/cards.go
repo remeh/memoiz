@@ -28,9 +28,21 @@ var (
 
 // SimpleCard only contains necessary fields
 // to represent a card.
-type SimpleCard struct {
-	Uid      uuid.UUID     `json:"uid"`
-	Text     string        `json:"text"`
-	Position int           `json:"position"`
-	Category mind.Category `json:"category"`
+// RichInfo COULD be loaded.
+type Card struct {
+	Uid      uuid.UUID `json:"uid"`
+	Text     string    `json:"text"`
+	Position int       `json:"position"`
+
+	// NOTE(remy): everything in RichInfo is optional
+	CardRichInfo
+}
+
+type CardRichInfo struct {
+	// Loaded is true if the RichInfo are loaded.
+	// Even partially.
+	Loaded bool `json:"loaded,omitempty"`
+
+	Category mind.Category `json:"category,omitempty"`
+	Image    string        `json:"img,omitempty"`
 }

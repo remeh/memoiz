@@ -13,20 +13,36 @@ type Put struct {
 }
 
 func (c Put) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// TODO(remy): auth
 	uid := api.ReadUser(r)
 
-	// TODO(remy): auth
+	// read parameters
+	// ----------------------
 
 	var body struct {
 		CardUid uuid.UUID `json:"card_uid"`
 		Text    string    `json:"text"`
 	}
 
-	api.ReadJsonBody(r, &body)
+	if err := api.ReadJsonBody(r, &body); err != nil {
+		api.RenderBadParameters(w)
+		return
+	}
+
+	// test parameter
+	// ----------------------
+
+	// TODO(remy): do we want to test text ?
+	if body.CardUid.IsNil() {
+		api.RenderBadParameters(w)
+		return
+	}
+
 	sc, err := cards.DAO().UpdateText(uid, body.CardUid, body.Text, time.Now())
 	if err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}
+
 	api.RenderJson(w, 200, sc)
 }

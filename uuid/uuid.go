@@ -53,6 +53,10 @@ func New() UUID {
 	return UUID(uuid.Parse(uuid.New()))
 }
 
+func (u UUID) IsNil() bool {
+	return IsNil(u)
+}
+
 func (u *UUID) Scan(value interface{}) error {
 	// from []byte
 	s, ok := value.([]byte)

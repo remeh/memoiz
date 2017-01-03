@@ -177,6 +177,7 @@ func (b *Bing) guessByDomains() (Category, error) {
 		DESC
 		LIMIT 1
 		`, inClause), params...).Scan(&cat, &weight); err != nil {
+		// TODO(remy): handle ErrNoRows ?
 		return Unknown, fmt.Errorf("can't categorize: %v : %v", b.domains, err)
 	}
 

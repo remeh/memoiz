@@ -46,7 +46,7 @@ func (d *CardsDAO) InitStmt() error {
 
 // Update updates the text of the given
 // card. It also updates the last_update time.
-func (d *CardsDAO) UpdateText(uid, owner uuid.UUID, text string, t time.Time) (SimpleCard, error) {
+func (d *CardsDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (Card, error) {
 	var position int
 
 	if err := d.DB.QueryRow(`
@@ -57,22 +57,44 @@ func (d *CardsDAO) UpdateText(uid, owner uuid.UUID, text string, t time.Time) (S
 			"uid" = $3 AND "owner_uid" = $4
 		RETURNING "position"
 	`, text, t, uid, owner).Scan(&position); err != nil {
-		return SimpleCard{}, err
+		return Card{}, err
 	}
 
-	return SimpleCard{
+	return Card{
 		Uid:      uid,
 		Text:     text,
 		Position: position,
 	}, nil
 }
 
+// GetRichInfo returns the rich information added
+// to the card: category, link enrichment (img), etc.
+func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
+	var ri CardRichInfo
+
+	if err := d.DB.QueryRow(`
+		SELECT "category", "image"
+		FROM "card"
+		WHERE
+			"uid" = $1
+			AND
+			"owner_uid" = $2
+	`, uid, owner).Scan(&ri.Category, &ri.Image); err != nil {
+		if err == sql.ErrNoRows {
+			return ri, nil
+		}
+		return ri, err
+	}
+
+	return ri, nil
+}
+
 // GetByUser returns the cards of the given user.
-func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, error) {
-	rv := make([]SimpleCard, 0)
+func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
+	rv := make([]Card, 0)
 
 	rows, err := d.DB.Query(`
-		SELECT "uid", "text", "position", "category"
+		SELECT "uid", "text", "position", "category", "image"
 		FROM "card"
 		WHERE
 			"owner_uid" = $1
@@ -87,11 +109,14 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, erro
 
 	defer rows.Close()
 	for rows.Next() {
-		var sc SimpleCard
+		var sc Card
+		var ri CardRichInfo
 
-		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &sc.Category); err != nil {
+		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image); err != nil {
 			return rv, err
 		}
+
+		sc.CardRichInfo = ri
 
 		rv = append(rv, sc)
 	}
@@ -101,10 +126,10 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]SimpleCard, erro
 
 // New creates a new card for the given user
 // and returns its ID + position.
-func (d *CardsDAO) New(userUid uuid.UUID, text string, t time.Time) (SimpleCard, error) {
-	var rv SimpleCard
+func (d *CardsDAO) New(uid uuid.UUID, text string, t time.Time) (Card, error) {
+	var rv Card
 
-	uid := uuid.New()
+	cardUid := uuid.New()
 
 	if err := d.DB.QueryRow(`
 		INSERT INTO "card"
@@ -113,7 +138,8 @@ func (d *CardsDAO) New(userUid uuid.UUID, text string, t time.Time) (SimpleCard,
 		FROM "card"
 		WHERE "owner_uid" = $2
 		RETURNING "position"
-	`, uid, userUid, text, t).Scan(&rv.Position); err != nil {
+	`, cardUid, uid, text, t).Scan(&rv.Position); err != nil {
+		// TODO(remy): handle ErrNoRows ?
 		return rv, fmt.Errorf("cards.New: %v", err)
 	}
 
@@ -125,7 +151,7 @@ func (d *CardsDAO) New(userUid uuid.UUID, text string, t time.Time) (SimpleCard,
 
 // Delete sets the deletion time of the given card in database
 // and changes the state of the card.
-func (d *CardsDAO) Delete(uid, owner uuid.UUID, t time.Time) error {
+func (d *CardsDAO) Delete(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
 		UPDATE "card"
 		SET

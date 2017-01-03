@@ -38,7 +38,11 @@ CREATE TABLE "card" (
     "text" text NOT NULL DEFAULT '',
     "position" int NOT NULL DEFAULT 0,
     "state" text NOT NULL DEFAULT 'CardActive',
+
+    -- rich information
+    -- could not be set
     "category" int NOT NULL DEFAULT 0,
+    "image" text DEFAULT '',
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now(),

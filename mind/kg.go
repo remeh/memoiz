@@ -1,6 +1,7 @@
 package mind
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -115,7 +116,9 @@ func (k *Kg) Analyze() error {
 		WHERE
 			"type" = $1
 	`, k.types[0]).Scan(&c); err != nil {
-		fmt.Println(err)
+		if err != sql.ErrNoRows {
+			return err
+		}
 		c = Unknown
 	}
 

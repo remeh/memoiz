@@ -26,13 +26,13 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	api.ReadJsonBody(r, &body)
 
 	var err error
-	var sc cards.SimpleCard
+	var sc cards.Card
 
 	if uuid.IsNil(body.CardUid) {
 		sc, err = cards.DAO().New(uid, body.Text, time.Now())
 		go mind.Analyze(sc.Uid, body.Text)
 	} else {
-		sc, err = cards.DAO().UpdateText(body.CardUid, uid, body.Text, time.Now())
+		sc, err = cards.DAO().UpdateText(uid, body.CardUid, body.Text, time.Now())
 	}
 
 	if err != nil {
