@@ -126,7 +126,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 
 // New creates a new card for the given user
 // and returns its ID + position.
-func (d *CardsDAO) New(uid uuid.UUID, text string, t time.Time) (Card, error) {
+func (d *CardsDAO) New(owner uuid.UUID, text string, t time.Time) (Card, error) {
 	var rv Card
 
 	cardUid := uuid.New()
@@ -138,12 +138,12 @@ func (d *CardsDAO) New(uid uuid.UUID, text string, t time.Time) (Card, error) {
 		FROM "card"
 		WHERE "owner_uid" = $2
 		RETURNING "position"
-	`, cardUid, uid, text, t).Scan(&rv.Position); err != nil {
+	`, cardUid, owner, text, t).Scan(&rv.Position); err != nil {
 		// TODO(remy): handle ErrNoRows ?
 		return rv, fmt.Errorf("cards.New: %v", err)
 	}
 
-	rv.Uid = uid
+	rv.Uid = cardUid
 	rv.Text = text
 
 	return rv, nil

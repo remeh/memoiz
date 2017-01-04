@@ -17,7 +17,7 @@ type Analyzer interface {
 }
 
 func Analyze(uid uuid.UUID, text string) {
-	if uuid.IsNil(uid) || len(text) == 0 {
+	if uid.IsNil() || len(text) == 0 {
 		return
 	}
 

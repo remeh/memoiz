@@ -28,7 +28,7 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var sc cards.Card
 
-	if uuid.IsNil(body.CardUid) {
+	if body.CardUid.IsNil() {
 		sc, err = cards.DAO().New(uid, body.Text, time.Now())
 		go mind.Analyze(sc.Uid, body.Text)
 	} else {
