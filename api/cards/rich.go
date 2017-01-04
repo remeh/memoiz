@@ -45,9 +45,6 @@ func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	ri, err := cards.DAO().GetRichInfo(uid, cardUid)
 
-	fmt.Println(uid)
-	fmt.Println(cardUid)
-
 	if err != nil {
 		api.RenderErrJson(w, err)
 		return

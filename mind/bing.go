@@ -157,8 +157,6 @@ func (b *Bing) guessByDomains() (Category, error) {
 	}
 	inClause += ")"
 
-	fmt.Println(b.domains)
-
 	var params []interface{} = make([]interface{}, len(b.domains))
 	for i := range params {
 		params[i] = b.domains[i]
