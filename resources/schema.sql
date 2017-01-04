@@ -46,6 +46,7 @@ CREATE TABLE "card" (
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now(),
+    "archive_time" timestamp with time zone,
     "deletion_time" timestamp with time zone
 );
 

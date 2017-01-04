@@ -2,6 +2,7 @@ package cards
 
 import (
 	"net/http"
+	"time"
 
 	"remy.io/scratche/api"
 	"remy.io/scratche/cards"
@@ -10,11 +11,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Enrich returns the enriched information
-// of the given card.
-type Rich struct{}
+type Archive struct {
+}
 
-func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c Archive) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// TODO(remy): auth
 	uid := api.ReadUser(r)
 
@@ -25,16 +25,14 @@ func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	vars := mux.Vars(r)
-
 	if cardUid, err = uuid.Parse(vars["uid"]); err != nil {
 		api.RenderBadParameters(w)
 		return
 	}
 
-	// test parameter
+	// test parameters
 	// ----------------------
 
-	// TODO(remy): do we want to test text ?
 	if cardUid.IsNil() {
 		api.RenderBadParameters(w)
 		return
@@ -42,12 +40,10 @@ func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// ----------------------
 
-	ri, err := cards.DAO().GetRichInfo(uid, cardUid)
-
-	if err != nil {
+	if err := cards.DAO().Archive(uid, cardUid, time.Now()); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}
 
-	api.RenderJson(w, 200, ri)
+	api.RenderOk(w)
 }

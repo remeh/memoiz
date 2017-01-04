@@ -47,7 +47,9 @@ func declareApiRoutes(s *Server) {
 
 	s.AddApi("/1.0/cards", log(cards.Get{}), "GET")
 	s.AddApi("/1.0/cards", log(cards.Post{}), "POST")
+	// TODO(remy): ids in parameters
 	s.AddApi("/1.0/cards/switch", log(cards.SwitchPosition{}), "POST")
 
+	s.AddApi("/1.0/cards/{uid}/archive", log(cards.Archive{}), "POST")
 	s.AddApi("/1.0/cards/{uid}/rich", log(cards.Rich{}), "GET")
 }

@@ -89,6 +89,22 @@ func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
 	return ri, nil
 }
 
+func (d *CardsDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
+	if _, err := d.DB.Exec(`
+		UPDATE "card"
+		SET
+			"archive_time" = $1,
+			"state" = $2
+		WHERE
+			"uid" = $3
+			AND
+			"owner_uid" = $4
+	`, t, CardArchived, uid, owner); err != nil {
+		return fmt.Errorf("cards.Archive: %v", err)
+	}
+	return nil
+}
+
 // GetByUser returns the cards of the given user.
 func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 	rv := make([]Card, 0)
