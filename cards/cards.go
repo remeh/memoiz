@@ -32,7 +32,7 @@ var (
 type Card struct {
 	Uid      uuid.UUID `json:"uid"`
 	Text     string    `json:"text"`
-	Position int       `json:"position"`
+	Position int       `json:"-"`
 
 	// NOTE(remy): everything in RichInfo is optional
 	CardRichInfo
