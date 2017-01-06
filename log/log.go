@@ -8,20 +8,29 @@ package log
 
 import (
 	"log"
+
+	"github.com/fatih/color"
+)
+
+var (
+	yellow = color.New(color.FgYellow).SprintFunc()
+	red    = color.New(color.FgRed).SprintFunc()
+	blue   = color.New(color.FgBlue).SprintFunc()
+	green  = color.New(color.FgGreen).SprintFunc()
 )
 
 func Error(data ...interface{}) {
-	log.Println("Error", data)
+	log.Println(red("Error"), data)
 }
 
 func Warning(data ...interface{}) {
-	log.Println("Warning", data)
+	log.Println(yellow("Warning"), data)
 }
 
 func Info(data ...interface{}) {
-	log.Println("Info", data)
+	log.Println(green("Info"), data)
 }
 
 func Debug(data ...interface{}) {
-	log.Println("Debug", data)
+	log.Println(blue("Debug"), data)
 }

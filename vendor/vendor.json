@@ -9,6 +9,19 @@
 			"revisionTime": "2016-12-16T13:12:46Z"
 		},
 		{
+			"checksumSHA1": "5rPfda8jFccr3A6heL+JAmi9K9g=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "d77da356e56a7428ad25149ca77381849a6a5232",
+			"revisionTime": "2016-06-15T09:26:46Z"
+		},
+		{
+			"checksumSHA1": "gkRIq2AsG0e/ngNfqW+IF/zr9o8=",
+			"path": "github.com/fatih/color",
+			"revision": "533cd7fd8a85905f67a1753afb4deddc85ea174f",
+			"revisionTime": "2016-03-17T09:31:53Z"
+		},
+		{
 			"checksumSHA1": "iIUYZyoanCQQTUaWsu8b+iOSPt4=",
 			"path": "github.com/gorilla/context",
 			"revision": "215affda49addc4c8ef7e2534915df2c8c35c6cd",
@@ -33,16 +46,55 @@
 			"revisionTime": "2016-12-20T09:00:36Z"
 		},
 		{
+			"checksumSHA1": "rCffFCN6TpDAN3Jylyo8RFzhQ9E=",
+			"origin": "github.com/fatih/color/vendor/github.com/mattn/go-colorable",
+			"path": "github.com/mattn/go-colorable",
+			"revision": "533cd7fd8a85905f67a1753afb4deddc85ea174f",
+			"revisionTime": "2016-03-17T09:31:53Z"
+		},
+		{
+			"checksumSHA1": "NkbetqlpWBi3gP08JDneC+axTKw=",
+			"origin": "github.com/fatih/color/vendor/github.com/mattn/go-isatty",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "533cd7fd8a85905f67a1753afb4deddc85ea174f",
+			"revisionTime": "2016-03-17T09:31:53Z"
+		},
+		{
 			"checksumSHA1": "ayRaLmkRnALRhJ4UwpKIHk9kfXo=",
 			"path": "github.com/pborman/uuid",
 			"revision": "cccd189d45f7ac3368a0d127efb7f4d08ae0b655",
 			"revisionTime": "2015-08-24T21:28:02Z"
 		},
 		{
+			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "d77da356e56a7428ad25149ca77381849a6a5232",
+			"revisionTime": "2016-06-15T09:26:46Z"
+		},
+		{
+			"checksumSHA1": "iydUphwYqZRq3WhstEdGsbvBAKs=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "d77da356e56a7428ad25149ca77381849a6a5232",
+			"revisionTime": "2016-06-15T09:26:46Z"
+		},
+		{
+			"checksumSHA1": "P9FJpir2c4G5PA46qEkaWy3l60U=",
+			"path": "github.com/stretchr/testify/require",
+			"revision": "d77da356e56a7428ad25149ca77381849a6a5232",
+			"revisionTime": "2016-06-15T09:26:46Z"
+		},
+		{
 			"checksumSHA1": "AQDPLXf0sUEcPv6xvzy0Fb+79kw=",
 			"path": "github.com/vrischmann/envconfig",
 			"revision": "e4f615d158ed2bea636ca576237d177becd0207b",
 			"revisionTime": "2015-08-18T07:29:23Z"
+		},
+		{
+			"checksumSHA1": "aVgPDgwY3/t4J/JOw9H3FVMHqh0=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "c200b10b5d5e122be351b67af224adc6128af5bf",
+			"revisionTime": "2016-10-22T18:22:21Z"
 		}
 	],
 	"rootPath": "remy.io/scratche"
