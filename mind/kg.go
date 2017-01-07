@@ -32,12 +32,19 @@ type Kg struct {
 }
 
 func (k *Kg) TryCache(text string) (bool, error) {
+	if !UseKg {
+		return false, nil
+	}
+
 	// TODO(remy): not implemented
 	k.categories = Categories{Unknown}
 	return false, nil
 }
 
 func (k *Kg) Fetch(text string) error {
+	if !UseKg {
+		return nil
+	}
 
 	var req *http.Request
 	var resp *http.Response
@@ -103,6 +110,10 @@ func (k *Kg) Fetch(text string) error {
 }
 
 func (k *Kg) Analyze() error {
+	if !UseKg {
+		return nil
+	}
+
 	if len(k.types) == 0 {
 		return nil
 	}
@@ -127,6 +138,10 @@ func (k *Kg) Analyze() error {
 }
 
 func (k *Kg) Store() error {
+	if !UseKg {
+		return nil
+	}
+
 	uid := uuid.New()
 
 	// store

@@ -33,12 +33,20 @@ type Bing struct {
 }
 
 func (b *Bing) TryCache(text string) (bool, error) {
+	if !UseBing {
+		return false, nil
+	}
+
 	// TODO(remy): not implemented
 	b.categories = Categories{Unknown}
 	return false, nil
 }
 
 func (b *Bing) Fetch(text string) error {
+	if !UseBing {
+		return nil
+	}
+
 	if len(text) < 2 {
 		// nothing useful can be found with only two chars
 		b.domains = make([]string, 0)
@@ -103,6 +111,10 @@ func (b *Bing) Fetch(text string) error {
 }
 
 func (b *Bing) Analyze() error {
+	if !UseBing {
+		return nil
+	}
+
 	cat, err := b.guessByDomains()
 	if err != nil {
 		log.Debug("Bing.Analyze:", err)
@@ -113,6 +125,10 @@ func (b *Bing) Analyze() error {
 }
 
 func (b *Bing) Store() error {
+	if !UseBing {
+		return nil
+	}
+
 	uid := uuid.New()
 
 	// store

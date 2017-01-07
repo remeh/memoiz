@@ -3,10 +3,31 @@ package mind
 import (
 	"strings"
 
+	"remy.io/scratche/config"
 	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
 	"remy.io/scratche/uuid"
 )
+
+var (
+	UseBing = false
+	UseKg   = false
+)
+
+func init() {
+	if len(config.Config.BingApiKey) > 0 {
+		UseBing = true
+		log.Info("Bing Search API will be used.")
+	}
+
+	if len(config.Config.KgApiKey) > 0 {
+		UseKg = true
+		log.Info("Google Knowledge Graph will be used.")
+	}
+
+}
+
+// ----------------------
 
 type Analyzer interface {
 	TryCache(string) (bool, error)
