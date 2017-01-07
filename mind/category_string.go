@@ -4,9 +4,9 @@ package mind
 
 import "fmt"
 
-const _Category_name = "UnknownArtistActorBookDateMovieMusicPersonPlaceSerieVideoVideoGame"
+const _Category_name = "UnknownArtistActorBookDateMovieMusicPersonPlaceSerieVideoVideoGameFood"
 
-var _Category_index = [...]uint8{0, 7, 13, 18, 22, 26, 31, 36, 42, 47, 52, 57, 66}
+var _Category_index = [...]uint8{0, 7, 13, 18, 22, 26, 31, 36, 42, 47, 52, 57, 66, 70}
 
 func (i Category) String() string {
 	if i < 0 || i >= Category(len(_Category_index)-1) {

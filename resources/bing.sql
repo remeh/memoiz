@@ -1,3 +1,5 @@
+DELETE FROM "domain";
+
 ----------------------
 -- Movies and Series
 ----------------------
@@ -259,3 +261,28 @@ INSERT INTO "domain" VALUES ('viamichelin', 8, 100); -- place
 INSERT INTO "domain" VALUES ('voyage', 8, 100); -- place
 
 INSERT INTO "domain" VALUES ('wikivoyage', 8, 100); -- place
+
+----------------------
+-- Food
+----------------------
+
+INSERT INTO "domain" VALUES ('allrecipes', 12, 100); -- food
+INSERT INTO "domain" VALUES ('alloresto', 12, 100); -- food
+INSERT INTO "domain" VALUES ('cookingchanneltv', 12, 100); -- food
+INSERT INTO "domain" VALUES ('chowhound', 12, 100); -- food
+INSERT INTO "domain" VALUES ('deliaonline', 12, 100); -- food
+INSERT INTO "domain" VALUES ('deliveroo', 12, 100); -- food
+INSERT INTO "domain" VALUES ('epicurious', 12, 100); -- food
+INSERT INTO "domain" VALUES ('food', 12, 100); -- food
+INSERT INTO "domain" VALUES ('foodora', 12, 100); -- food
+INSERT INTO "domain" VALUES ('foodnetwork', 12, 100); -- food
+INSERT INTO "domain" VALUES ('finecooking', 12, 100); -- food
+INSERT INTO "domain" VALUES ('kraftrecipes', 12, 100); -- food
+INSERT INTO "domain" VALUES ('myrecipes', 12, 100); -- food
+INSERT INTO "domain" VALUES ('resto-in', 12, 100); -- food
+INSERT INTO "domain" VALUES ('saveur', 12, 100); -- food
+INSERT INTO "domain" VALUES ('simplyrecipes', 12, 100); -- food
+INSERT INTO "domain" VALUES ('takeeateasy', 12, 100); -- food
+INSERT INTO "domain" VALUES ('tasteofhome', 12, 100); -- food
+INSERT INTO "domain" VALUES ('ubereats', 12, 100); -- food
+
