@@ -124,7 +124,7 @@ func (b *Bing) Analyze() error {
 	return nil
 }
 
-func (b *Bing) Store() error {
+func (b *Bing) Store(cardUid uuid.UUID) error {
 	if !UseBing {
 		return nil
 	}
@@ -134,10 +134,10 @@ func (b *Bing) Store() error {
 	// store
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "domain_result"
-		("uid", "card_text", "category", "domains", "weight", "creation_time")
+		("uid", "card_uid", "card_text", "category", "domains", "weight", "creation_time")
 		VALUES
-		($1, $2, $3, $4, $5, $6)
-	`, uid, b.text, pq.Array(b.categories), pq.Array(b.domains), b.weight, time.Now()); err != nil {
+		($1, $2, $3, $4, $5, $6, $7)
+	`, uid, cardUid, b.text, pq.Array(b.categories), pq.Array(b.domains), b.weight, time.Now()); err != nil {
 		return err
 	}
 

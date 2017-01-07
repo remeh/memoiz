@@ -33,7 +33,7 @@ type Analyzer interface {
 	TryCache(string) (bool, error)
 	Fetch(string) error
 	Analyze() error
-	Store() error
+	Store(cardUid uuid.UUID) error
 	Categories() Categories
 }
 
@@ -86,7 +86,7 @@ func Analyze(uid uuid.UUID, text string) {
 			return
 		}
 
-		if err = a.Store(); err != nil {
+		if err = a.Store(uid); err != nil {
 			log.Error("Analyze/Store:", err)
 			return
 		}

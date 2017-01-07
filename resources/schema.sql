@@ -72,6 +72,7 @@ CREATE UNIQUE INDEX ON "domain" ("domain", "category");
 
 CREATE TABLE "domain_result" (
     "uid" text NOT NULL,
+    "card_uid" text NOT NULL,
     "card_text" text NOT NULL DEFAULT '',
     "category" int[] NOT NULL,
     "domains" text[] NOT NULL,
@@ -97,6 +98,7 @@ CREATE UNIQUE INDEX ON "kg_type" ("type");
 
 CREATE TABLE "kg_result" (
     "uid" text NOT NULL,
+    "card_uid" text NOT NULL,
     "card_text" text NOT NULL DEFAULT '',
     "types" text DEFAULT '',
     "description" text DEFAULT '',

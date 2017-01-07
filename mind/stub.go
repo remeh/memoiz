@@ -1,5 +1,7 @@
 package mind
 
+import "remy.io/scratche/uuid"
+
 type Stub struct {
 }
 
@@ -15,7 +17,7 @@ func (s *Stub) Analyze() error {
 	return nil
 }
 
-func (s *Stub) Store() error {
+func (s *Stub) Store(uuid.UUID) error {
 	return nil
 }
 
