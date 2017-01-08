@@ -73,13 +73,13 @@ func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
 	var ri CardRichInfo
 
 	if err := d.DB.QueryRow(`
-		SELECT "category", "image"
+		SELECT "category", "image", "last_update"
 		FROM "card"
 		WHERE
 			"uid" = $1
 			AND
 			"owner_uid" = $2
-	`, uid, owner).Scan(&ri.Category, &ri.Image); err != nil {
+	`, uid, owner).Scan(&ri.Category, &ri.Image, &ri.LastUpdate); err != nil {
 		if err == sql.ErrNoRows {
 			return ri, nil
 		}
@@ -110,7 +110,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 	rv := make([]Card, 0)
 
 	rows, err := d.DB.Query(`
-		SELECT "uid", "text", "position", "category", "image"
+		SELECT "uid", "text", "position", "category", "image", "last_update"
 		FROM "card"
 		WHERE
 			"owner_uid" = $1
@@ -128,7 +128,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 		var sc Card
 		var ri CardRichInfo
 
-		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image); err != nil {
+		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image, &ri.LastUpdate); err != nil {
 			return rv, err
 		}
 

@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 
 	"remy.io/scratche/mind"
+	"remy.io/scratche/storage"
 	"remy.io/scratche/uuid"
 )
 
@@ -43,6 +44,7 @@ type CardRichInfo struct {
 	// Even partially.
 	Loaded bool `json:"loaded,omitempty"`
 
-	Category mind.Category `json:"category,omitempty"`
-	Image    string        `json:"img,omitempty"`
+	LastUpdate storage.JSTime `json:"last_update"` // timestamp
+	Category   mind.Category  `json:"category,omitempty"`
+	Image      string         `json:"img,omitempty"`
 }
