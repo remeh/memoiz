@@ -80,6 +80,7 @@ CREATE TABLE "domain_result" (
     "creation_time" timestamp with time zone DEFAULT now()
 );
 
+ALTER TABLE "domain_result" ADD CONSTRAINT "domain_result_card_uid" FOREIGN KEY ("card_uid") REFERENCES "card" ("uid") MATCH FULL;
 CREATE UNIQUE INDEX ON "domain_result" ("uid");
 CREATE INDEX ON "domain_result" ("card_text");
 CREATE INDEX ON "domain_result" ("category");
@@ -106,6 +107,7 @@ CREATE TABLE "kg_result" (
     "creation_time" timestamp with time zone DEFAULT now()
 );
 
+ALTER TABLE "kg_result" ADD CONSTRAINT "kg_result_card_uid" FOREIGN KEY ("card_uid") REFERENCES "card" ("uid") MATCH FULL;
 CREATE UNIQUE INDEX ON "kg_result" ("uid");
 CREATE INDEX ON "kg_result" ("card_text");
 CREATE INDEX ON "kg_result" ("category");
