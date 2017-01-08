@@ -6,6 +6,7 @@ import (
 
 	"remy.io/scratche/api"
 	"remy.io/scratche/cards"
+	"remy.io/scratche/mind"
 	"remy.io/scratche/uuid"
 )
 
@@ -22,6 +23,7 @@ func (c Put) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		CardUid uuid.UUID `json:"card_uid"`
 		Text    string    `json:"text"`
+		Enrich  bool      `json:"enrich"`
 	}
 
 	if err := api.ReadJsonBody(r, &body); err != nil {
@@ -42,6 +44,10 @@ func (c Put) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.RenderErrJson(w, err)
 		return
+	}
+
+	if body.Enrich {
+		go mind.Analyze(body.CardUid, body.Text)
 	}
 
 	api.RenderJson(w, 200, sc)

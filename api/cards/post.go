@@ -21,6 +21,7 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		CardUid uuid.UUID `json:"card_uid"`
 		Text    string    `json:"text"`
+		Enrich  bool      `json:"enrich"`
 	}
 
 	api.ReadJsonBody(r, &body)
@@ -30,9 +31,12 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if body.CardUid.IsNil() {
 		sc, err = cards.DAO().New(uid, body.Text, time.Now())
-		go mind.Analyze(sc.Uid, body.Text)
 	} else {
 		sc, err = cards.DAO().UpdateText(uid, body.CardUid, body.Text, time.Now())
+	}
+
+	if body.Enrich {
+		go mind.Analyze(sc.Uid, body.Text)
 	}
 
 	if err != nil {
