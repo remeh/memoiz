@@ -6,6 +6,7 @@
 
 # Mid Term
 
+  * L'image devrait être stocké sur nos serveurs
   * Scroll lorsqu'on drag'n'drop en bas et en haut
 
 ------------

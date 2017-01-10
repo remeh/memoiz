@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"regexp"
 
@@ -35,7 +36,7 @@ type Url struct {
 	data  []byte
 }
 
-var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[0-9a-zA-Z]+)\/([0-9a-zA-Z\.\/])*`)
+var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[0-9a-zA-Z]+)\/([0-9a-zA-Z\.\/])*(\?[0-9a-zA-Z\%\&\-\=\_\.]*)`)
 
 func (u *Url) TryCache(text string) (bool, error) {
 	return false, nil
@@ -60,6 +61,7 @@ func (u *Url) Fetch(text string) error {
 	if req, err = http.NewRequest("GET", u.url, nil); err != nil {
 		return err
 	}
+	req.Header.Set("User-Agent", randomUserAgent())
 
 	cli := &http.Client{} // TODO(remy): parameters of this client ?
 	if resp, err = cli.Do(req); err != nil {
@@ -128,4 +130,27 @@ func (u *Url) Store(uid uuid.UUID) error {
 
 func (u *Url) Categories() Categories {
 	return Categories{Unknown}
+}
+
+// ----------------------
+
+var uas []string = []string{
+	// Chrome
+	"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36",
+	"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36",
+	// Firefox
+	"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12;rv:49.0) Gecko/20100101 Firefox/46.0",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12;rv:49.0) Gecko/20100101 Firefox/47.0",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12;rv:49.0) Gecko/20100101 Firefox/48.0",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12;rv:49.0) Gecko/20100101 Firefox/49.0",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12;rv:49.0) Gecko/20100101 Firefox/50.0",
+	// Internet Explorer
+	"Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
+}
+
+func randomUserAgent() string {
+	return uas[rand.Intn(len(uas))]
 }
