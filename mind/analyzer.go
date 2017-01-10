@@ -60,7 +60,7 @@ func Analyze(uid uuid.UUID, text string) {
 
 	if len(analyzers) == 0 {
 		// don't even bother to analyze something which looks
-		// like a complete not
+		// like a complete note
 		analyzers = append(analyzers, &Stub{})
 	}
 
@@ -71,7 +71,10 @@ func Analyze(uid uuid.UUID, text string) {
 	// ----------------------
 
 	for _, a := range analyzers {
-		found, err := a.TryCache(text)
+		var err error
+		var found bool
+
+		found, err = a.TryCache(text)
 		if err != nil {
 			log.Error("Analyze/TryCache:", err)
 			return
@@ -80,18 +83,18 @@ func Analyze(uid uuid.UUID, text string) {
 		if !found {
 			if err = a.Fetch(text); err != nil {
 				log.Error("Analyze/Fetch:", err)
-				return
+				continue
 			}
 		}
 
 		if err = a.Analyze(); err != nil {
 			log.Error("Analyze/Analyze:", err)
-			return
+			continue
 		}
 
 		if err = a.Store(uid); err != nil {
 			log.Error("Analyze/Store:", err)
-			return
+			continue
 		}
 
 		// update the Card if anything has been found
