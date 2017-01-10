@@ -64,6 +64,9 @@ func Analyze(uid uuid.UUID, text string) {
 		analyzers = append(analyzers, &Stub{})
 	}
 
+	// always try to retrieve urls
+	analyzers = append(analyzers, &Url{})
+
 	// apply the analyze
 	// ----------------------
 

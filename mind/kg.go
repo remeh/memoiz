@@ -60,7 +60,7 @@ func (k *Kg) Fetch(text string) error {
 		return err
 	}
 
-	cli := &http.Client{}
+	cli := &http.Client{} // TODO(remy): parameters of this client ?
 	if resp, err = cli.Do(req); err != nil {
 		return err
 	}

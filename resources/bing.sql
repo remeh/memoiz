@@ -254,11 +254,13 @@ INSERT INTO "domain" VALUES ('routard', 8, 100); -- place
 
 INSERT INTO "domain" VALUES ('tourisme', 8, 100); -- place
 
-INSERT INTO "domain" VALUES ('tripadvisor', 8, 100); -- place
+INSERT INTO "domain" VALUES ('tripadvisor', 8, 80); -- place
 
 INSERT INTO "domain" VALUES ('viamichelin', 8, 100); -- place
 
 INSERT INTO "domain" VALUES ('voyage', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('yelp', 8, 80); -- place
 
 INSERT INTO "domain" VALUES ('wikivoyage', 8, 100); -- place
 
@@ -284,5 +286,7 @@ INSERT INTO "domain" VALUES ('saveur', 12, 100); -- food
 INSERT INTO "domain" VALUES ('simplyrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('takeeateasy', 12, 100); -- food
 INSERT INTO "domain" VALUES ('tasteofhome', 12, 100); -- food
+INSERT INTO "domain" VALUES ('tripadvisor', 12, 20); -- food
 INSERT INTO "domain" VALUES ('ubereats', 12, 100); -- food
+INSERT INTO "domain" VALUES ('yelp', 12, 20); -- food
 

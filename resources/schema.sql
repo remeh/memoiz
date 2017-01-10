@@ -43,6 +43,7 @@ CREATE TABLE "card" (
     -- could not be set
     "category" int NOT NULL DEFAULT 0,
     "image" text DEFAULT '',
+    "url" text DEFAULT  '',
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now(),

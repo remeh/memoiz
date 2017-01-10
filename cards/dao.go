@@ -73,13 +73,13 @@ func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
 	var ri CardRichInfo
 
 	if err := d.DB.QueryRow(`
-		SELECT "category", "image", "last_update"
+		SELECT "category", "image", "url", "last_update"
 		FROM "card"
 		WHERE
 			"uid" = $1
 			AND
 			"owner_uid" = $2
-	`, uid, owner).Scan(&ri.Category, &ri.Image, &ri.LastUpdate); err != nil {
+		`, uid, owner).Scan(&ri.Category, &ri.Image, &ri.Url, &ri.LastUpdate); err != nil {
 		if err == sql.ErrNoRows {
 			return ri, nil
 		}

@@ -47,4 +47,5 @@ type CardRichInfo struct {
 	LastUpdate storage.JSTime `json:"last_update"` // timestamp
 	Category   mind.Category  `json:"category,omitempty"`
 	Image      string         `json:"img,omitempty"`
+	Url        string         `json:"url,omitempty"`
 }
