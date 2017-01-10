@@ -36,7 +36,7 @@ type Url struct {
 	data  []byte
 }
 
-var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[0-9a-zA-Z]+)\/([0-9a-zA-Z\.\/])*(\?[0-9a-zA-Z\%\&\-\=\_\.]*)`)
+var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[-_0-9a-zA-Z]+)\/([-_0-9a-zA-Z\.\/])*(\?[0-9a-zA-Z\%\&\-\=\_\.]*)`)
 
 func (u *Url) TryCache(text string) (bool, error) {
 	return false, nil
