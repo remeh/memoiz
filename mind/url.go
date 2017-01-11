@@ -26,13 +26,16 @@ import (
 // <meta property="og:site_name" content="Twitter">
 // <meta property="fb:app_id" content="2231777543">
 const (
-	metaUrl   = "og:url"
-	metaImage = "og:image"
+	metaUrl         = "og:url"
+	metaImage       = "og:image"
+	metaTitle       = "og:title"
+	metaDescription = "og:description"
 )
 
 type Url struct {
 	url   string
 	image string
+	title string
 	data  []byte
 }
 
@@ -64,6 +67,7 @@ func (u *Url) Fetch(text string) error {
 	req.Header.Set("User-Agent", randomUserAgent())
 
 	cli := &http.Client{} // TODO(remy): parameters of this client ?
+	// XXX(remy): add timeout to the client
 	if resp, err = cli.Do(req); err != nil {
 		return err
 	}
@@ -92,7 +96,7 @@ func (u *Url) Analyze() error {
 
 	// read the fetch data
 	// TODO(remy): we should probably ensure its html first ?
-	// TODO(remy): we don't need to read the whole file
+	// TODO(remy): pretty sure we don't need to read the whole file
 
 	// read the document as HTML
 
@@ -100,6 +104,16 @@ func (u *Url) Analyze() error {
 	if err != nil {
 		return err
 	}
+
+	var title, ogTitle, ogDescription string
+
+	// read the title
+	// ----------------------
+
+	title = doc.Find("title").Text()
+
+	// read the meta
+	// ----------------------
 
 	doc.Find("meta").Each(func(i int, s *goquery.Selection) {
 		prop, exists := s.Attr("property")
@@ -109,9 +123,15 @@ func (u *Url) Analyze() error {
 				u.url, _ = s.Attr("content")
 			case metaImage:
 				u.image, _ = s.Attr("content")
+			case metaTitle:
+				ogTitle, _ = s.Attr("content")
+			case metaDescription:
+				ogDescription, _ = s.Attr("content")
 			}
 		}
 	})
+
+	u.title = chooseTitle(u.url, title, ogTitle, ogDescription)
 
 	return nil
 }
@@ -133,6 +153,21 @@ func (u *Url) Categories() Categories {
 }
 
 // ----------------------
+
+// TODO(remy): comment me
+func chooseTitle(url string, title, ogTitle, ogDescription string) string {
+	var rv string
+
+	// TODO(remy): get domain only from url
+	// TODO(remy): depending on the domain, return the ogTitle or the ogDescription
+
+	// fallback on title
+	if len(rv) == 0 {
+		rv = title
+	}
+
+	return rv
+}
 
 var uas []string = []string{
 	// Chrome
