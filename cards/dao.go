@@ -57,7 +57,7 @@ func (d *CardsDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (C
 			"uid" = $3 AND "owner_uid" = $4
 		RETURNING "position"
 	`, text, t, uid, owner).Scan(&position); err != nil {
-		return Card{}, err
+		return Card{}, log.Err("UpdateText:", err)
 	}
 
 	return Card{
@@ -73,17 +73,17 @@ func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
 	var ri CardRichInfo
 
 	if err := d.DB.QueryRow(`
-		SELECT "r_category", "r_image", "r_url", "last_update"
+		SELECT "r_category", "r_image", "r_url", "r_title", "last_update"
 		FROM "card"
 		WHERE
 			"uid" = $1
 			AND
 			"owner_uid" = $2
-		`, uid, owner).Scan(&ri.Category, &ri.Image, &ri.Url, &ri.LastUpdate); err != nil {
+		`, uid, owner).Scan(&ri.Category, &ri.Image, &ri.Url, &ri.Title, &ri.LastUpdate); err != nil {
 		if err == sql.ErrNoRows {
 			return ri, nil
 		}
-		return ri, err
+		return ri, log.Err("GetRichInfo:", err)
 	}
 
 	return ri, nil
@@ -100,7 +100,7 @@ func (d *CardsDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 			AND
 			"owner_uid" = $4
 	`, t, CardArchived, uid, owner); err != nil {
-		return fmt.Errorf("cards.Archive: %v", err)
+		return log.Err("cards.Archive", err)
 	}
 	return nil
 }
@@ -110,7 +110,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 	rv := make([]Card, 0)
 
 	rows, err := d.DB.Query(`
-		SELECT "uid", "text", "position", "r_category", "r_image", "r_url", "last_update"
+		SELECT "uid", "text", "position", "r_category", "r_image", "r_url", "r_title", "last_update"
 		FROM "card"
 		WHERE
 			"owner_uid" = $1
@@ -128,7 +128,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 		var sc Card
 		var ri CardRichInfo
 
-		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image, &ri.Url, &ri.LastUpdate); err != nil {
+		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image, &ri.Url, &ri.Title, &ri.LastUpdate); err != nil {
 			return rv, err
 		}
 

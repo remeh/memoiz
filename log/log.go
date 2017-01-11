@@ -7,6 +7,7 @@
 package log
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/fatih/color"
@@ -33,4 +34,8 @@ func Info(data ...interface{}) {
 
 func Debug(data ...interface{}) {
 	log.Println(blue("Debug"), data)
+}
+
+func Err(prefix string, err error) error {
+	return fmt.Errorf("%s %v", err)
 }

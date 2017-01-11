@@ -39,7 +39,7 @@ type Url struct {
 	data  []byte
 }
 
-var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[-_0-9a-zA-Z]+)\/([-_0-9a-zA-Z\.\/])*(\?[0-9a-zA-Z\%\&\-\=\_\.]*)`)
+var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[-_0-9a-zA-Z]+)\/([-_0-9a-zA-Z\.\/])*(\?[0-9a-zA-Z\%\&\-\=\_\.]*)*`)
 
 func (u *Url) TryCache(text string) (bool, error) {
 	return false, nil
@@ -140,10 +140,10 @@ func (u *Url) Store(uid uuid.UUID) error {
 	// update the card image and URL
 	if _, err := storage.DB().Exec(`
 		UPDATE "card"
-		SET "r_url" = $1, "r_image" = $2
-		WHERE "uid" = $3
-	`, u.url, u.image, uid); err != nil {
-		return err
+		SET "r_url" = $1, "r_image" = $2, "r_title" = $3
+		WHERE "uid" = $4
+	`, u.url, u.image, u.title, uid); err != nil {
+		return log.Err("Url:", err)
 	}
 	return nil
 }
@@ -158,8 +158,20 @@ func (u *Url) Categories() Categories {
 func chooseTitle(url string, title, ogTitle, ogDescription string) string {
 	var rv string
 
-	// TODO(remy): get domain only from url
-	// TODO(remy): depending on the domain, return the ogTitle or the ogDescription
+	domain := rxDomain.FindString(url)
+
+	if len(domain) != 0 {
+		switch domain {
+		case "youtube", "twitter":
+			rv = ogDescription
+		default:
+			rv = ogTitle
+		}
+	}
+
+	if len(rv) == 0 && len(ogDescription) != 0 {
+		rv = ogDescription
+	}
 
 	// fallback on title
 	if len(rv) == 0 {
