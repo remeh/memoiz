@@ -66,8 +66,9 @@ func (u *Url) Fetch(text string) error {
 	}
 	req.Header.Set("User-Agent", randomUserAgent())
 
-	cli := &http.Client{} // TODO(remy): parameters of this client ?
-	// XXX(remy): add timeout to the client
+	cli := &http.Client{
+		Timeout: time.Second * 15, // TODO(remy): better fix this timeout?
+	}
 	if resp, err = cli.Do(req); err != nil {
 		return err
 	}
@@ -154,7 +155,8 @@ func (u *Url) Categories() Categories {
 
 // ----------------------
 
-// TODO(remy): comment me
+// chooseTitle chooses the best title for the given URL
+// and given read title, og:title and og:description.
 func chooseTitle(url string, title, ogTitle, ogDescription string) string {
 	var rv string
 
