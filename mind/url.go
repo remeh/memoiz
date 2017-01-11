@@ -120,7 +120,7 @@ func (u *Url) Store(uid uuid.UUID) error {
 	// update the card image and URL
 	if _, err := storage.DB().Exec(`
 		UPDATE "card"
-		SET "url" = $1, "image" = $2
+		SET "r_url" = $1, "r_image" = $2
 		WHERE "uid" = $3
 	`, u.url, u.image, uid); err != nil {
 		return err

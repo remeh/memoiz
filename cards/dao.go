@@ -73,7 +73,7 @@ func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
 	var ri CardRichInfo
 
 	if err := d.DB.QueryRow(`
-		SELECT "category", "image", "url", "last_update"
+		SELECT "r_category", "r_image", "r_url", "last_update"
 		FROM "card"
 		WHERE
 			"uid" = $1
@@ -110,7 +110,7 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 	rv := make([]Card, 0)
 
 	rows, err := d.DB.Query(`
-		SELECT "uid", "text", "position", "category", "image", "url", "last_update"
+		SELECT "uid", "text", "position", "r_category", "r_image", "r_url", "last_update"
 		FROM "card"
 		WHERE
 			"owner_uid" = $1

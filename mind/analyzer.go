@@ -105,7 +105,7 @@ func Analyze(uid uuid.UUID, text string) {
 			// update the card
 			if _, err := storage.DB().Exec(`
 			UPDATE "card"
-			SET "category" = $1
+			SET "r_category" = $1
 			WHERE "uid" = $2
 		`, cats[0], uid); err != nil {
 				log.Error("mind.Analyze:", err)
