@@ -114,10 +114,11 @@ func (b *Bing) Analyze() error {
 		return nil
 	}
 
-	cat, err := b.guessByDomains()
+	cat, weight, err := guessByDomains(b.domains)
 	if err != nil {
 		log.Debug("Bing.Analyze:", err)
 	}
+	b.weight = weight
 	b.categories = Categories{cat}
 
 	return nil
@@ -151,54 +152,6 @@ func (b *Bing) Categories() Categories {
 }
 
 // ----------------------
-
-// guessByDomains retrieve the Category which seems to represent
-// the best the given card.
-func (b *Bing) guessByDomains() (Category, error) {
-	if len(b.domains) == 0 {
-		// TODO(remy): log this, shouldn't happen if bing has respond
-		return Unknown, nil
-	}
-
-	inClause := "("
-	for i := 0; i < len(b.domains); i++ {
-		inClause += fmt.Sprintf("$%d", i+1)
-		if i != len(b.domains)-1 {
-			inClause += ","
-		}
-	}
-	inClause += ")"
-
-	var params []interface{} = make([]interface{}, len(b.domains))
-	for i := range params {
-		params[i] = b.domains[i]
-	}
-
-	var cat Category
-	var weight int
-
-	if err := storage.DB().QueryRow(fmt.Sprintf(`
-		SELECT "category", sum("weight") w
-		FROM "domain"
-		WHERE "domain" IN
-		%s
-		GROUP BY "category"
-		ORDER BY w
-		DESC
-		LIMIT 1
-		`, inClause), params...).Scan(&cat, &weight); err != nil {
-		// TODO(remy): handle ErrNoRows ?
-		return Unknown, fmt.Errorf("can't categorize: %v : %v", b.domains, err)
-	}
-
-	if weight < 150 {
-		return Unknown, nil
-	}
-
-	b.weight = weight
-
-	return cat, nil
-}
 
 // buildUrl returns the URL to call Bing API.
 func (b *Bing) buildUrl() string {

@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"regexp"
 	"time"
 
 	"remy.io/scratche/log"
@@ -34,13 +33,14 @@ const (
 )
 
 type Url struct {
-	url   string
-	image string
-	title string
-	data  []byte
-}
+	url    string
+	domain string
+	image  string
+	title  string
+	data   []byte
 
-var urlRx = regexp.MustCompile(`((https?:\/\/)?([0-9a-zA-Z]+\.)*[-_0-9a-zA-Z]+\.[-_0-9a-zA-Z]+)\/([-_0-9a-zA-Z\.\/])*(\?[0-9a-zA-Z\%\&\-\=\_\.]*)*`)
+	category Category
+}
 
 func (u *Url) TryCache(text string) (bool, error) {
 	return false, nil
@@ -94,6 +94,27 @@ func (u *Url) Analyze() error {
 		return nil
 	}
 
+	matches := rxDomain.FindAllStringSubmatch(u.url, 2)
+	if len(matches) >= 1 && len(matches[0]) >= 2 {
+		u.domain = matches[0][1]
+	}
+
+	// first, checks if we can find a category
+	// for this url.
+	// ----------------------
+	var cat Category
+	var weight int
+	var err error
+
+	if cat, weight, err = guessByDomains([]string{u.domain}); err != nil {
+		log.Error("Url/Analyze:", err)
+		// we do not return, we want to try to fetch the URL
+	}
+
+	if cat != Unknown && weight > 50 {
+		u.category = cat
+	}
+
 	// read the fetch data
 	// TODO(remy): we should probably ensure its html first ?
 	// TODO(remy): pretty sure we don't need to read the whole file
@@ -131,7 +152,7 @@ func (u *Url) Analyze() error {
 		}
 	})
 
-	u.title = chooseTitle(u.url, title, ogTitle, ogDescription)
+	u.title = chooseTitle(u.domain, title, ogTitle, ogDescription)
 
 	return nil
 }
@@ -145,6 +166,16 @@ func (u *Url) Store(uid uuid.UUID) error {
 	`, u.url, u.image, u.title, uid); err != nil {
 		return log.Err("Url:", err)
 	}
+	if u.category != Unknown {
+		fmt.Println(u.category)
+		if _, err := storage.DB().Exec(`
+		UPDATE "card"
+		SET "r_category" = $1
+		WHERE "uid" = $2
+	`, u.category, uid); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -156,10 +187,8 @@ func (u *Url) Categories() Categories {
 
 // chooseTitle chooses the best title for the given URL
 // and given read title, og:title and og:description.
-func chooseTitle(url string, title, ogTitle, ogDescription string) string {
+func chooseTitle(domain string, title, ogTitle, ogDescription string) string {
 	var rv string
-
-	domain := rxDomain.FindString(url)
 
 	if len(domain) != 0 {
 		switch domain {

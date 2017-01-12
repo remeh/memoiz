@@ -76,7 +76,7 @@ func Analyze(uid uuid.UUID, text string) {
 
 	if len(analyzers) == 0 {
 		// don't even bother to analyze something which looks
-		// like a complete note
+		// like a complete note.
 		analyzers = append(analyzers, &Stub{})
 	}
 
