@@ -1,6 +1,7 @@
 package mind
 
 import (
+	"database/sql"
 	"fmt"
 
 	"remy.io/scratche/storage"
@@ -42,8 +43,9 @@ func guessByDomains(domains []string) (Category, int, error) {
 		DESC
 		LIMIT 1
 		`, inClause), params...).Scan(&cat, &weight); err != nil {
-		// TODO(remy): handle ErrNoRows ?
-		return Unknown, 0, fmt.Errorf("can't categorize: %v : %v", domains, err)
+		if err != sql.ErrNoRows {
+			err = fmt.Errorf("can't categorize: %v : %v", domains, err)
+		}
 	}
 
 	// We do not want to return the category if there
