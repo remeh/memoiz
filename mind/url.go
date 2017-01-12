@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"net/http"
 	"regexp"
+	"time"
 
 	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
@@ -46,8 +47,6 @@ func (u *Url) TryCache(text string) (bool, error) {
 }
 
 func (u *Url) Fetch(text string) error {
-	// look for an url in the text
-	u.url = urlRx.FindString(text)
 	if len(u.url) == 0 {
 		return nil
 	}

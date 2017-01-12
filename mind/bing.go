@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"regexp"
 	"strings"
 	"time"
 
@@ -152,9 +151,6 @@ func (b *Bing) Categories() Categories {
 }
 
 // ----------------------
-
-// rxDomain retrieves only the domain (removing the TLD)
-var rxDomain *regexp.Regexp = regexp.MustCompile(`([a-zA-Z0-9]*)\.[a-zA-Z0-9]*\/`)
 
 // guessByDomains retrieve the Category which seems to represent
 // the best the given card.

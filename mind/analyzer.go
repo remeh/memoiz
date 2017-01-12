@@ -37,6 +37,8 @@ type Analyzer interface {
 	Categories() Categories
 }
 
+// Analyze starts the regular analyzers such
+// as Bing, Google Knowledge Graph.
 func Analyze(uid uuid.UUID, text string) {
 	if uid.IsNil() || len(text) == 0 {
 		return
@@ -44,7 +46,21 @@ func Analyze(uid uuid.UUID, text string) {
 
 	analyzers := make([]Analyzer, 0)
 
-	// choose the first analyzer to launch
+	// looks whether the text contains an URL
+	// ---------------------
+
+	url := rxUrl.FindString(text)
+	if len(url) != 0 {
+		// we have an URL: start only the URL
+		// analyzer.
+		// TODO(remy): start a domain analyze
+		// on only this domain.
+		analyzers = append(analyzers, &Url{url: url})
+		analyze(analyzers, uid, text)
+		return
+	}
+
+	// no URL, we'll try with Bing and Kg analyzers.
 	// ----------------------
 
 	spaces := strings.Count(text, " ")
@@ -64,9 +80,13 @@ func Analyze(uid uuid.UUID, text string) {
 		analyzers = append(analyzers, &Stub{})
 	}
 
-	// always try to retrieve urls
-	analyzers = append(analyzers, &Url{})
+	analyze(analyzers, uid, text)
+}
 
+// ----------------------
+
+// analyzer pipeline.
+func analyze(analyzers []Analyzer, uid uuid.UUID, text string) {
 	// apply the analyze
 	// ----------------------
 
