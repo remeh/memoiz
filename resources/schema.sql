@@ -16,7 +16,7 @@ CREATE TABLE "user" (
     "email" text NOT NULL DEFAULT '',
     "firstname" text NOT NULL DEFAULT '',
     "lastname" text NOT NULL DEFAULT '',
-    "password" text NOT NULL DEFAULT '',
+    "hash" text NOT NULL DEFAULT '',
     "gender" text NOT NULL DEFAULT 'Undefined',
     "phone" text NOT NULL DEFAULT '',
     "address" text NOT NULL DEFAULT '',
@@ -27,7 +27,7 @@ CREATE TABLE "user" (
 );
 
 CREATE UNIQUE INDEX ON "user" ("uid");
-CREATE INDEX ON "user" ("email");
+CREATE UNIQUE INDEX ON "user" ("email");
 
 -- Card
 
