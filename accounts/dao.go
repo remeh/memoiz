@@ -2,11 +2,10 @@
 //
 // Rémy Mathieu © 2016
 
-package account
+package accounts
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"remy.io/scratche/log"
@@ -66,9 +65,8 @@ func (d *AccountDAO) UidByEmail(email string) (uuid.UUID, error) {
 // Create inserts the given account in database.
 func (d *AccountDAO) Create(uid uuid.UUID, firstname, email, hash string, t time.Time) error {
 	var err error
-	var r *sql.Result
 
-	if r, err = d.DB.Exec(`
+	if _, err = d.DB.Exec(`
 		INSERT INTO "user"
 		("uid", "email", "firstname", "hash", "creation_time", "last_update")
 		VALUES

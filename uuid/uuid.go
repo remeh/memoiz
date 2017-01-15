@@ -14,6 +14,8 @@ import (
 
 type UUID uuid.UUID
 
+var Nil = uuid.NIL
+
 func (u UUID) String() string {
 	return uuid.UUID(u).String()
 }

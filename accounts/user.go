@@ -1,16 +1,8 @@
-package account
+package accounts
 
-import (
-	"fmt"
-	"log"
-	"net/http"
-	"time"
+import "golang.org/x/crypto/bcrypt"
 
-	"remy.io/scratche/uuid/"
-
-	"golang.org/x/crypto/bcrypt"
-)
-
+/*
 func SetSessionCookie(w http.ResponseWriter, session db.Session) {
 	cookie := &http.Cookie{
 		Name:   "t",
@@ -19,6 +11,7 @@ func SetSessionCookie(w http.ResponseWriter, session db.Session) {
 	}
 	http.SetCookie(w, cookie)
 }
+*/
 
 // IsPasswordSecure checks that the given password
 // is strong enough to be used.

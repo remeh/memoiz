@@ -9,7 +9,7 @@ package main
 import (
 	"net/http"
 
-	"remy.io/scratche/api/account"
+	"remy.io/scratche/api/accounts"
 	"remy.io/scratche/api/adapter"
 	"remy.io/scratche/api/cards"
 	"remy.io/scratche/api/example"
@@ -46,7 +46,7 @@ func declareApiRoutes(s *Server) {
 	// Accounts
 	// ----------------------
 
-	s.AddApi("/1.0/accounts", log(account.Create{}), "POST")
+	s.AddApi("/1.0/accounts", log(accounts.Create{}), "POST")
 
 	// Cards routes
 	// ----------------------

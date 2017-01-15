@@ -1,10 +1,10 @@
-package account
+package accounts
 
 import (
 	"net/http"
 	"time"
 
-	"remy.io/scratche/account"
+	"remy.io/scratche/accounts"
 	"remy.io/scratche/api"
 	"remy.io/scratche/uuid"
 )
@@ -30,7 +30,7 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(body.Email) == 0 || account.ValidEmail(body.Email) {
+	if len(body.Email) == 0 || !accounts.ValidEmail(body.Email) {
 		api.RenderBadParameter(w, "email")
 		return
 	}
@@ -41,18 +41,39 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(body.Password) == 0 ||
-		account.IsPasswordSecure(body.Password) {
+		!accounts.IsPasswordSecure(body.Password) {
 		api.RenderBadParameter(w, "password")
 		return
+	}
+
+	// check for existence
+	// ----------------------
+
+	var err error
+	if uid, err := accounts.DAO().UidByEmail(body.Email); err != nil {
+		api.RenderErrJson(w, err)
+		return
+	} else {
+		if !uid.IsNil() {
+			api.RenderBaseJson(w, 409, "existing user")
+			return
+		}
 	}
 
 	// user creation
 	// ----------------------
 
-	uid := uuid.New()
+	var hash string
+
+	uid = uuid.New()
 	now := time.Now()
 
-	if err := account.DAO().Create(uid, firstname, email, account.Crypt(password), now); err != nil {
+	if hash, err = accounts.Crypt(body.Password); err != nil {
+		api.RenderErrJson(w, err)
+		return
+	}
+
+	if err := accounts.DAO().Create(uid, body.Firstname, body.Email, hash, now); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}
@@ -62,10 +83,12 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resp := struct {
 		api.Response
-		Uid uuid.UUID
+		Uid uuid.UUID `json:"uid"`
 	}{
-		Msg: "ok",
-		Ok:  true,
+		Response: api.Response{
+			Msg: "ok",
+			Ok:  true,
+		},
 		Uid: uid,
 	}
 
