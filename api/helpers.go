@@ -104,6 +104,25 @@ func RenderBadParameters(w http.ResponseWriter) {
 	RenderBaseJson(w, 400, "bad parameters")
 }
 
+// responseBadParam is used by RenderBadParameter
+// to return 400 indicating which parameter isn't
+// correctly set
+type responseBadParam struct {
+	Msg   string `json:"msg"`
+	Ok    bool   `json:"ok"`
+	Param string `json:"param"`
+}
+
+// RenderBadParameter is the same thing as RenderBadParameters
+// but returning which parameter is bad.
+func RenderBadParameter(w http.ResponseWriter, param string) {
+	RenderJson(w, 400, responseBadParam{
+		Msg:   "bad parameter",
+		Ok:    false,
+		Param: param,
+	})
+}
+
 func RenderOk(w http.ResponseWriter) {
 	RenderBaseJson(w, 200, "ok")
 }

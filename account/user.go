@@ -27,6 +27,13 @@ func IsPasswordSecure(password string) bool {
 	return true
 }
 
+// ValidEmail returns whether the given email is
+// valid or not.
+func ValidEmail(email string) bool {
+	// TODO(remy): valid email
+	return true
+}
+
 // Crypt crypts the given password using bcrypt.
 func Crypt(password string) (string, error) {
 	b, err := bcrypt.GenerateFromPassword([]byte(password), 10)

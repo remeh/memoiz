@@ -2,7 +2,7 @@
 //
 // Rémy Mathieu © 2016
 
-package cards
+package account
 
 import (
 	"database/sql"
@@ -42,6 +42,25 @@ func DAO() *AccountDAO {
 func (d *AccountDAO) InitStmt() error {
 	var err error
 	return err
+}
+
+// UidByEmail returns the uid attached to the given
+// email if it is already used.
+// Otherwise, returns nil.
+func (d *AccountDAO) UidByEmail(email string) (uuid.UUID, error) {
+	var err error
+	var uid uuid.UUID
+
+	if d.DB.QueryRow(`
+		SELECT "uid"
+		FROM "user"
+		WHERE
+			"email" = $1
+	`, email).Scan(&uid); err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	return uid, nil
 }
 
 // Create inserts the given account in database.
