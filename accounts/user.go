@@ -1,17 +1,16 @@
 package accounts
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"remy.io/scratche/uuid"
 
-/*
-func SetSessionCookie(w http.ResponseWriter, session db.Session) {
-	cookie := &http.Cookie{
-		Name:   "t",
-		Value:  session.Token,
-		MaxAge: 86400, // 1 day
-	}
-	http.SetCookie(w, cookie)
+	"golang.org/x/crypto/bcrypt"
+)
+
+type SimpleUser struct {
+	Uid       uuid.UUID `json:"uid"`
+	Firstname string    `json:"firstname"`
+	Email     string    `json:"email"`
 }
-*/
 
 // IsPasswordSecure checks that the given password
 // is strong enough to be used.

@@ -37,6 +37,10 @@ func log(h http.Handler) http.Handler {
 	return adapter.LogAdapter(h)
 }
 
+func auth(h http.Handler) http.Handler {
+	return adapter.AuthAdapter(h)
+}
+
 func startJobs() {
 }
 
@@ -47,16 +51,17 @@ func declareApiRoutes(s *Server) {
 	// ----------------------
 
 	s.AddApi("/1.0/accounts", log(accounts.Create{}), "POST")
+	s.AddApi("/1.0/accounts/login", log(accounts.Login{}), "POST")
 
 	// Cards routes
 	// ----------------------
 
-	s.AddApi("/1.0/cards", log(cards.Get{}), "GET")
-	s.AddApi("/1.0/cards", log(cards.Post{}), "POST")
+	s.AddApi("/1.0/cards", log(auth(cards.Get{})), "GET")
+	s.AddApi("/1.0/cards", log(auth(cards.Post{})), "POST")
 	// TODO(remy): ids in parameters
-	s.AddApi("/1.0/cards/switch", log(cards.SwitchPosition{}), "POST")
+	s.AddApi("/1.0/cards/switch", log(auth(cards.SwitchPosition{})), "POST")
 
-	s.AddApi("/1.0/cards/{uid}/archive", log(cards.Archive{}), "POST")
-	s.AddApi("/1.0/cards/{uid}/rich", log(cards.Rich{}), "GET")
+	s.AddApi("/1.0/cards/{uid}/archive", log(auth(cards.Archive{})), "POST")
+	s.AddApi("/1.0/cards/{uid}/rich", log(auth(cards.Rich{})), "GET")
 
 }

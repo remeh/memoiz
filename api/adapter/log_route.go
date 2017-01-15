@@ -16,7 +16,9 @@ type LogHandler struct {
 }
 
 func (a LogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// FIXME(remy): finish CORS
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	// propagate to the next handler
 	sWriter := &StatusWriter{w, 200}

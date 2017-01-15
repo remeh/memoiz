@@ -62,6 +62,24 @@ func (d *AccountDAO) UidByEmail(email string) (uuid.UUID, error) {
 	return uid, nil
 }
 
+// TODO(remy): comment me
+func (d *AccountDAO) UserByEmail(email string) (SimpleUser, string, error) {
+	var err error
+	var su SimpleUser
+	var hash string
+
+	if d.DB.QueryRow(`
+		SELECT "uid", "firstname", "email", "hash"
+		FROM "user"
+		WHERE
+			"email" = $1
+	`, email).Scan(&su.Uid, &su.Firstname, &su.Email, &hash); err != nil && err != sql.ErrNoRows {
+		return su, "", err
+	}
+
+	return su, hash, nil
+}
+
 // Create inserts the given account in database.
 func (d *AccountDAO) Create(uid uuid.UUID, firstname, email, hash string, t time.Time) error {
 	var err error

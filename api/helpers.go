@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"reflect"
 
+	"remy.io/scratche/accounts"
 	"remy.io/scratche/log"
 	"remy.io/scratche/uuid"
 )
@@ -14,21 +15,30 @@ import (
 // Request
 // ----------------------
 
-// ReadUser reads the 'u' parameter in the request
-// for a valid UUID.
+// ReadUser reads the session cookie in the request
+// to return the user Uid.
 func ReadUser(r *http.Request) uuid.UUID {
-	r.ParseForm()
-
-	param := r.Form.Get("u")
-	if len(param) == 0 && len(param) != 36 {
+	c, err := r.Cookie(accounts.SessionToken)
+	if err != nil {
 		return nil
 	}
 
-	if id, err := uuid.Parse(param); err != nil {
+	if c == nil {
 		return nil
-	} else {
-		return id
 	}
+
+	t := c.Value
+
+	if len(t) == 0 && len(t) != 36*3 {
+		return nil
+	}
+
+	s, exists := accounts.GetSession(t)
+	if !exists {
+		return nil
+	}
+
+	return s.Uid
 }
 
 func ReadJsonBody(r *http.Request, object interface{}) error {
