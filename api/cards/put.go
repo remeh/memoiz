@@ -14,7 +14,6 @@ type Put struct {
 }
 
 func (c Put) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// TODO(remy): auth
 	uid := api.ReadUser(r)
 
 	// read parameters

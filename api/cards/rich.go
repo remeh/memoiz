@@ -15,7 +15,6 @@ import (
 type Rich struct{}
 
 func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// TODO(remy): auth
 	uid := api.ReadUser(r)
 
 	// read parameters

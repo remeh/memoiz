@@ -66,7 +66,7 @@ func (u *Url) Fetch(text string) error {
 	req.Header.Set("User-Agent", randomUserAgent())
 
 	cli := &http.Client{
-		Timeout: time.Second * 15, // TODO(remy): better fix this timeout?
+		Timeout: time.Second * 15,
 	}
 	if resp, err = cli.Do(req); err != nil {
 		return err

@@ -155,7 +155,9 @@ func (d *CardsDAO) New(owner uuid.UUID, text string, t time.Time) (Card, error) 
 		WHERE "owner_uid" = $2
 		RETURNING "position"
 	`, cardUid, owner, text, t).Scan(&rv.Position); err != nil {
-		// TODO(remy): handle ErrNoRows ?
+		if err == sql.ErrNoRows {
+			return rv, fmt.Errorf("cards.New: no position returned")
+		}
 		return rv, fmt.Errorf("cards.New: %v", err)
 	}
 

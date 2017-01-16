@@ -15,7 +15,6 @@ type Archive struct {
 }
 
 func (c Archive) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// TODO(remy): auth
 	uid := api.ReadUser(r)
 
 	// read parameters

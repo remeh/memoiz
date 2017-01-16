@@ -14,7 +14,10 @@ type Create struct{}
 func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uid := api.ReadUser(r)
 
-	// TODO(remy): auth (do not permit user creation when logged in)
+	if !uid.IsNil() {
+		api.RenderBaseJson(w, 403, "you can't create many accounts")
+		return
+	}
 
 	// read parameters
 	// ----------------------

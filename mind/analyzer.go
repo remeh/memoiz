@@ -53,8 +53,6 @@ func Analyze(uid uuid.UUID, text string) {
 	if len(url) != 0 {
 		// we have an URL: start only the URL
 		// analyzer.
-		// TODO(remy): start a domain analyze
-		// on only this domain.
 		analyzers = append(analyzers, &Url{url: url})
 		analyze(analyzers, uid, text)
 		return

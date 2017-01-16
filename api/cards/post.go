@@ -16,7 +16,7 @@ type Post struct {
 func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uid := api.ReadUser(r)
 
-	// TODO(remy): auth
+	// ----------------------
 
 	var body struct {
 		CardUid uuid.UUID `json:"card_uid"`

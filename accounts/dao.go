@@ -62,7 +62,8 @@ func (d *AccountDAO) UidByEmail(email string) (uuid.UUID, error) {
 	return uid, nil
 }
 
-// TODO(remy): comment me
+// UserByEmail returns basic information of an user
+// using its email as unique identifier.
 func (d *AccountDAO) UserByEmail(email string) (SimpleUser, string, error) {
 	var err error
 	var su SimpleUser

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"remy.io/scratche/log"
 	"remy.io/scratche/storage"
 )
 
@@ -12,7 +13,7 @@ import (
 // The weight the choice is also returned.
 func guessByDomains(domains []string) (Category, int, error) {
 	if len(domains) == 0 {
-		// TODO(remy): log this, shouldn't happen if bing has respond
+		log.Warning("guessByDomains: called with len(domains) == 0")
 		return Unknown, 0, nil
 	}
 
