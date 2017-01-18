@@ -52,6 +52,7 @@ func declareApiRoutes(s *Server) {
 
 	s.AddApi("/1.0/accounts", log(accounts.Create{}), "POST")
 	s.AddApi("/1.0/accounts/login", log(accounts.Login{}), "POST")
+	s.AddApi("/1.0/accounts/logout", log(accounts.Logout{}), "POST")
 
 	// Cards routes
 	// ----------------------
