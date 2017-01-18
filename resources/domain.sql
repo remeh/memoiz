@@ -4,6 +4,13 @@ DELETE FROM "domain";
 -- Movies and Series
 ----------------------
 
+-- Critictoo
+INSERT INTO "domain" VALUES ('critictoo', 5, 40); -- movie
+INSERT INTO "domain" VALUES ('critictoo', 9, 60); -- serie
+
+-- BetaSeries
+INSERT INTO "domain" VALUES ('betaseries', 9, 100); -- serie
+
 INSERT INTO "domain" VALUES ('123movies', 5, 50);
 INSERT INTO "domain" VALUES ('123movies', 9, 50);
 
@@ -41,6 +48,10 @@ INSERT INTO "domain" VALUES ('locafilm', 9, 50); -- serie
 -- Miramax
 INSERT INTO "domain" VALUES ('miramax', 5, 75); -- movie
 INSERT INTO "domain" VALUES ('miramax', 9, 25); -- serie
+
+-- Netflix
+INSERT INTO "domain" VALUES ('netflix', 5, 50); -- movie
+INSERT INTO "domain" VALUES ('netflix', 9, 50); -- serie
 
 -- Moviefone
 INSERT INTO "domain" VALUES ('moviefone', 5, 50);
