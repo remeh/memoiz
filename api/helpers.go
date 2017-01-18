@@ -18,18 +18,8 @@ import (
 // ReadUser reads the session cookie in the request
 // to return the user Uid.
 func ReadUser(r *http.Request) uuid.UUID {
-	c, err := r.Cookie(accounts.SessionToken)
-	if err != nil {
-		return nil
-	}
-
-	if c == nil {
-		return nil
-	}
-
-	t := c.Value
-
-	if len(t) == 0 && len(t) != 36*3 {
+	t := ReadSessionToken(r)
+	if len(t) == 0 {
 		return nil
 	}
 
@@ -39,6 +29,26 @@ func ReadUser(r *http.Request) uuid.UUID {
 	}
 
 	return s.Uid
+}
+
+func ReadSessionToken(r *http.Request) string {
+	c, err := r.Cookie(accounts.SessionToken)
+
+	if err != nil {
+		log.Error(err)
+		return ""
+	}
+
+	if c == nil {
+		println("no cookie")
+		return ""
+	}
+
+	t := c.Value
+	if len(t) != (36-4)*3 {
+		return ""
+	}
+	return t
 }
 
 func ReadJsonBody(r *http.Request, object interface{}) error {

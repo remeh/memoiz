@@ -7,7 +7,9 @@ package adapter
 
 import (
 	"net/http"
+	"time"
 
+	"remy.io/scratche/accounts"
 	"remy.io/scratche/api"
 )
 
@@ -21,6 +23,9 @@ func (a AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		api.RenderForbiddenJson(w)
 		return
 	}
+
+	// refresh the session in RAM
+	accounts.RefreshSession(api.ReadSessionToken(r), time.Now())
 
 	a.handler.ServeHTTP(w, r)
 }
