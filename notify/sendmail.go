@@ -16,7 +16,7 @@ import (
 var (
 	UseMail = false
 
-	Sender = "ratch@remy.io"
+	Sender = "scratch@remy.io"
 )
 
 func init() {
