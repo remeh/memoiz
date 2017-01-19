@@ -11,6 +11,7 @@ import (
 
 	"remy.io/scratche/config"
 	l "remy.io/scratche/log"
+	"remy.io/scratche/notify"
 	"remy.io/scratche/storage"
 
 	"github.com/gorilla/mux"
@@ -34,6 +35,9 @@ func (s *Server) Start() error {
 	if err != nil {
 		return err
 	}
+
+	// XXX(remy): remove
+	notify.SendCategoryMail(notify.TmpGenerateCards())
 
 	// Prepares the router serving the static pages and assets.
 	s.prepareStaticRouter()

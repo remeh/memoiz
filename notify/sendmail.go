@@ -5,15 +5,18 @@ import (
 	"fmt"
 	"net/smtp"
 
+	"remy.io/scratche/cards"
 	"remy.io/scratche/config"
 	"remy.io/scratche/log"
+	"remy.io/scratche/mind"
 	"remy.io/scratche/notify/template"
+	"remy.io/scratche/uuid"
 )
 
 var (
 	UseMail = false
 
-	Sender = "scratche@remy.io"
+	Sender = "ratch@remy.io"
 )
 
 func init() {
@@ -31,42 +34,45 @@ func init() {
 
 // ----------------------
 
-func Prout() {
-	println("a!")
-}
-
-type Temp struct {
-	Category string
-	Count    int
-}
-
-func Sendmail() {
+func SendCategoryMail(cs map[mind.Category]cards.Cards) {
 	host := fmt.Sprintf("%s:%d", config.Config.SmtpHost, config.Config.SmtpPort)
-
-	body := []byte("To: me@remy.io\r\nSubject: Hello!\r\n\r\nCorpus\r\n")
 
 	auth := smtp.PlainAuth("",
 		config.Config.SmtpLogin,
 		config.Config.SmtpPassword,
 		config.Config.SmtpHost,
 	)
-	fmt.Println(host, body, auth)
 
 	buff := bytes.Buffer{}
 
-	t := Temp{
-		Category: "Movie",
-		Count:    1,
-	}
+	buff.WriteString("MIME-version: 1.0;\r\n")
+	buff.WriteString("Content-Type: text/html; charset=\"UTF-8\";\r\n")
+	buff.WriteString("To: me@remy.io\r\n")
+	buff.WriteString("Subject: Hello!\r\n\r\n")
+
+	fmt.Println(cs)
 
 	html := template.Root.Lookup("base.html")
-	html.Execute(&buff, t)
+	html.Execute(&buff, cs)
 
-	fmt.Println(string(buff.Bytes()))
-	/*
-		err := smtp.SendMail(host, auth, Sender, []string{"me@remy.io"}, body)
-		if err != nil {
-			log.Error(err)
-		}
-	*/
+	buff.WriteString("\r\n")
+
+	err := smtp.SendMail(host, auth, Sender, []string{"me@remy.io"}, buff.Bytes())
+	if err != nil {
+		log.Error(err)
+	}
+}
+
+// XXX
+func TmpGenerateCards() map[mind.Category]cards.Cards {
+	uid, _ := uuid.Parse("12341234-1234-1234-1234-123412341234")
+	cs, _ := cards.DAO().GetByUser(uid, cards.CardActive)
+
+	rv := make(map[mind.Category]cards.Cards)
+
+	for _, c := range cs {
+		rv[mind.Movie] = append(rv[mind.Movie], c)
+	}
+
+	return rv
 }
