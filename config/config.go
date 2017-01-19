@@ -36,9 +36,9 @@ type Configuration struct {
 	// Connection string
 	ConnString string `envconfig:"CONN,default=host=/var/run/postgresql sslmode=disable user=scratche dbname=scratche password=scratche"`
 	// Azure Web search api key
-	BingApiKey string `envconfig:"BING"`
+	BingApiKey string `envconfig:"BING,optional"`
 	// Google Knowledge Graph api key
-	KgApiKey string `envconfig:"KG"`
+	KgApiKey string `envconfig:"KG,optional"`
 }
 
 // readConfig reads in the environment var
