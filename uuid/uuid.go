@@ -13,6 +13,7 @@ import (
 )
 
 type UUID uuid.UUID
+type UUIDs []UUID
 
 var Nil = uuid.NIL
 
