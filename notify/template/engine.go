@@ -77,7 +77,8 @@ func lookForTemplates(path string) ([]string, error) {
 			continue
 		}
 
-		if strings.HasSuffix(fi.Name(), ".html") {
+		if strings.HasSuffix(fi.Name(), ".html") ||
+			strings.HasSuffix(fi.Name(), ".css") {
 			rv = append(rv, path+fi.Name())
 		}
 	}

@@ -1,12 +1,14 @@
 <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="mui-panel">
-  <div class="mui--text-headline">Category {{.Category}}</div>
+      <div class="mui--text-headline">Category {{with $x := index . 0}}{{$x.CardRichInfo.Category}}{{end}}</div>
   <br/>
   <div class="mui--text-body1">
-    You've added {{.Count}} scratches with the category {{.Category}}. Dare to do one right now ?
+    You've added {{len .}} scratches with the category {{with $x := index . 0}}{{$x.CardRichInfo.Category}}{{end}}. Dare to do one right now ?
   </div>
   <div>
     <ul>
-      <li>Matrix</li>
+      {{ range . }}
+      <li>{{.Text}}</li>
+      {{ end }}
     </ul>
   </div>
 </td></tr></table>

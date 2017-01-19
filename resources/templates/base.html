@@ -4,8 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width" />
     <!-- NOTE: external links are for testing only -->
-    <link href="//cdn.muicss.com/mui-0.9.9-rc1/email/mui-email-styletag.css" rel="stylesheet" />
-    <link href="//cdn.muicss.com/mui-0.9.9-rc1/email/mui-email-inline.css" rel="stylesheet" />
+    <style>
+      {{ template "mui.css" }}
+    </style>
   </head>
   <body>
   <table class="mui-body" cellpadding="0" cellspacing="0" border="0"><tr><td class="mui-panel">
@@ -17,7 +18,9 @@
     <div class="mui--text-title">Your notes are waiting for you. We're here to remind you!</div>
   </div>
 
-  {{ template "category.html" . }}
+  {{ range . }}
+    {{ template "category.html" . }}
+  {{ end }}
 
   </td></tr></table>
   </body>
