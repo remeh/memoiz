@@ -24,7 +24,6 @@ func init() {
 		UseKg = true
 		log.Info("Google Knowledge Graph will be used.")
 	}
-
 }
 
 // ----------------------

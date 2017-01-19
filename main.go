@@ -15,6 +15,7 @@ import (
 	"remy.io/scratche/api/example"
 	"remy.io/scratche/config"
 	l "remy.io/scratche/log"
+	"remy.io/scratche/notify"
 )
 
 func main() {
@@ -24,6 +25,8 @@ func main() {
 
 	declareApiRoutes(s)
 	startJobs()
+
+	notify.Sendmail()
 
 	l.Info("listening on", config.Config.ListenAddr)
 
