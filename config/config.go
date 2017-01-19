@@ -39,6 +39,12 @@ type Configuration struct {
 	BingApiKey string `envconfig:"BING,optional"`
 	// Google Knowledge Graph api key
 	KgApiKey string `envconfig:"KG,optional"`
+
+	// Smtp Configuration
+	SmtpHost     string `envconfig:"SMTP_HOST,optional"`
+	SmtpPort     int    `envconfig:"SMTP_PORT,optional"`
+	SmtpLogin    string `envconfig:"SMTP_LOGIN,optional"`
+	SmtpPassword string `envconfig:"SMTP_PWD,optional"`
 }
 
 // readConfig reads in the environment var
