@@ -27,7 +27,9 @@ var (
 	CardDeleted CardState = "CardDeleted"
 )
 
-// SimpleCard only contains necessary fields
+type Cards []Card
+
+// Card only contains necessary fields
 // to represent a card.
 // RichInfo COULD be loaded.
 type Card struct {
