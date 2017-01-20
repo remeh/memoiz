@@ -34,6 +34,10 @@ func init() {
 // ----------------------
 
 func SendCategoryMail(cs map[mind.Category]cards.Cards) {
+	if !UseMail {
+		return
+	}
+
 	host := fmt.Sprintf("%s:%d", config.Config.SmtpHost, config.Config.SmtpPort)
 
 	auth := smtp.PlainAuth("",
