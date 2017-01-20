@@ -10,7 +10,6 @@ import (
 	"remy.io/scratche/log"
 	"remy.io/scratche/mind"
 	"remy.io/scratche/notify/template"
-	"remy.io/scratche/uuid"
 )
 
 var (
@@ -50,8 +49,6 @@ func SendCategoryMail(cs map[mind.Category]cards.Cards) {
 	buff.WriteString("To: me@remy.io\r\n")
 	buff.WriteString("Subject: Hello!\r\n\r\n")
 
-	fmt.Println(cs)
-
 	html := template.Root.Lookup("base.html")
 	html.Execute(&buff, cs)
 
@@ -61,18 +58,4 @@ func SendCategoryMail(cs map[mind.Category]cards.Cards) {
 	if err != nil {
 		log.Error(err)
 	}
-}
-
-// XXX
-func TmpGenerateCards() map[mind.Category]cards.Cards {
-	uid, _ := uuid.Parse("12341234-1234-1234-1234-123412341234")
-	cs, _ := cards.DAO().GetByUser(uid, cards.CardActive)
-
-	rv := make(map[mind.Category]cards.Cards)
-
-	for _, c := range cs {
-		rv[mind.Movie] = append(rv[mind.Movie], c)
-	}
-
-	return rv
 }
