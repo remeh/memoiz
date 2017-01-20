@@ -52,3 +52,23 @@ type CardRichInfo struct {
 	Url        string         `json:"r_url,omitempty"`
 	Title      string         `json:"r_title,omitempty"`
 }
+
+// ----------------------
+
+// GroupByCategory regroups the slice of cards per Category.
+func (cs Cards) GroupByCategory() map[mind.Category]Cards {
+	rv := make(map[mind.Category]Cards)
+
+	for _, c := range cs {
+		v, exists := rv[c.CardRichInfo.Category]
+
+		if !exists {
+			v = make(Cards, 0)
+		}
+
+		v = append(v, c)
+		rv[c.CardRichInfo.Category] = v
+	}
+
+	return rv
+}
