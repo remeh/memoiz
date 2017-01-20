@@ -15,6 +15,10 @@ import (
 	"github.com/lib/pq"
 )
 
+const (
+	CategoryReminderEmail = "CategoryReminderEmail"
+)
+
 func main() {
 	ticker := time.NewTicker(time.Second * 10)
 
@@ -55,10 +59,29 @@ func fetch() (map[string]cards.Cards, error) {
 	// query
 	// ----------------------
 
+	// first we want to retrieve for whom we'll
+	// send some emails
+	// ----
+
+	var uids uuid.UUIDs
+
+	if uids, err = getOwners(time.Second*60, 5); err != nil {
+		return nil, log.Err("fetch", err)
+	}
+
+	// gets the cards of these owners
+	// ----
+
+	p := make([]interface{}, 0)
+	for i, uid := range uids {
+		p[i] = uid
+	}
+
 	if rows, err = storage.DB().Query(`
 		SELECT "owner_uid", array_agg("uid"), array_agg(text), array_agg("r_category")
 		FROM "card"
-		WHERE "r_category" != 0
+		WHERE
+			"owner_uid" = $1
 		GROUP BY "owner_uid"
 	`); err != nil {
 		return nil, log.Err("fetch", err)

@@ -116,6 +116,21 @@ CREATE INDEX ON "kg_result" ("card_text");
 CREATE INDEX ON "kg_result" ("category");
 
 ----------------------
+-- Emailing
+----------------------
+
+CREATE TABLE "emailing" (
+    "uid" text NOT NULL,
+    "owner_uid" text NOT NULL,
+    "type" text NOT NULL,
+    "creation_time" timestamp with time zone DEFAULT now()
+);
+
+CREATE UNIQUE INDEX ON "emailing" ("uid");
+CREATE INDEX ON "emailing" ("owner_uid");
+CREATE INDEX ON "emailing" ("owner_uid","creation_time");
+
+----------------------
 -- DB Schema
 ----------------------
 
