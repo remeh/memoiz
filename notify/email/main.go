@@ -1,26 +1,28 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
 	"time"
 
+	"remy.io/scratche/accounts"
 	"remy.io/scratche/cards"
 	"remy.io/scratche/config"
 	"remy.io/scratche/log"
-	"remy.io/scratche/mind"
 	"remy.io/scratche/notify"
 	"remy.io/scratche/storage"
 	"remy.io/scratche/uuid"
-
-	"github.com/lib/pq"
 )
 
 const (
 	CategoryReminderEmail = "CategoryReminderEmail"
+	RunFrequency          = time.Minute
+	EmailFrequency        = time.Hour * 24
+	//RunFrequency   = time.Second * 10
+	//EmailFrequency = time.Second * 30
 )
 
 func main() {
-	ticker := time.NewTicker(time.Second * 10)
+	ticker := time.NewTicker(RunFrequency)
 
 	log.Info("notify/email: starting")
 
@@ -39,8 +41,8 @@ func main() {
 			continue
 		}
 
-		if err := analyze(cards); err != nil {
-			log.Error("notify/email:", err)
+		if err := send(cards, t); err != nil {
+			log.Error("notify/email", err)
 		}
 	}
 }
@@ -53,89 +55,63 @@ func prepare() error {
 // fetch fetches Ids of cards for which notification
 // has never been done.
 func fetch() (map[string]cards.Cards, error) {
-	var rows *sql.Rows
-	var err error
-
-	// query
-	// ----------------------
 
 	// first we want to retrieve for whom we'll
 	// send some emails
-	// ----
+	// ----------------------
 
+	var err error
 	var uids uuid.UUIDs
 
-	if uids, err = getOwners(time.Second*60, 5); err != nil {
+	if uids, err = getOwners(EmailFrequency, 5); err != nil {
 		return nil, log.Err("fetch", err)
 	}
 
 	// gets the cards of these owners
-	// ----
+	// ----------------------
 
-	p := make([]interface{}, 0)
-	for i, uid := range uids {
-		p[i] = uid
-	}
-
-	if rows, err = storage.DB().Query(`
-		SELECT "owner_uid", array_agg("uid"), array_agg(text), array_agg("r_category")
-		FROM "card"
-		WHERE
-			"owner_uid" = $1
-		GROUP BY "owner_uid"
-	`); err != nil {
-		return nil, log.Err("fetch", err)
-	}
-
-	if rows == nil {
+	if len(uids) == 0 {
 		return make(map[string]cards.Cards), nil
 	}
 
-	// read the results
-	// ----------------------
-
-	rv := make(map[string]cards.Cards)
-
-	defer rows.Close()
-	for rows.Next() {
-		var uid string
-		var uids uuid.UUIDs
-		var texts []string
-		var cats []int64
-
-		if err := rows.Scan(&uid, pq.Array(&uids), pq.Array(&texts), pq.Array(&cats)); err != nil {
-			log.Error("notify/email: fetch:", err, "Continuing.")
-			continue
-		}
-
-		if len(uids) != len(cats) || len(uids) != len(texts) {
-			log.Error("notify/email: fetch: len(uids) != len(cats) for", uid, "Continuing.")
-			continue
-		}
-
-		cards := make(cards.Cards, len(uids))
-		for i, uid := range uids {
-			cards[i].Uid = uid
-			cards[i].CardRichInfo.Category = mind.Category(cats[i])
-			if len(texts[i]) > 140 {
-				cards[i].Text = texts[i][:140] + "..."
-			} else {
-				cards[i].Text = texts[i]
-			}
-		}
-
-		rv[uid] = cards
-	}
-
-	return rv, nil
+	return getCards(uids)
 }
 
-// analyze analyzer per owner a big set of cards.
-func analyze(cards map[string]cards.Cards) error {
+// TODO(remy): comment me.
+func send(cards map[string]cards.Cards, t time.Time) error {
 	for owner, cards := range cards {
-		log.Info("Analyzing cards of", owner)
+		cards = cards
+		log.Info("Sending for", owner)
 
-		notify.SendCategoryMail(cards.GroupByCategory())
+		// get the user
+		// ----------------------
+
+		var uid uuid.UUID
+		var err error
+
+		if uid, err = uuid.Parse(owner); err != nil {
+			return log.Err("send", err)
+		}
+
+		var acc accounts.SimpleUser
+
+		if acc, _, err = accounts.DAO().UserByUid(uid); err != nil {
+			return fmt.Errorf("send: unknown user %q", owner)
+		}
+
+		// send the email
+		// ----------------------
+
+		if err := notify.SendCategoryMail(acc, cards.GroupByCategory()); err != nil {
+			return log.Err("send", err)
+		}
+
+		// store that the email has been sent.
+		// ----------------------
+
+		if err := emailSent(acc, t); err != nil {
+			return log.Err("send", err)
+		}
 	}
 
 	return nil

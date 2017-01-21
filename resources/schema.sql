@@ -119,16 +119,23 @@ CREATE INDEX ON "kg_result" ("category");
 -- Emailing
 ----------------------
 
-CREATE TABLE "emailing" (
+CREATE TABLE "emailing_sent" (
     "uid" text NOT NULL,
     "owner_uid" text NOT NULL,
     "type" text NOT NULL,
     "creation_time" timestamp with time zone DEFAULT now()
 );
 
-CREATE UNIQUE INDEX ON "emailing" ("uid");
-CREATE INDEX ON "emailing" ("owner_uid");
-CREATE INDEX ON "emailing" ("owner_uid","creation_time");
+CREATE UNIQUE INDEX ON "emailing_sent" ("uid");
+CREATE INDEX ON "emailing_sent" ("owner_uid");
+CREATE INDEX ON "emailing_sent" ("owner_uid","creation_time");
+
+CREATE TABLE "emailing_unsubscribe" (
+    "owner_uid" text NOT NULL,
+    "creation_time" timestamp with time zone DEFAULT NULL
+);
+
+CREATE UNIQUE INDEX ON "emailing_unsubscribe" ("owner_uid");
 
 ----------------------
 -- DB Schema

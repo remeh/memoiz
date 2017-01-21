@@ -62,6 +62,29 @@ func (d *AccountDAO) UidByEmail(email string) (uuid.UUID, error) {
 	return uid, nil
 }
 
+// UserByUid returns basic information of an user
+// using its uid.
+func (d *AccountDAO) UserByUid(uid uuid.UUID) (SimpleUser, string, error) {
+	if uid.IsNil() {
+		return SimpleUser{}, "", nil
+	}
+
+	var err error
+	var su SimpleUser
+	var hash string
+
+	if d.DB.QueryRow(`
+		SELECT "uid", "firstname", "email", "hash"
+		FROM "user"
+		WHERE
+			"uid" = $1
+	`, uid).Scan(&su.Uid, &su.Firstname, &su.Email, &hash); err != nil && err != sql.ErrNoRows {
+		return su, "", err
+	}
+
+	return su, hash, nil
+}
+
 // UserByEmail returns basic information of an user
 // using its email as unique identifier.
 func (d *AccountDAO) UserByEmail(email string) (SimpleUser, string, error) {

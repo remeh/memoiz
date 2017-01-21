@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/smtp"
 
+	"remy.io/scratche/accounts"
 	"remy.io/scratche/cards"
 	"remy.io/scratche/config"
 	"remy.io/scratche/log"
@@ -33,9 +34,11 @@ func init() {
 
 // ----------------------
 
-func SendCategoryMail(cs map[mind.Category]cards.Cards) {
+// SendCategoryMail sends an email to the given email
+// to remind him he has recently added some new cards.
+func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]cards.Cards) error {
 	if !UseMail {
-		return
+		return nil
 	}
 
 	host := fmt.Sprintf("%s:%d", config.Config.SmtpHost, config.Config.SmtpPort)
@@ -50,16 +53,24 @@ func SendCategoryMail(cs map[mind.Category]cards.Cards) {
 
 	buff.WriteString("MIME-version: 1.0;\r\n")
 	buff.WriteString("Content-Type: text/html; charset=\"UTF-8\";\r\n")
-	buff.WriteString("To: me@remy.io\r\n")
-	buff.WriteString("Subject: Hello!\r\n\r\n")
+	buff.WriteString(fmt.Sprintf("To: %s\r\n", acc.Email)) // TODO(remy): put the real email here.
+	buff.WriteString("Subject: Hello!\r\n\r\n")            // TODO(remy): generate a subject
 
 	html := template.Root.Lookup("base.html")
-	html.Execute(&buff, cs)
+	if html == nil {
+		return fmt.Errorf("SendCategoryMail: can't find base template")
+	}
+
+	if err := html.Execute(&buff, cs); err != nil {
+		log.Err("SendCategoryMail", err)
+	}
 
 	buff.WriteString("\r\n")
 
 	err := smtp.SendMail(host, auth, Sender, []string{"me@remy.io"}, buff.Bytes())
 	if err != nil {
-		log.Error(err)
+		return log.Err("SendCategoryMail", err)
 	}
+
+	return nil
 }
