@@ -41,7 +41,7 @@ func SetSessionCookie(w http.ResponseWriter, s Session) {
 }
 
 func NewSession(userUid uuid.UUID, t time.Time) Session {
-	token := randSessTok()
+	token := randTok()
 	sessions[token] = Session{
 		Token:        token,
 		Uid:          userUid,
@@ -72,7 +72,9 @@ func GetSession(token string) (Session, bool) {
 
 // ----------------------
 
-func randSessTok() string {
+// randTok generates a random token composed of 3 uuids
+// merge without the - char.
+func randTok() string {
 	rv := ""
 	for i := 0; i < 3; i++ {
 		str := uuid.New().String()
