@@ -22,6 +22,8 @@ CREATE TABLE "user" (
     "address" text NOT NULL DEFAULT '',
     "timezone" text NOT NULL DEFAULT '',
 
+    "stripe_token" text DEFAULT '',
+
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now()
 );
