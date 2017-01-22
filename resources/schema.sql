@@ -139,6 +139,7 @@ CREATE INDEX ON "emailing_sent" ("owner_uid","creation_time");
 
 CREATE TABLE "emailing_unsubscribe" (
     "owner_uid" text NOT NULL,
+    "reason" text DEFAULT '',
     "creation_time" timestamp with time zone DEFAULT NULL
 );
 

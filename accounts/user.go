@@ -40,3 +40,15 @@ func Check(hash, password string) bool {
 	}
 	return true
 }
+
+// UnsubToken generates a random unsubscription
+// token.
+// It is composed of:
+// - the char '1' (version)
+// - first 8 chars of the user uid
+// - with 3 randoms uuids (without -) appended.
+func UnsubToken(uid uuid.UUID) string {
+	end := randTok()
+	start := uid.String()[0:8]
+	return "1" + start + end
+}

@@ -54,6 +54,8 @@ func declareApiRoutes(s *Server) {
 	s.AddApi("/1.0/accounts/login", log(accounts.Login{}), "POST")
 	s.AddApi("/1.0/accounts/logout", log(accounts.Logout{}), "POST")
 
+	s.AddApi("/1.0/emailing/unsubscribe/{token}", log(accounts.Unsubscribe{}), "GET")
+
 	// Cards routes
 	// ----------------------
 

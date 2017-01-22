@@ -68,15 +68,16 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var hash string
 
-	uid = uuid.New()
+	uid = uuid.New() // random uuid
 	now := time.Now()
+	unsubTok := accounts.UnsubToken(uid)
 
 	if hash, err = accounts.Crypt(body.Password); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}
 
-	if err := accounts.DAO().Create(uid, body.Firstname, body.Email, hash, now); err != nil {
+	if err := accounts.DAO().Create(uid, body.Firstname, body.Email, hash, unsubTok, now); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}

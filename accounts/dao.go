@@ -6,6 +6,7 @@ package accounts
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"remy.io/scratche/log"
@@ -105,16 +106,48 @@ func (d *AccountDAO) UserByEmail(email string) (SimpleUser, string, error) {
 }
 
 // Create inserts the given account in database.
-func (d *AccountDAO) Create(uid uuid.UUID, firstname, email, hash string, t time.Time) error {
+func (d *AccountDAO) Create(uid uuid.UUID, firstname, email, hash, unsubTok string, t time.Time) error {
+	if _, err := d.DB.Exec(`
+		INSERT INTO "user"
+		("uid", "email", "firstname", "hash", "unsubscribe_token", "creation_time", "last_update")
+		VALUES
+		($1, $2, $3, $4, $5, $6, $7)
+	`, uid, email, firstname, hash, unsubTok, t, t); err != nil {
+		return log.Err("Account/Create", err)
+	}
+
+	return nil
+}
+
+// Unsubscribe inserts an entry in the unsubscribe table indicating
+// that an user doesn't wan't to receive any email anymore.
+func (d *AccountDAO) Unsubscribe(token, reason string) error {
+	// find the user having this unsubscribe token
 	var err error
+	var uid uuid.UUID
+
+	if err = d.DB.QueryRow(`
+		SELECT "uid" FROM "user"
+		WHERE "unsubscribe_token" = $1
+		LIMIT 1`, token).Scan(&uid); err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("Unsubscribe: unknown token: %s", token)
+		} else {
+			return err
+		}
+	}
+
+	if uid.IsNil() {
+		return fmt.Errorf("Unsubscribe: nil uid.")
+	}
 
 	if _, err = d.DB.Exec(`
-		INSERT INTO "user"
-		("uid", "email", "firstname", "hash", "creation_time", "last_update")
+		INSERT INTO "emailing_unsubscribe"
+		(owner_uid, reason, creation_time)
 		VALUES
-		($1, $2, $3, $4, $5, $6)
-	`, uid, email, firstname, hash, t, t); err != nil {
-		return log.Err("Account/Create:", err)
+		($1, $2, $3)
+	`, token, reason, time.Now()); err != nil {
+		return log.Err("Account/Unsubscribe", err)
 	}
 
 	return nil
