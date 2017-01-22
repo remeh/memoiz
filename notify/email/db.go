@@ -32,7 +32,7 @@ func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
 		WHERE
 			-- send the first mail 1 day after the
 			-- user subscription
-			u."creation_time" + interval '1 day' < now()
+			u."creation_time" + interval '`+EmailFirstAfter+`' < now()
 			AND
 			-- send only to people not unsubscribed
 			eu."creation_time" IS NULL
@@ -60,7 +60,6 @@ func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
 			t = nt.Time
 		}
 
-		fmt.Println(t, d, time.Since(t))
 		if time.Since(t) > d {
 			uids = append(uids, uid)
 		}

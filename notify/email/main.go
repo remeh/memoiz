@@ -18,9 +18,11 @@ const (
 	RunFrequency          = time.Minute
 	EmailFrequency        = time.Hour * 24
 	EmailFrequencyPg      = "1 day"
-	//RunFrequency   = time.Second * 10
-	//EmailFrequency = time.Second * 30
-	//EmailFrequencyPg = "30 second"
+	EmailFirstAfter       = "1 day"
+	//RunFrequency     = time.Second * 10
+	//EmailFrequency   = time.Minute * 3
+	//EmailFrequencyPg = "3 minute"
+	//EmailFirstAfter  = "3 minute"
 )
 
 func main() {
