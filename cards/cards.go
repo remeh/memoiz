@@ -3,9 +3,9 @@ package cards
 import (
 	"database/sql/driver"
 
-	"remy.io/scratche/mind"
-	"remy.io/scratche/storage"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/mind"
+	"remy.io/memoiz/storage"
+	"remy.io/memoiz/uuid"
 )
 
 type CardState string

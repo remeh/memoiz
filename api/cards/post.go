@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"time"
 
-	"remy.io/scratche/api"
-	"remy.io/scratche/cards"
-	"remy.io/scratche/mind"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/api"
+	"remy.io/memoiz/cards"
+	"remy.io/memoiz/mind"
+	"remy.io/memoiz/uuid"
 )
 
 type Post struct {

@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"remy.io/scratche/config"
-	"remy.io/scratche/log"
+	"remy.io/memoiz/config"
+	"remy.io/memoiz/log"
 )
 
 func init() {

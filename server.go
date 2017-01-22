@@ -1,4 +1,4 @@
-// Scratche backend.
+// Memoiz backend.
 //
 // Listening server.
 //
@@ -9,9 +9,9 @@ package main
 import (
 	"net/http"
 
-	"remy.io/scratche/config"
-	l "remy.io/scratche/log"
-	"remy.io/scratche/storage"
+	"remy.io/memoiz/config"
+	l "remy.io/memoiz/log"
+	"remy.io/memoiz/storage"
 
 	"github.com/gorilla/mux"
 )

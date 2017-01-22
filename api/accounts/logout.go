@@ -3,8 +3,8 @@ package accounts
 import (
 	"net/http"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/api"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/api"
 )
 
 type Logout struct{}

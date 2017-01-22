@@ -1,6 +1,6 @@
 package mind
 
-import "remy.io/scratche/uuid"
+import "remy.io/memoiz/uuid"
 
 type Stub struct {
 }

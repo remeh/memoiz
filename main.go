@@ -1,4 +1,4 @@
-// Scratche Backend
+// Memoiz Backend
 //
 // Main
 //
@@ -9,12 +9,12 @@ package main
 import (
 	"net/http"
 
-	"remy.io/scratche/api/accounts"
-	"remy.io/scratche/api/adapter"
-	"remy.io/scratche/api/cards"
-	"remy.io/scratche/api/example"
-	"remy.io/scratche/config"
-	l "remy.io/scratche/log"
+	"remy.io/memoiz/api/accounts"
+	"remy.io/memoiz/api/adapter"
+	"remy.io/memoiz/api/cards"
+	"remy.io/memoiz/api/example"
+	"remy.io/memoiz/config"
+	l "remy.io/memoiz/log"
 )
 
 func main() {

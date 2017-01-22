@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"remy.io/scratche/log"
+	"remy.io/memoiz/log"
 )
 
 type LogHandler struct {

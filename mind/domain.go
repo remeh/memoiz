@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"remy.io/scratche/log"
-	"remy.io/scratche/storage"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/storage"
 )
 
 // guessByDomains retrieve the Category which seems to represent

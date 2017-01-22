@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/api"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/api"
 )
 
 type AuthHandler struct {

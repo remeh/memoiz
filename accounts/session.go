@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/uuid"
 )
 
 const (

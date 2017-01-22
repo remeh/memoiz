@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"reflect"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/log"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/uuid"
 )
 
 // Request

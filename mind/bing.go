@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"remy.io/scratche/config"
-	"remy.io/scratche/log"
-	"remy.io/scratche/storage"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/config"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/storage"
+	"remy.io/memoiz/uuid"
 
 	"github.com/buger/jsonparser"
 	"github.com/lib/pq"

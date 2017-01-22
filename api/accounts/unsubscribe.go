@@ -3,9 +3,9 @@ package accounts
 import (
 	"net/http"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/api"
-	"remy.io/scratche/log"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/api"
+	"remy.io/memoiz/log"
 
 	"github.com/gorilla/mux"
 )

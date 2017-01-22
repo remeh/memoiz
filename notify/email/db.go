@@ -7,12 +7,12 @@ import (
 
 	"github.com/lib/pq"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/cards"
-	"remy.io/scratche/log"
-	"remy.io/scratche/mind"
-	"remy.io/scratche/storage"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/cards"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/mind"
+	"remy.io/memoiz/storage"
+	"remy.io/memoiz/uuid"
 )
 
 // getOwners returns a given amount of owner

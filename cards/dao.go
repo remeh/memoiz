@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"time"
 
-	"remy.io/scratche/log"
-	"remy.io/scratche/storage"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/storage"
+	"remy.io/memoiz/uuid"
 )
 
 type CardsDAO struct {

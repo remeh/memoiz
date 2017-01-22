@@ -1,4 +1,4 @@
-// Scratche Backend
+// Memoiz Backend
 //
 // Runtime configuration.
 //
@@ -9,7 +9,7 @@ package config
 import (
 	"strings"
 
-	"remy.io/scratche/log"
+	"remy.io/memoiz/log"
 
 	"github.com/vrischmann/envconfig"
 )
@@ -34,7 +34,7 @@ type Configuration struct {
 	// Resources directory
 	ResDir string `envconfig:"RES,default=resources/"`
 	// Connection string
-	ConnString string `envconfig:"CONN,default=host=/var/run/postgresql sslmode=disable user=scratche dbname=scratche password=scratche"`
+	ConnString string `envconfig:"CONN,default=host=/var/run/postgresql sslmode=disable user=memoiz dbname=memoiz password=memoiz"`
 	// Azure Web search api key
 	BingApiKey string `envconfig:"BING,optional"`
 	// Google Knowledge Graph api key

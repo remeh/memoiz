@@ -1,7 +1,7 @@
 package accounts
 
 import (
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/uuid"
 
 	"golang.org/x/crypto/bcrypt"
 )

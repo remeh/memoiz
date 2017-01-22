@@ -3,8 +3,8 @@ package cards
 import (
 	"net/http"
 
-	"remy.io/scratche/api"
-	"remy.io/scratche/cards"
+	"remy.io/memoiz/api"
+	"remy.io/memoiz/cards"
 )
 
 type Get struct {

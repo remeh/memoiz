@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/api"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/api"
+	"remy.io/memoiz/uuid"
 )
 
 type Create struct{}

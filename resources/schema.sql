@@ -1,13 +1,13 @@
 -- Database init
-CREATE USER scratche WITH UNENCRYPTED PASSWORD 'scratche';
-CREATE DATABASE "scratche";
-GRANT ALL ON DATABASE "scratche" TO "scratche";
+CREATE USER memoiz WITH UNENCRYPTED PASSWORD 'memoiz';
+CREATE DATABASE "memoiz";
+GRANT ALL ON DATABASE "memoiz" TO "memoiz";
 
--- Switch to the scratche db
-\connect "scratche";
+-- Switch to the memoiz db
+\connect "memoiz";
 CREATE EXTENSION fuzzystrmatch; -- create the fuzzy match ext
--- Now connect as the scratche user.
-set role "scratche";
+-- Now connect as the memoiz user.
+set role "memoiz";
 
 -- User
 

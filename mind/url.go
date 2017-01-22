@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"time"
 
-	"remy.io/scratche/log"
-	"remy.io/scratche/storage"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/storage"
+	"remy.io/memoiz/uuid"
 
 	"github.com/PuerkitoBio/goquery"
 )

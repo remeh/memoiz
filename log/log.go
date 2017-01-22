@@ -1,4 +1,4 @@
-// Scratche Backend - Logger.
+// Memoiz Backend - Logger.
 //
 // Logger helpers.
 //

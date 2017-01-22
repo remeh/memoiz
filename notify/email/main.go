@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/cards"
-	"remy.io/scratche/config"
-	"remy.io/scratche/log"
-	"remy.io/scratche/notify"
-	"remy.io/scratche/storage"
-	"remy.io/scratche/uuid"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/cards"
+	"remy.io/memoiz/config"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/notify"
+	"remy.io/memoiz/storage"
+	"remy.io/memoiz/uuid"
 )
 
 const (

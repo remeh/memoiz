@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"remy.io/scratche/accounts"
-	"remy.io/scratche/cards"
-	"remy.io/scratche/config"
-	"remy.io/scratche/log"
-	"remy.io/scratche/mind"
-	"remy.io/scratche/notify/template"
+	"remy.io/memoiz/accounts"
+	"remy.io/memoiz/cards"
+	"remy.io/memoiz/config"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/mind"
+	"remy.io/memoiz/notify/template"
 )
 
 var (
 	UseMail = false
 
-	Sender = "scratch@remy.io"
+	Sender = "memo@remy.io"
 )
 
 func init() {
