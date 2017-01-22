@@ -40,6 +40,9 @@ type Configuration struct {
 	// Google Knowledge Graph api key
 	KgApiKey string `envconfig:"KG,optional"`
 
+	// URL of the app calling the backend. For CORS purpose.
+	AppUrl string `envconfig:"APP_URL,default=http://app.memoiz.com"`
+
 	// Smtp Configuration
 	SmtpHost     string `envconfig:"SMTP_HOST,optional"`
 	SmtpPort     int    `envconfig:"SMTP_PORT,optional"`

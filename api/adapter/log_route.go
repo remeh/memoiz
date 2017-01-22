@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
 )
 
@@ -16,8 +17,7 @@ type LogHandler struct {
 }
 
 func (a LogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// FIXME(remy): finish CORS
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", config.Config.AppUrl)
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	// propagate to the next handler
