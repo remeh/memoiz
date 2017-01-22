@@ -17,8 +17,10 @@ const (
 	CategoryReminderEmail = "CategoryReminderEmail"
 	RunFrequency          = time.Minute
 	EmailFrequency        = time.Hour * 24
+	EmailFrequencyPg      = "1 day"
 	//RunFrequency   = time.Second * 10
 	//EmailFrequency = time.Second * 30
+	//EmailFrequencyPg = "30 second"
 )
 
 func main() {

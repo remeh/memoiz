@@ -101,13 +101,16 @@ func getCards(owners uuid.UUIDs) (map[string]cards.Cards, error) {
 		}
 	}
 
-	// finally query
+	// finally query cards created between last mail and this mail.
 
 	if rows, err = storage.DB().Query(`
 		SELECT "owner_uid", array_agg("uid"), array_agg(text), array_agg("r_category")
 		FROM "card"
 		WHERE
 			"owner_uid" IN `+in+`
+			AND
+			-- cards created between last mail and this email
+			"creation_time" + interval '`+EmailFrequencyPg+`' > now()
 		GROUP BY "owner_uid"
 	`, p...); err != nil {
 		return nil, log.Err("getCards", err)
