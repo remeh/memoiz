@@ -18,10 +18,11 @@
     <div class="mui--text-title">Your notes are waiting for you. We're here to remind you!</div>
   </div>
 
-  {{ range . }}
+  {{ range .Cards }}
     {{ template "category.html" . }}
   {{ end }}
 
+  <span style="font-size:0.8em; margin-top: 1em;">This email is sent to you because you're an user of Scratche. If you're willing to, <a href='scratche.com/api/1.0/emailing/unsubscribe/{{ .SimpleUser.UnsubToken }}' title='click here to unsubscribe'>click here to unsubscribe</a> to not receive these emails anymore.</span>
   </td></tr></table>
   </body>
 </html>

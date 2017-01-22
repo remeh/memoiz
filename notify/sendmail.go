@@ -34,6 +34,11 @@ func init() {
 
 // ----------------------
 
+type scmParam struct {
+	SimpleUser accounts.SimpleUser
+	Cards      map[mind.Category]cards.Cards
+}
+
 // SendCategoryMail sends an email to the given email
 // to remind him he has recently added some new cards.
 func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]cards.Cards) error {
@@ -61,7 +66,12 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]cards.Cards)
 		return fmt.Errorf("SendCategoryMail: can't find base template")
 	}
 
-	if err := html.Execute(&buff, cs); err != nil {
+	p := scmParam{
+		SimpleUser: acc,
+		Cards:      cs,
+	}
+
+	if err := html.Execute(&buff, p); err != nil {
 		log.Err("SendCategoryMail", err)
 	}
 

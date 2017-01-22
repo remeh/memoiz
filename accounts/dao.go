@@ -75,11 +75,11 @@ func (d *AccountDAO) UserByUid(uid uuid.UUID) (SimpleUser, string, error) {
 	var hash string
 
 	if d.DB.QueryRow(`
-		SELECT "uid", "firstname", "email", "hash"
+		SELECT "uid", "firstname", "email", "unsubscribe_token", "hash"
 		FROM "user"
 		WHERE
 			"uid" = $1
-	`, uid).Scan(&su.Uid, &su.Firstname, &su.Email, &hash); err != nil && err != sql.ErrNoRows {
+	`, uid).Scan(&su.Uid, &su.Firstname, &su.Email, &su.UnsubToken, &hash); err != nil && err != sql.ErrNoRows {
 		return su, "", err
 	}
 
@@ -94,11 +94,11 @@ func (d *AccountDAO) UserByEmail(email string) (SimpleUser, string, error) {
 	var hash string
 
 	if d.DB.QueryRow(`
-		SELECT "uid", "firstname", "email", "hash"
+		SELECT "uid", "firstname", "email", "unsubscribe_token", "hash"
 		FROM "user"
 		WHERE
 			"email" = $1
-	`, email).Scan(&su.Uid, &su.Firstname, &su.Email, &hash); err != nil && err != sql.ErrNoRows {
+	`, email).Scan(&su.Uid, &su.Firstname, &su.Email, &su.UnsubToken, &hash); err != nil && err != sql.ErrNoRows {
 		return su, "", err
 	}
 
@@ -143,10 +143,10 @@ func (d *AccountDAO) Unsubscribe(token, reason string) error {
 
 	if _, err = d.DB.Exec(`
 		INSERT INTO "emailing_unsubscribe"
-		(owner_uid, reason, creation_time)
+		(owner_uid, token, reason, creation_time)
 		VALUES
-		($1, $2, $3)
-	`, token, reason, time.Now()); err != nil {
+		($1, $2, $3, $4)
+	`, uid, token, reason, time.Now()); err != nil {
 		return log.Err("Account/Unsubscribe", err)
 	}
 

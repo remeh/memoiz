@@ -15,14 +15,14 @@ import (
 
 const (
 	CategoryReminderEmail = "CategoryReminderEmail"
-	RunFrequency          = time.Minute
-	EmailFrequency        = time.Hour * 24
-	EmailFrequencyPg      = "1 day"
-	EmailFirstAfter       = "1 day"
-	//RunFrequency     = time.Second * 10
-	//EmailFrequency   = time.Minute * 3
-	//EmailFrequencyPg = "3 minute"
-	//EmailFirstAfter  = "3 minute"
+	//RunFrequency          = time.Minute
+	//EmailFrequency        = time.Hour * 24
+	//EmailFrequencyPg      = "1 day"
+	//EmailFirstAfter       = "1 day"
+	RunFrequency     = time.Second * 10
+	EmailFrequency   = time.Minute * 3
+	EmailFrequencyPg = "3 minute"
+	EmailFirstAfter  = "3 minute"
 )
 
 func main() {

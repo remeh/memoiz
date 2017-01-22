@@ -136,14 +136,17 @@ CREATE TABLE "emailing_sent" (
 CREATE UNIQUE INDEX ON "emailing_sent" ("uid");
 CREATE INDEX ON "emailing_sent" ("owner_uid");
 CREATE INDEX ON "emailing_sent" ("owner_uid","creation_time");
+ALTER TABLE "emailing_sent" ADD CONSTRAINT "emailing_sent_owner_uid" FOREIGN KEY ("owner_uid") REFERENCES "user" ("uid") MATCH FULL;
 
 CREATE TABLE "emailing_unsubscribe" (
     "owner_uid" text NOT NULL,
+    "token" text NOT NULL,
     "reason" text DEFAULT '',
     "creation_time" timestamp with time zone DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX ON "emailing_unsubscribe" ("owner_uid");
+ALTER TABLE "emailing_unsubscribe" ADD CONSTRAINT "emailing_unsubscribe_owner_uid" FOREIGN KEY ("owner_uid") REFERENCES "user" ("uid") MATCH FULL;
 
 ----------------------
 -- DB Schema

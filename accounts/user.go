@@ -10,6 +10,8 @@ type SimpleUser struct {
 	Uid       uuid.UUID `json:"uid"`
 	Firstname string    `json:"firstname"`
 	Email     string    `json:"email"`
+
+	UnsubToken string `json:"-"`
 }
 
 // IsPasswordSecure checks that the given password
