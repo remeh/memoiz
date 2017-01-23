@@ -6,7 +6,7 @@ import (
 	"net/smtp"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
 	"remy.io/memoiz/mind"
@@ -36,12 +36,12 @@ func init() {
 
 type scmParam struct {
 	SimpleUser accounts.SimpleUser
-	Cards      map[mind.Category]cards.Cards
+	Memos      map[mind.Category]memos.Memos
 }
 
 // SendCategoryMail sends an email to the given email
-// to remind him he has recently added some new cards.
-func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]cards.Cards) error {
+// to remind him he has recently added some new memos.
+func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos) error {
 	if !UseMail {
 		return nil
 	}
@@ -68,7 +68,7 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]cards.Cards)
 
 	p := scmParam{
 		SimpleUser: acc,
-		Cards:      cs,
+		Memos:      cs,
 	}
 
 	if err := html.Execute(&buff, p); err != nil {

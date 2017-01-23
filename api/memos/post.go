@@ -1,11 +1,11 @@
-package cards
+package memos
 
 import (
 	"net/http"
 	"time"
 
 	"remy.io/memoiz/api"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
 	"remy.io/memoiz/uuid"
 )
@@ -19,7 +19,7 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// ----------------------
 
 	var body struct {
-		CardUid uuid.UUID `json:"card_uid"`
+		MemoUid uuid.UUID `json:"memo_uid"`
 		Text    string    `json:"text"`
 		Enrich  bool      `json:"enrich"`
 	}
@@ -27,12 +27,12 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	api.ReadJsonBody(r, &body)
 
 	var err error
-	var sc cards.Card
+	var sc memos.Memo
 
-	if body.CardUid.IsNil() {
-		sc, err = cards.DAO().New(uid, body.Text, time.Now())
+	if body.MemoUid.IsNil() {
+		sc, err = memos.DAO().New(uid, body.Text, time.Now())
 	} else {
-		sc, err = cards.DAO().UpdateText(uid, body.CardUid, body.Text, time.Now())
+		sc, err = memos.DAO().UpdateText(uid, body.MemoUid, body.Text, time.Now())
 	}
 
 	if body.Enrich {

@@ -1,8 +1,8 @@
-// Cards DAO.
+// Memos DAO.
 //
 // Rémy Mathieu © 2016
 
-package cards
+package memos
 
 import (
 	"database/sql"
@@ -14,53 +14,53 @@ import (
 	"remy.io/memoiz/uuid"
 )
 
-type CardsDAO struct {
+type MemosDAO struct {
 	DB *sql.DB
 }
 
 // ----------------------
 
-var dao *CardsDAO
+var dao *MemosDAO
 
-func DAO() *CardsDAO {
+func DAO() *MemosDAO {
 	if dao != nil {
 		return dao
 	}
 
-	dao = &CardsDAO{
+	dao = &MemosDAO{
 		DB: storage.DB(),
 	}
 
 	if err := dao.InitStmt(); err != nil {
-		log.Error("Can't prepare CardsDAO")
+		log.Error("Can't prepare MemosDAO")
 		panic(err)
 	}
 
 	return dao
 }
 
-func (d *CardsDAO) InitStmt() error {
+func (d *MemosDAO) InitStmt() error {
 	var err error
 	return err
 }
 
 // Update updates the text of the given
-// card. It also updates the last_update time.
-func (d *CardsDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (Card, error) {
+// memo. It also updates the last_update time.
+func (d *MemosDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (Memo, error) {
 	var position int
 
 	if err := d.DB.QueryRow(`
-		UPDATE "card"
+		UPDATE "memo"
 		SET
 			"text" = $1, "last_update" = $2
 		WHERE
 			"uid" = $3 AND "owner_uid" = $4
 		RETURNING "position"
 	`, text, t, uid, owner).Scan(&position); err != nil {
-		return Card{}, log.Err("UpdateText:", err)
+		return Memo{}, log.Err("UpdateText:", err)
 	}
 
-	return Card{
+	return Memo{
 		Uid:      uid,
 		Text:     text,
 		Position: position,
@@ -68,13 +68,13 @@ func (d *CardsDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (C
 }
 
 // GetRichInfo returns the rich information added
-// to the card: category, link enrichment (img), etc.
-func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
-	var ri CardRichInfo
+// to the memo: category, link enrichment (img), etc.
+func (d *MemosDAO) GetRichInfo(owner, uid uuid.UUID) (MemoRichInfo, error) {
+	var ri MemoRichInfo
 
 	if err := d.DB.QueryRow(`
 		SELECT "r_category", "r_image", "r_url", "r_title", "last_update"
-		FROM "card"
+		FROM "memo"
 		WHERE
 			"uid" = $1
 			AND
@@ -89,9 +89,9 @@ func (d *CardsDAO) GetRichInfo(owner, uid uuid.UUID) (CardRichInfo, error) {
 	return ri, nil
 }
 
-func (d *CardsDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
+func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
-		UPDATE "card"
+		UPDATE "memo"
 		SET
 			"archive_time" = $1,
 			"state" = $2
@@ -99,19 +99,19 @@ func (d *CardsDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 			"uid" = $3
 			AND
 			"owner_uid" = $4
-	`, t, CardArchived, uid, owner); err != nil {
-		return log.Err("cards.Archive", err)
+	`, t, MemoArchived, uid, owner); err != nil {
+		return log.Err("memos.Archive", err)
 	}
 	return nil
 }
 
-// GetByUser returns the cards of the given user.
-func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
-	rv := make([]Card, 0)
+// GetByUser returns the memos of the given user.
+func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState) ([]Memo, error) {
+	rv := make([]Memo, 0)
 
 	rows, err := d.DB.Query(`
 		SELECT "uid", "text", "position", "r_category", "r_image", "r_url", "r_title", "last_update"
-		FROM "card"
+		FROM "memo"
 		WHERE
 			"owner_uid" = $1
 			AND
@@ -125,14 +125,14 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 
 	defer rows.Close()
 	for rows.Next() {
-		var sc Card
-		var ri CardRichInfo
+		var sc Memo
+		var ri MemoRichInfo
 
 		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image, &ri.Url, &ri.Title, &ri.LastUpdate); err != nil {
 			return rv, err
 		}
 
-		sc.CardRichInfo = ri
+		sc.MemoRichInfo = ri
 
 		rv = append(rv, sc)
 	}
@@ -140,38 +140,38 @@ func (d *CardsDAO) GetByUser(uid uuid.UUID, state CardState) ([]Card, error) {
 	return rv, nil
 }
 
-// New creates a new card for the given user
+// New creates a new memo for the given user
 // and returns its ID + position.
-func (d *CardsDAO) New(owner uuid.UUID, text string, t time.Time) (Card, error) {
-	var rv Card
+func (d *MemosDAO) New(owner uuid.UUID, text string, t time.Time) (Memo, error) {
+	var rv Memo
 
-	cardUid := uuid.New()
+	memoUid := uuid.New()
 
 	if err := d.DB.QueryRow(`
-		INSERT INTO "card"
+		INSERT INTO "memo"
 		("uid", "owner_uid", "text", "position", "creation_time", "last_update")
 		SELECT $1, $2, $3, coalesce(max("position"),0)+1, $4, $4
-		FROM "card"
+		FROM "memo"
 		WHERE "owner_uid" = $2
 		RETURNING "position"
-	`, cardUid, owner, text, t).Scan(&rv.Position); err != nil {
+	`, memoUid, owner, text, t).Scan(&rv.Position); err != nil {
 		if err == sql.ErrNoRows {
-			return rv, fmt.Errorf("cards.New: no position returned")
+			return rv, fmt.Errorf("memos.New: no position returned")
 		}
-		return rv, fmt.Errorf("cards.New: %v", err)
+		return rv, fmt.Errorf("memos.New: %v", err)
 	}
 
-	rv.Uid = cardUid
+	rv.Uid = memoUid
 	rv.Text = text
 
 	return rv, nil
 }
 
-// Delete sets the deletion time of the given card in database
-// and changes the state of the card.
-func (d *CardsDAO) Delete(owner, uid uuid.UUID, t time.Time) error {
+// Delete sets the deletion time of the given memo in database
+// and changes the state of the memo.
+func (d *MemosDAO) Delete(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
-		UPDATE "card"
+		UPDATE "memo"
 		SET
 			"deletion_time" = $1
 		WHERE
@@ -179,17 +179,17 @@ func (d *CardsDAO) Delete(owner, uid uuid.UUID, t time.Time) error {
 			AND
 			"owner_uid" = $3
 	`, t, uid, owner); err != nil {
-		return fmt.Errorf("cards.Delete: %v", err)
+		return fmt.Errorf("memos.Delete: %v", err)
 	}
 	return nil
 }
 
-func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) error {
+func (d *MemosDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) error {
 	var tx *sql.Tx
 	var err error
 
 	if tx, err = d.DB.Begin(); err != nil {
-		return fmt.Errorf("cards.SwitchPosition: can't start transaction: %v", err)
+		return fmt.Errorf("memos.SwitchPosition: can't start transaction: %v", err)
 	}
 
 	// retrieve actual position
@@ -198,38 +198,38 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 	var lp, rp int64
 
 	if err = tx.QueryRow(`
-		SELECT "position" FROM "card"
+		SELECT "position" FROM "memo"
 		WHERE "uid" = $1 AND "owner_uid" = $2 FOR UPDATE`,
 		left, owner).Scan(&lp); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("cards.SwitchPosition: can't retrieve left card pos: %v", err)
+		return fmt.Errorf("memos.SwitchPosition: can't retrieve left memo pos: %v", err)
 	}
 
 	if err = tx.QueryRow(`
-		SELECT "position" FROM "card"
+		SELECT "position" FROM "memo"
 		WHERE "uid" = $1 AND "owner_uid" = $2 FOR UPDATE`,
 		right, owner).Scan(&rp); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("cards.SwitchPosition: can't retrieve right card pos: %v", err)
+		return fmt.Errorf("memos.SwitchPosition: can't retrieve right memo pos: %v", err)
 	}
 
 	// set new position
 	// ----------------------
 
 	if _, err := tx.Exec(`
-		UPDATE "card" SET "position" = $1
+		UPDATE "memo" SET "position" = $1
 		WHERE "uid" = $2 AND "owner_uid" = $3`,
 		rp, left, owner); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("cards.SwitchPosition: can't update left card pos: %v", err)
+		return fmt.Errorf("memos.SwitchPosition: can't update left memo pos: %v", err)
 	}
 
 	if _, err := tx.Exec(`
-		UPDATE "card" SET "position" = $1
+		UPDATE "memo" SET "position" = $1
 		WHERE "uid" = $2 AND "owner_uid" = $3`,
 		lp, right, owner); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("cards.SwitchPosition: can't update right card pos: %v", err)
+		return fmt.Errorf("memos.SwitchPosition: can't update right memo pos: %v", err)
 	}
 
 	// commit the transaction
@@ -237,7 +237,7 @@ func (d *CardsDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) err
 
 	if err = tx.Commit(); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("cards.SwitchPosition: can't commit transaction: %v", err)
+		return fmt.Errorf("memos.SwitchPosition: can't commit transaction: %v", err)
 	}
 
 	return nil

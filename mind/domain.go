@@ -9,7 +9,7 @@ import (
 )
 
 // guessByDomains retrieve the Category which seems to represent
-// the best the given card.
+// the best the given memo.
 // The weight the choice is also returned.
 func guessByDomains(domains []string) (Category, int, error) {
 	if len(domains) == 0 {

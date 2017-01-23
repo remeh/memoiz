@@ -11,8 +11,8 @@ import (
 
 	"remy.io/memoiz/api/accounts"
 	"remy.io/memoiz/api/adapter"
-	"remy.io/memoiz/api/cards"
 	"remy.io/memoiz/api/example"
+	"remy.io/memoiz/api/memos"
 	"remy.io/memoiz/config"
 	l "remy.io/memoiz/log"
 )
@@ -56,13 +56,13 @@ func declareApiRoutes(s *Server) {
 
 	s.AddApi("/1.0/emailing/unsubscribe/{token}", log(accounts.Unsubscribe{}), "GET")
 
-	// Cards routes
+	// Memos routes
 	// ----------------------
 
-	s.AddApi("/1.0/cards", log(auth(cards.Get{})), "GET")
-	s.AddApi("/1.0/cards", log(auth(cards.Post{})), "POST")
-	s.AddApi("/1.0/cards/switch/{left}/{right}", log(auth(cards.SwitchPosition{})), "POST")
-	s.AddApi("/1.0/cards/{uid}/archive", log(auth(cards.Archive{})), "POST")
-	s.AddApi("/1.0/cards/{uid}/rich", log(auth(cards.Rich{})), "GET")
+	s.AddApi("/1.0/memos", log(auth(memos.Get{})), "GET")
+	s.AddApi("/1.0/memos", log(auth(memos.Post{})), "POST")
+	s.AddApi("/1.0/memos/switch/{left}/{right}", log(auth(memos.SwitchPosition{})), "POST")
+	s.AddApi("/1.0/memos/{uid}/archive", log(auth(memos.Archive{})), "POST")
+	s.AddApi("/1.0/memos/{uid}/rich", log(auth(memos.Rich{})), "GET")
 
 }

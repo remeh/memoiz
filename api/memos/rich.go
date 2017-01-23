@@ -1,17 +1,17 @@
-package cards
+package memos
 
 import (
 	"net/http"
 
 	"remy.io/memoiz/api"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/uuid"
 
 	"github.com/gorilla/mux"
 )
 
 // Enrich returns the enriched information
-// of the given card.
+// of the given memo.
 type Rich struct{}
 
 func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -20,12 +20,12 @@ func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// read parameters
 	// ----------------------
 
-	var cardUid uuid.UUID
+	var memoUid uuid.UUID
 	var err error
 
 	vars := mux.Vars(r)
 
-	if cardUid, err = uuid.Parse(vars["uid"]); err != nil {
+	if memoUid, err = uuid.Parse(vars["uid"]); err != nil {
 		api.RenderBadParameters(w)
 		return
 	}
@@ -34,14 +34,14 @@ func (c Rich) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// ----------------------
 
 	// TODO(remy): do we want to test text ?
-	if cardUid.IsNil() {
+	if memoUid.IsNil() {
 		api.RenderBadParameters(w)
 		return
 	}
 
 	// ----------------------
 
-	ri, err := cards.DAO().GetRichInfo(uid, cardUid)
+	ri, err := memos.DAO().GetRichInfo(uid, memoUid)
 
 	if err != nil {
 		api.RenderErrJson(w, err)

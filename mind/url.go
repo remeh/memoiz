@@ -168,9 +168,9 @@ func (u *Url) Analyze() error {
 }
 
 func (u *Url) Store(uid uuid.UUID) error {
-	// update the card image and URL
+	// update the memo image and URL
 	if _, err := storage.DB().Exec(`
-		UPDATE "card"
+		UPDATE "memo"
 		SET "r_url" = $1, "r_image" = $2, "r_title" = $3
 		WHERE "uid" = $4
 	`, u.url, u.image, u.title, uid); err != nil {
@@ -179,7 +179,7 @@ func (u *Url) Store(uid uuid.UUID) error {
 	if u.category != Unknown {
 		fmt.Println(u.category)
 		if _, err := storage.DB().Exec(`
-		UPDATE "card"
+		UPDATE "memo"
 		SET "r_category" = $1
 		WHERE "uid" = $2
 	`, u.category, uid); err != nil {

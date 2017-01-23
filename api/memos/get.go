@@ -1,10 +1,10 @@
-package cards
+package memos
 
 import (
 	"net/http"
 
 	"remy.io/memoiz/api"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 )
 
 type Get struct {
@@ -13,7 +13,7 @@ type Get struct {
 func (c Get) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uid := api.ReadUser(r)
 
-	cs, err := cards.DAO().GetByUser(uid, cards.CardActive)
+	cs, err := memos.DAO().GetByUser(uid, memos.MemoActive)
 
 	if err != nil {
 		api.RenderErrJson(w, err)

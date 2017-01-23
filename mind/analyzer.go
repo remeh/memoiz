@@ -32,7 +32,7 @@ type Analyzer interface {
 	TryCache(string) (bool, error)
 	Fetch(string) error
 	Analyze() error
-	Store(cardUid uuid.UUID) error
+	Store(memoUid uuid.UUID) error
 	Categories() Categories
 }
 
@@ -114,14 +114,14 @@ func analyze(analyzers []Analyzer, uid uuid.UUID, text string) {
 			continue
 		}
 
-		// update the Card if anything has been found
+		// update the Memo if anything has been found
 		// ----------------------
 
 		cats := a.Categories()
 		if cats != nil && len(cats) > 0 && cats[0] != Unknown {
-			// update the card
+			// update the memo
 			if _, err := storage.DB().Exec(`
-			UPDATE "card"
+			UPDATE "memo"
 			SET "r_category" = $1
 			WHERE "uid" = $2
 		`, cats[0], uid); err != nil {

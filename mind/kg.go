@@ -139,7 +139,7 @@ func (k *Kg) Analyze() error {
 	return nil
 }
 
-func (k *Kg) Store(cardUid uuid.UUID) error {
+func (k *Kg) Store(memoUid uuid.UUID) error {
 	if !UseKg {
 		return nil
 	}
@@ -149,10 +149,10 @@ func (k *Kg) Store(cardUid uuid.UUID) error {
 	// store
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "kg_result"
-		("uid", "card_uid", "card_text", "types", "description", "category", "creation_time")
+		("uid", "memo_uid", "memo_text", "types", "description", "category", "creation_time")
 		VALUES
 		($1, $2, $3, $4, $5, $6, $7)
-	`, uid, cardUid, k.text, pq.Array(k.types), k.description, pq.Array(k.categories), time.Now()); err != nil {
+	`, uid, memoUid, k.text, pq.Array(k.types), k.description, pq.Array(k.categories), time.Now()); err != nil {
 		return err
 	}
 

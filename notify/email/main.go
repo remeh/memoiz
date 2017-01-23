@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
 	"remy.io/memoiz/notify"
@@ -36,16 +36,16 @@ func main() {
 
 	for t := range ticker.C {
 		log.Debug("notify/email: waking up", t)
-		cards, err := fetch()
+		memos, err := fetch()
 		if err != nil {
 			log.Error("notify/email:", err)
 		}
 
-		if len(cards) == 0 {
+		if len(memos) == 0 {
 			continue
 		}
 
-		if err := send(cards, t); err != nil {
+		if err := send(memos, t); err != nil {
 			log.Error("notify/email", err)
 		}
 	}
@@ -56,9 +56,9 @@ func prepare() error {
 	return err
 }
 
-// fetch fetches Ids of cards for which notification
+// fetch fetches Ids of memos for which notification
 // has never been done.
-func fetch() (map[string]cards.Cards, error) {
+func fetch() (map[string]memos.Memos, error) {
 
 	// first we want to retrieve for whom we'll
 	// send some emails
@@ -71,20 +71,20 @@ func fetch() (map[string]cards.Cards, error) {
 		return nil, log.Err("fetch", err)
 	}
 
-	// gets the cards of these owners
+	// gets the memos of these owners
 	// ----------------------
 
 	if len(uids) == 0 {
-		return make(map[string]cards.Cards), nil
+		return make(map[string]memos.Memos), nil
 	}
 
-	return getCards(uids)
+	return getMemos(uids)
 }
 
 // TODO(remy): comment me.
-func send(cards map[string]cards.Cards, t time.Time) error {
-	for owner, cards := range cards {
-		cards = cards
+func send(memos map[string]memos.Memos, t time.Time) error {
+	for owner, memos := range memos {
+		memos = memos
 		log.Info("Sending for", owner)
 
 		// get the user
@@ -106,7 +106,7 @@ func send(cards map[string]cards.Cards, t time.Time) error {
 		// send the email
 		// ----------------------
 
-		if err := notify.SendCategoryMail(acc, cards.GroupByCategory()); err != nil {
+		if err := notify.SendCategoryMail(acc, memos.GroupByCategory()); err != nil {
 			return log.Err("send", err)
 		}
 

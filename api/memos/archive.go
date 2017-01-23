@@ -1,11 +1,11 @@
-package cards
+package memos
 
 import (
 	"net/http"
 	"time"
 
 	"remy.io/memoiz/api"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/uuid"
 
 	"github.com/gorilla/mux"
@@ -20,11 +20,11 @@ func (c Archive) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// read parameters
 	// ----------------------
 
-	var cardUid uuid.UUID
+	var memoUid uuid.UUID
 	var err error
 
 	vars := mux.Vars(r)
-	if cardUid, err = uuid.Parse(vars["uid"]); err != nil {
+	if memoUid, err = uuid.Parse(vars["uid"]); err != nil {
 		api.RenderBadParameters(w)
 		return
 	}
@@ -32,14 +32,14 @@ func (c Archive) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// test parameters
 	// ----------------------
 
-	if cardUid.IsNil() {
+	if memoUid.IsNil() {
 		api.RenderBadParameters(w)
 		return
 	}
 
 	// ----------------------
 
-	if err := cards.DAO().Archive(uid, cardUid, time.Now()); err != nil {
+	if err := memos.DAO().Archive(uid, memoUid, time.Now()); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}

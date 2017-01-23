@@ -8,7 +8,7 @@ import (
 	"github.com/lib/pq"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/log"
 	"remy.io/memoiz/mind"
 	"remy.io/memoiz/storage"
@@ -68,13 +68,13 @@ func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
 	return uids, nil
 }
 
-// getCards returns the cards per owners.
-func getCards(owners uuid.UUIDs) (map[string]cards.Cards, error) {
+// getMemos returns the memos per owners.
+func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 	var rows *sql.Rows
 	var err error
 
 	if len(owners) == 0 {
-		return nil, fmt.Errorf("notify/email: getCards: called with len(owners) == 0")
+		return nil, fmt.Errorf("notify/email: getMemos: called with len(owners) == 0")
 	}
 
 	// query
@@ -100,29 +100,29 @@ func getCards(owners uuid.UUIDs) (map[string]cards.Cards, error) {
 		}
 	}
 
-	// finally query cards created between last mail and this mail.
+	// finally query memos created between last mail and this mail.
 
 	if rows, err = storage.DB().Query(`
 		SELECT "owner_uid", array_agg("uid"), array_agg(text), array_agg("r_category")
-		FROM "card"
+		FROM "memo"
 		WHERE
 			"owner_uid" IN `+in+`
 			AND
-			-- cards created between last mail and this email
+			-- memos created between last mail and this email
 			"creation_time" + interval '`+EmailFrequencyPg+`' > now()
 		GROUP BY "owner_uid"
 	`, p...); err != nil {
-		return nil, log.Err("getCards", err)
+		return nil, log.Err("getMemos", err)
 	}
 
 	if rows == nil {
-		return make(map[string]cards.Cards), nil
+		return make(map[string]memos.Memos), nil
 	}
 
 	// read the results
 	// ----------------------
 
-	rv := make(map[string]cards.Cards)
+	rv := make(map[string]memos.Memos)
 
 	defer rows.Close()
 	for rows.Next() {
@@ -132,27 +132,27 @@ func getCards(owners uuid.UUIDs) (map[string]cards.Cards, error) {
 		var cats []int64
 
 		if err := rows.Scan(&uid, pq.Array(&uids), pq.Array(&texts), pq.Array(&cats)); err != nil {
-			log.Error("notify/email: getCards:", err, "Continuing.")
+			log.Error("notify/email: getMemos:", err, "Continuing.")
 			continue
 		}
 
 		if len(uids) != len(cats) || len(uids) != len(texts) {
-			log.Error("notify/email: getCards: len(uids) != len(cats) for", uid, "Continuing.")
+			log.Error("notify/email: getMemos: len(uids) != len(cats) for", uid, "Continuing.")
 			continue
 		}
 
-		cards := make(cards.Cards, len(uids))
+		memos := make(memos.Memos, len(uids))
 		for i, uid := range uids {
-			cards[i].Uid = uid
-			cards[i].CardRichInfo.Category = mind.Category(cats[i])
+			memos[i].Uid = uid
+			memos[i].MemoRichInfo.Category = mind.Category(cats[i])
 			if len(texts[i]) > 140 {
-				cards[i].Text = texts[i][:140] + "..."
+				memos[i].Text = texts[i][:140] + "..."
 			} else {
-				cards[i].Text = texts[i]
+				memos[i].Text = texts[i]
 			}
 		}
 
-		rv[uid] = cards
+		rv[uid] = memos
 	}
 
 	return rv, nil

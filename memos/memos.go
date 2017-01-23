@@ -1,4 +1,4 @@
-package cards
+package memos
 
 import (
 	"database/sql/driver"
@@ -8,40 +8,40 @@ import (
 	"remy.io/memoiz/uuid"
 )
 
-type CardState string
+type MemoState string
 
-func (c CardState) String() string {
+func (c MemoState) String() string {
 	return string(c)
 }
 
-func (c CardState) Value() (driver.Value, error) {
+func (c MemoState) Value() (driver.Value, error) {
 	return driver.Value(c.String()), nil
 }
 
 var (
-	// CardActive is an active card of the user.
-	CardActive CardState = "CardActive"
-	// CardArchived has been archived by the user.
-	CardArchived CardState = "CardArchived"
-	// CardDeleted is used when the user has deleted the card.
-	CardDeleted CardState = "CardDeleted"
+	// MemoActive is an active memo of the user.
+	MemoActive MemoState = "MemoActive"
+	// MemoArchived has been archived by the user.
+	MemoArchived MemoState = "MemoArchived"
+	// MemoDeleted is used when the user has deleted the memo.
+	MemoDeleted MemoState = "MemoDeleted"
 )
 
-type Cards []Card
+type Memos []Memo
 
-// Card only contains necessary fields
-// to represent a card.
+// Memo only contains necessary fields
+// to represent a memo.
 // RichInfo COULD be loaded.
-type Card struct {
+type Memo struct {
 	Uid      uuid.UUID `json:"uid"`
 	Text     string    `json:"text"`
 	Position int       `json:"-"`
 
 	// NOTE(remy): everything in RichInfo is optional
-	CardRichInfo
+	MemoRichInfo
 }
 
-type CardRichInfo struct {
+type MemoRichInfo struct {
 	// Loaded is true if the RichInfo are loaded.
 	// Even partially.
 	Loaded bool `json:"loaded,omitempty"`
@@ -55,19 +55,19 @@ type CardRichInfo struct {
 
 // ----------------------
 
-// GroupByCategory regroups the slice of cards per Category.
-func (cs Cards) GroupByCategory() map[mind.Category]Cards {
-	rv := make(map[mind.Category]Cards)
+// GroupByCategory regroups the slice of memos per Category.
+func (cs Memos) GroupByCategory() map[mind.Category]Memos {
+	rv := make(map[mind.Category]Memos)
 
 	for _, c := range cs {
-		v, exists := rv[c.CardRichInfo.Category]
+		v, exists := rv[c.MemoRichInfo.Category]
 
 		if !exists {
-			v = make(Cards, 0)
+			v = make(Memos, 0)
 		}
 
 		v = append(v, c)
-		rv[c.CardRichInfo.Category] = v
+		rv[c.MemoRichInfo.Category] = v
 	}
 
 	return rv

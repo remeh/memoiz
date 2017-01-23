@@ -1,11 +1,11 @@
-package cards
+package memos
 
 import (
 	"net/http"
 	"time"
 
 	"remy.io/memoiz/api"
-	"remy.io/memoiz/cards"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/uuid"
 
 	"github.com/gorilla/mux"
@@ -41,7 +41,7 @@ func (c SwitchPosition) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// ----------------------
 
-	if err := cards.DAO().SwitchPosition(leftUid, rightUid, uid, time.Now()); err != nil {
+	if err := memos.DAO().SwitchPosition(leftUid, rightUid, uid, time.Now()); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}

@@ -1,8 +1,10 @@
 # Short Term
 
-  * Supprimer image+url quand une card est éditée
-  * Retirer(/changer?) la catégorie d'une carte
-  * Historiser les changements/retrait de catégorie d'une carte ?
+  * Renommer Card -> Memo
+  * Drag'n'Drop entre 2 memos
+  * Supprimer image+url quand un memo est édité
+  * Retirer(/changer?) la catégorie d'un memo
+  * Historiser les changements/retrait de catégorie d'un memo ?
   * Session timeout cleaner
 
 # Mid Term

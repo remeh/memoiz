@@ -23,7 +23,7 @@ const (
 
 // Bing uses Cognitive Services to do a Web Search
 // and compares the returned domains to known ones
-// to guess what could be the topic of the card.
+// to guess what could be the topic of the memo.
 type Bing struct {
 	text       string
 	domains    []string
@@ -124,7 +124,7 @@ func (b *Bing) Analyze() error {
 	return nil
 }
 
-func (b *Bing) Store(cardUid uuid.UUID) error {
+func (b *Bing) Store(memoUid uuid.UUID) error {
 	if !UseBing {
 		return nil
 	}
@@ -134,10 +134,10 @@ func (b *Bing) Store(cardUid uuid.UUID) error {
 	// store
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "domain_result"
-		("uid", "card_uid", "card_text", "category", "domains", "weight", "creation_time")
+		("uid", "memo_uid", "memo_text", "category", "domains", "weight", "creation_time")
 		VALUES
 		($1, $2, $3, $4, $5, $6, $7)
-	`, uid, cardUid, b.text, pq.Array(b.categories), pq.Array(b.domains), b.weight, time.Now()); err != nil {
+	`, uid, memoUid, b.text, pq.Array(b.categories), pq.Array(b.domains), b.weight, time.Now()); err != nil {
 		return err
 	}
 
