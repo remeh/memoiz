@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"net"
 	"net/http"
 	"time"
 
@@ -65,8 +66,17 @@ func (u *Url) Fetch(text string) error {
 	}
 	req.Header.Set("User-Agent", randomUserAgent())
 
+	// NOTE(remy): we force ipv4 because youtube answers 429 responses (too many requests)
+	// on OVH network if we're using ipv6...
+	tr := &http.Transport{
+		Dial: func(network, addr string) (net.Conn, error) {
+			return net.Dial("tcp4", addr)
+		},
+	}
+
 	cli := &http.Client{
-		Timeout: time.Second * 15,
+		Transport: tr,
+		Timeout:   time.Second * 15,
 	}
 	if resp, err = cli.Do(req); err != nil {
 		return err
