@@ -1,6 +1,5 @@
 # Short Term
 
-  * Renommer Card -> Memo
   * Drag'n'Drop entre 2 memos
   * Supprimer image+url quand un memo est édité
   * Retirer(/changer?) la catégorie d'un memo
