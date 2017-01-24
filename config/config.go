@@ -43,6 +43,9 @@ type Configuration struct {
 	// URL of the app calling the backend. For CORS purpose.
 	AppUrl string `envconfig:"APP_URL,default=http://app.memoiz.com"`
 
+	// StripeKey for checkout
+	StripeKey string `envconfig:"STRIPE_KEY,optional"`
+
 	// Smtp Configuration
 	SmtpHost     string `envconfig:"SMTP_HOST,optional"`
 	SmtpPort     int    `envconfig:"SMTP_PORT,optional"`
@@ -66,6 +69,14 @@ func Read() (Configuration, error) {
 
 	if !strings.HasSuffix(c.ResDir, "/") {
 		c.ResDir += "/"
+	}
+
+	if len(c.StripeKey) != 0 {
+		if strings.HasPrefix(c.StripeKey, "sk_test") {
+			log.Info("Stripe TEST API key set")
+		} else {
+			log.Warning("Stripe PRODUCTION API key set!")
+		}
 	}
 
 	return c, nil
