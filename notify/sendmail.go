@@ -6,9 +6,9 @@ import (
 	"net/smtp"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/memos"
 	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
 	"remy.io/memoiz/notify/template"
 )
@@ -16,7 +16,7 @@ import (
 var (
 	UseMail = false
 
-	Sender = "memo@remy.io"
+	Sender = "memos@mail.memoiz.com"
 )
 
 func init() {
@@ -77,7 +77,7 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos)
 
 	buff.WriteString("\r\n")
 
-	err := smtp.SendMail(host, auth, Sender, []string{"me@remy.io"}, buff.Bytes())
+	err := smtp.SendMail(host, auth, Sender, []string{acc.Email}, buff.Bytes())
 	if err != nil {
 		return log.Err("SendCategoryMail", err)
 	}
