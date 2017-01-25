@@ -101,6 +101,7 @@ func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 	}
 
 	// finally query memos created between last mail and this mail.
+	// TODO(remy): use a dynamic state instead of directly MemoActive
 
 	if rows, err = storage.DB().Query(`
 		SELECT "owner_uid", array_agg("uid"), array_agg(text), array_agg("r_category")
@@ -110,6 +111,8 @@ func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 			AND
 			-- memos created between last mail and this email
 			"creation_time" + interval '`+EmailFrequencyPg+`' > now()
+			AND
+			"state" = 'MemoActive'
 		GROUP BY "owner_uid"
 		ORDER BY "creation_time" DESC
 	`, p...); err != nil {
