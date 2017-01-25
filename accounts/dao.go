@@ -75,11 +75,11 @@ func (d *AccountDAO) UserByUid(uid uuid.UUID) (SimpleUser, string, error) {
 	var hash string
 
 	if d.DB.QueryRow(`
-		SELECT "uid", "firstname", "email", "unsubscribe_token", "hash"
+		SELECT "uid", "firstname", "email", "unsubscribe_token", "stripe_token", "hash"
 		FROM "user"
 		WHERE
 			"uid" = $1
-	`, uid).Scan(&su.Uid, &su.Firstname, &su.Email, &su.UnsubToken, &hash); err != nil && err != sql.ErrNoRows {
+	`, uid).Scan(&su.Uid, &su.Firstname, &su.Email, &su.UnsubToken, &su.StripeToken, &hash); err != nil && err != sql.ErrNoRows {
 		return su, "", err
 	}
 
@@ -94,11 +94,11 @@ func (d *AccountDAO) UserByEmail(email string) (SimpleUser, string, error) {
 	var hash string
 
 	if d.DB.QueryRow(`
-		SELECT "uid", "firstname", "email", "unsubscribe_token", "hash"
+		SELECT "uid", "firstname", "email", "unsubscribe_token", "stripe_token", "hash"
 		FROM "user"
 		WHERE
 			"email" = $1
-	`, email).Scan(&su.Uid, &su.Firstname, &su.Email, &su.UnsubToken, &hash); err != nil && err != sql.ErrNoRows {
+	`, email).Scan(&su.Uid, &su.Firstname, &su.Email, &su.UnsubToken, &su.StripeToken, &hash); err != nil && err != sql.ErrNoRows {
 		return su, "", err
 	}
 
@@ -114,6 +114,30 @@ func (d *AccountDAO) Create(uid uuid.UUID, firstname, email, hash, unsubTok stri
 		($1, $2, $3, $4, $5, $6, $7)
 	`, uid, email, firstname, hash, unsubTok, t, t); err != nil {
 		return log.Err("Account/Create", err)
+	}
+
+	return nil
+}
+
+// UpdateStripeToken updates the Stripe token in database
+// for the given user.
+func (d *AccountDAO) UpdateStripeToken(u SimpleUser) error {
+	n, err := d.DB.Exec(`
+		UPDATE "user"
+		SET
+			"stripe_token" = $1
+		WHERE
+			"uid" = $2
+	`, u.StripeToken, u.Uid)
+
+	if err != nil {
+		return err
+	}
+
+	if n, err := n.RowsAffected(); err != nil {
+		return err
+	} else if n != 1 {
+		return fmt.Errorf("accounts: UpdateStripeToken: %d users updated.", n)
 	}
 
 	return nil

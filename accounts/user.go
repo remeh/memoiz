@@ -11,7 +11,8 @@ type SimpleUser struct {
 	Firstname string    `json:"firstname"`
 	Email     string    `json:"email"`
 
-	UnsubToken string `json:"-"`
+	UnsubToken  string `json:"-"`
+	StripeToken string `json:"-"`
 }
 
 // IsPasswordSecure checks that the given password

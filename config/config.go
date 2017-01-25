@@ -11,6 +11,7 @@ import (
 
 	"remy.io/memoiz/log"
 
+	stripe "github.com/stripe/stripe-go"
 	"github.com/vrischmann/envconfig"
 )
 
@@ -77,6 +78,7 @@ func Read() (Configuration, error) {
 		} else {
 			log.Warning("Stripe PRODUCTION API key set!")
 		}
+		stripe.Key = c.StripeKey
 	}
 
 	return c, nil

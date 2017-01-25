@@ -26,7 +26,7 @@ CREATE TABLE "user" (
     "unsubscribe_token" text DEFAULT NULL,
 
     -- payment
-    "stripe_token" text DEFAULT '',
+   "stripe_token" text DEFAULT NULL,
 
     -- time
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
