@@ -8,8 +8,8 @@ import (
 	"github.com/lib/pq"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/memos"
 	"remy.io/memoiz/log"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
 	"remy.io/memoiz/storage"
 	"remy.io/memoiz/uuid"
@@ -111,6 +111,7 @@ func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 			-- memos created between last mail and this email
 			"creation_time" + interval '`+EmailFrequencyPg+`' > now()
 		GROUP BY "owner_uid"
+		ORDER BY "creation_time" DESC
 	`, p...); err != nil {
 		return nil, log.Err("getMemos", err)
 	}
