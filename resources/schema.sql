@@ -23,10 +23,10 @@ CREATE TABLE "user" (
     "timezone" text NOT NULL DEFAULT '',
 
     -- emailing
-    "unsubscribe_token" text DEFAULT NULL,
+    "unsubscribe_token" text DEFAULT '',
 
     -- payment
-   "stripe_token" text DEFAULT NULL,
+   "stripe_token" text DEFAULT '',
 
     -- time
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
@@ -35,6 +35,33 @@ CREATE TABLE "user" (
 
 CREATE UNIQUE INDEX ON "user" ("uid");
 CREATE UNIQUE INDEX ON "user" ("email");
+
+-- Subscription
+
+CREATE TABLE "subscription" (
+    "uid" text NOT NULL,
+    "owner_uid" text NOT NULL,
+
+    -- which token has been used to pay this subscription
+    "stripe_customer_token" text NOT NULL,
+    -- which token has been generated while paying this sub
+    "stripe_charge_token" text NOT NULL,
+
+    -- which plan has been chosen and when does it end
+    "plan" text NOT NULL,
+    "price" int NOT NULL,
+    "end" timestamp with time zone NOT NULL,
+
+    -- stripe response serialized in JSON. Forensic purpose.
+    "stripe_response" text NOT NULL,
+
+    "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
+    "last_update" timestamp with time zone NOT NULL DEFAULT now()
+);
+
+CREATE UNIQUE INDEX ON "subscription" ("uid");
+CREATE INDEX ON "subscription" ("owner_uid");
+ALTER TABLE "subscription" ADD CONSTRAINT "subscription_owner_uid" FOREIGN KEY ("owner_uid") REFERENCES "user" ("uid") MATCH FULL;
 
 -- Memo
 
