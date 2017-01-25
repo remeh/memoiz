@@ -3,6 +3,18 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "gZpTQWYbJq9blAeN8RGsL8ZVdAs=",
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "417cce822c7b9a379df5824be95228d177c5698b",
+			"revisionTime": "2015-09-27T20:28:20Z"
+		},
+		{
+			"checksumSHA1": "YKJEHQmesxr6ExwGE4WZrpQsq4s=",
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48",
+			"revisionTime": "2015-07-30T17:44:59Z"
+		},
+		{
 			"checksumSHA1": "VadeGPSSCviJGQjTCtUuH3rPK3w=",
 			"path": "github.com/buger/jsonparser",
 			"revision": "42b84a5caf12249d724445a0be7df0272f30b9a9",
@@ -85,16 +97,160 @@
 			"revisionTime": "2016-06-15T09:26:46Z"
 		},
 		{
+			"checksumSHA1": "MlqtHNY6zKR80Yp4muWuX3k+Hic=",
+			"path": "github.com/stripe/stripe-go",
+			"revision": "3f2707ab5115e7c54c70a77aabcb386d6f405810",
+			"revisionTime": "2017-01-23T22:12:50Z"
+		},
+		{
+			"checksumSHA1": "9821tHS2B+kvu6xFo778wG0Stbw=",
+			"path": "github.com/stripe/stripe-go/charge",
+			"revision": "3f2707ab5115e7c54c70a77aabcb386d6f405810",
+			"revisionTime": "2017-01-23T22:12:50Z"
+		},
+		{
+			"checksumSHA1": "2dVO9xvrpjU6VIGHa6eHHllHqJM=",
+			"path": "github.com/stripe/stripe-go/customer",
+			"revision": "3f2707ab5115e7c54c70a77aabcb386d6f405810",
+			"revisionTime": "2017-01-23T22:12:50Z"
+		},
+		{
+			"checksumSHA1": "y5AD80EvDutFqGuAYsBtcya6ntM=",
+			"path": "github.com/stripe/stripe-go/orderitem",
+			"revision": "3f2707ab5115e7c54c70a77aabcb386d6f405810",
+			"revisionTime": "2017-01-23T22:12:50Z"
+		},
+		{
 			"checksumSHA1": "AQDPLXf0sUEcPv6xvzy0Fb+79kw=",
 			"path": "github.com/vrischmann/envconfig",
 			"revision": "e4f615d158ed2bea636ca576237d177becd0207b",
 			"revisionTime": "2015-08-18T07:29:23Z"
 		},
 		{
+			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "9477e0b78b9ac3d0b03822fd95422e2fe07627cd",
+			"revisionTime": "2016-10-31T15:37:30Z"
+		},
+		{
+			"checksumSHA1": "JsJdKXhz87gWenMwBeejTOeNE7k=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "9477e0b78b9ac3d0b03822fd95422e2fe07627cd",
+			"revisionTime": "2016-10-31T15:37:30Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
+			"revisionTime": "2016-11-04T22:18:50Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
+			"revisionTime": "2016-11-04T22:18:50Z"
+		},
+		{
 			"checksumSHA1": "aVgPDgwY3/t4J/JOw9H3FVMHqh0=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "c200b10b5d5e122be351b67af224adc6128af5bf",
 			"revisionTime": "2016-10-22T18:22:21Z"
+		},
+		{
+			"checksumSHA1": "kwBkt8SQzV0m3Q0ZZYd5hJkvjbw=",
+			"path": "remy.io/memoiz",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "4SIXu8TtgNxwaPxf5A8odE6Bi9o=",
+			"path": "remy.io/memoiz/accounts",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "pOqwQaOOpdft6kVw5MCzXwxghiU=",
+			"path": "remy.io/memoiz/api",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "omdzPZsa7OsBT4/wKTrQ6KLZ/wo=",
+			"path": "remy.io/memoiz/api/accounts",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "r3VfsD/kBV+yjlP19oz9MpSmtBQ=",
+			"path": "remy.io/memoiz/api/adapter",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "fbiA+m7b9czBGMjVriKP6FX6iN8=",
+			"path": "remy.io/memoiz/api/example",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "vZW1Eu45kS5LvK28hpxNzQxhjBM=",
+			"path": "remy.io/memoiz/api/memos",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "GvWmlsEGHU6QO+8gkhSn4WT8EDQ=",
+			"path": "remy.io/memoiz/config",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "f30qc+CVMOXxI4WAbl27PVeZO5o=",
+			"path": "remy.io/memoiz/log",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "j2KzBl8WXfoeT+yz1kEE8tO7U14=",
+			"path": "remy.io/memoiz/memos",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "LS6EDCoXXzvkGzICcVlMUOIgcYo=",
+			"path": "remy.io/memoiz/mind",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "ZCvQHeIs5fvZ+osXZ2EAxaASSZo=",
+			"path": "remy.io/memoiz/notify",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "19NS3aqZsOj78WLgFLRdUwho1ZI=",
+			"path": "remy.io/memoiz/notify/email",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "KrB3E/TEi4ZGKYqclYdheBMBW/E=",
+			"path": "remy.io/memoiz/notify/template",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "Cyv/JRRZp1kLRLSVk0NicTg8Ajc=",
+			"path": "remy.io/memoiz/storage",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
+		},
+		{
+			"checksumSHA1": "wmH2uBLU7GcObuM9nBjKj9AAH/o=",
+			"path": "remy.io/memoiz/uuid",
+			"revision": "7ec22c979e82a0c73fd49a8882dff0bfb33242b9",
+			"revisionTime": "2017-01-25T11:48:29Z"
 		}
 	],
 	"rootPath": "remy.io/memoiz"
