@@ -132,6 +132,8 @@ func (c Checkout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	plan = plans[body.Plan]
 
+	// TODO(remy): if an error occurred here, we should retry 1 or 2 times.
+
 	// proceed to the payment
 	// ----------------------
 

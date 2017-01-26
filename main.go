@@ -51,6 +51,7 @@ func declareApiRoutes(s *Server) {
 	// ----------------------
 
 	s.AddApi("/1.0/accounts", log(accounts.Create{}), "POST")
+	s.AddApi("/1.0/accounts", log(accounts.Check{}), "GET")
 	s.AddApi("/1.0/accounts/login", log(accounts.Login{}), "POST")
 	s.AddApi("/1.0/accounts/logout", log(accounts.Logout{}), "POST")
 	s.AddApi("/1.0/accounts/checkout", log(auth(accounts.Checkout{})), "POST")
