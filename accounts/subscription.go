@@ -59,3 +59,13 @@ func AddSubscription(u SimpleUser, chargeId string, json []byte, t time.Time, pl
 
 	return nil
 }
+
+func TrialInfos(uid uuid.UUID) (bool, time.Time, error) {
+	// TODO(remy): implement me
+	return true, time.Now().Add(time.Hour * 24), nil
+}
+
+func SubscriptionInfos(uid uuid.UUID) (bool, Plan, time.Time, error) {
+	// TODO(remy): implement me
+	return false, Basic, time.Now().Add(time.Hour * 24), nil
+}
