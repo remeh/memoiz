@@ -22,5 +22,5 @@ func (s *Stub) Store(uuid.UUID) error {
 }
 
 func (s *Stub) Categories() Categories {
-	return Categories{Unknown}
+	return Categories{Uncategorized}
 }

@@ -1,7 +1,6 @@
 # Short Term
 
   * Unknown → Uncategorized
-  * Send plans through JSON on Checkout page.
   * Drag'nDrop entre 2 memos
   * Fix URL regexps for domains
   * Supprimer image+url quand un memo est édité

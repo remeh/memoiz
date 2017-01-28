@@ -37,7 +37,7 @@ func (k *Kg) TryCache(text string) (bool, error) {
 	}
 
 	// TODO(remy): not implemented
-	k.categories = Categories{Unknown}
+	k.categories = Categories{Uncategorized}
 	return false, nil
 }
 
@@ -51,7 +51,7 @@ func (k *Kg) Fetch(text string) error {
 	var err error
 
 	k.text = text
-	k.categories = Categories{Unknown}
+	k.categories = Categories{Uncategorized}
 
 	// http request to Bing
 	// ----------------------
@@ -132,7 +132,7 @@ func (k *Kg) Analyze() error {
 		if err != sql.ErrNoRows {
 			return err
 		}
-		c = Unknown
+		c = Uncategorized
 	}
 
 	k.categories = Categories{c}

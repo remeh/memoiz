@@ -14,7 +14,7 @@ import (
 func guessByDomains(domains []string) (Category, int, error) {
 	if len(domains) == 0 {
 		log.Warning("guessByDomains: called with len(domains) == 0")
-		return Unknown, 0, nil
+		return Uncategorized, 0, nil
 	}
 
 	inClause := "("
@@ -53,7 +53,7 @@ func guessByDomains(domains []string) (Category, int, error) {
 	// is many domains tested and the resulting weight
 	// is < 150
 	if weight < 150 && len(domains) > 1 {
-		return Unknown, 0, nil
+		return Uncategorized, 0, nil
 	}
 
 	return cat, weight, nil

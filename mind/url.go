@@ -121,7 +121,7 @@ func (u *Url) Analyze() error {
 		// we do not return, we want to try to fetch the URL
 	}
 
-	if cat != Unknown && weight > 50 {
+	if cat != Uncategorized && weight > 50 {
 		u.category = cat
 	}
 
@@ -176,7 +176,7 @@ func (u *Url) Store(uid uuid.UUID) error {
 	`, u.url, u.image, u.title, uid); err != nil {
 		return log.Err("Url:", err)
 	}
-	if u.category != Unknown {
+	if u.category != Uncategorized {
 		fmt.Println(u.category)
 		if _, err := storage.DB().Exec(`
 		UPDATE "memo"
@@ -190,7 +190,7 @@ func (u *Url) Store(uid uuid.UUID) error {
 }
 
 func (u *Url) Categories() Categories {
-	return Categories{Unknown}
+	return Categories{Uncategorized}
 }
 
 // ----------------------

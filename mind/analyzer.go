@@ -118,7 +118,7 @@ func analyze(analyzers []Analyzer, uid uuid.UUID, text string) {
 		// ----------------------
 
 		cats := a.Categories()
-		if cats != nil && len(cats) > 0 && cats[0] != Unknown {
+		if cats != nil && len(cats) > 0 && cats[0] != Uncategorized {
 			// update the memo
 			if _, err := storage.DB().Exec(`
 			UPDATE "memo"

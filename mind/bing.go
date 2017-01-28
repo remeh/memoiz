@@ -37,7 +37,7 @@ func (b *Bing) TryCache(text string) (bool, error) {
 	}
 
 	// TODO(remy): not implemented
-	b.categories = Categories{Unknown}
+	b.categories = Categories{Uncategorized}
 	return false, nil
 }
 

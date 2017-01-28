@@ -12,19 +12,19 @@ type Category int64
 type Categories []Category
 
 const (
-	Unknown   Category = iota
-	Artist             // 1
-	Actor              // 2
-	Book               // 3
-	Date               // 4
-	Movie              // 5
-	Music              // 6
-	Person             // 7
-	Place              // 8
-	Serie              // 9
-	Video              // 10
-	VideoGame          // 11
-	Food               // 12
+	Uncategorized Category = iota
+	Artist                 // 1
+	Actor                  // 2
+	Book                   // 3
+	Date                   // 4
+	Movie                  // 5
+	Music                  // 6
+	Person                 // 7
+	Place                  // 8
+	Serie                  // 9
+	Video                  // 10
+	VideoGame              // 11
+	Food                   // 12
 )
 
 func (c *Category) Scan(src interface{}) error {
