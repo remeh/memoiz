@@ -11,31 +11,34 @@ import (
 type Plans struct{}
 
 type plansResp struct {
-	Plans []plan `json:"plans"`
+	Plans map[string]plan `json:"plans"`
+	Order []string        `json:"order"`
 }
 
 type plan struct {
+	Id       string `json:"id"`
 	Name     string `json:"name"`
 	Price    string `json:"price"`
 	Duration string `json:"duration"`
 }
 
 func (c Plans) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ps := []plan{
-		planToPlan(accounts.Basic),
-		planToPlan(accounts.Starter),
-		planToPlan(accounts.Year),
+	ps := map[string]plan{
+		"1": planToPlan("1", accounts.Basic),
+		"2": planToPlan("2", accounts.Starter),
+		"3": planToPlan("3", accounts.Year),
 	}
 
 	resp := plansResp{
 		Plans: ps,
+		Order: []string{"1", "2", "3"},
 	}
 
 	api.RenderJson(w, 200, resp)
 
 }
 
-func planToPlan(p accounts.Plan) plan {
+func planToPlan(id string, p accounts.Plan) plan {
 	round := strconv.Itoa(int(p.Price / 100))
 	cents := strconv.Itoa(int(p.Price % 100))
 
@@ -45,6 +48,7 @@ func planToPlan(p accounts.Plan) plan {
 	}
 
 	return plan{
+		Id:       id,
 		Name:     p.Name,
 		Price:    price,
 		Duration: p.DurationStr,
