@@ -14,23 +14,28 @@ type Plan struct {
 	Price uint64
 	// Duration.
 	Duration time.Duration
+	// Duration description
+	DurationStr string
 }
 
 var (
 	Basic Plan = Plan{
-		Name:     "Basic",
-		Price:    500,
-		Duration: time.Hour * 24 * 90, // 3 months
+		Name:        "Basic",
+		Price:       500,
+		Duration:    time.Hour * 24 * 90,
+		DurationStr: "3 months",
 	}
 	Starter Plan = Plan{
-		Name:     "Starter",
-		Price:    900,
-		Duration: time.Hour * 24 * 180, // 6 months
+		Name:        "Starter",
+		Price:       900,
+		Duration:    time.Hour * 24 * 180,
+		DurationStr: "6 months",
 	}
 	Year Plan = Plan{
-		Name:     "Year",
-		Price:    1700,
-		Duration: time.Hour * 24 * 360, // 1 year
+		Name:        "Year",
+		Price:       1700,
+		Duration:    time.Hour * 24 * 360,
+		DurationStr: "1 year",
 	}
 )
 
