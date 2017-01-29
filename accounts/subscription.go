@@ -65,7 +65,7 @@ func AddSubscription(u SimpleUser, chargeId string, json []byte, t time.Time, pl
 
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "subscription"
-		("uid", "owner_uid", "stripe_customer_token", "stripe_charge_token", "plan", "price", "end", "stripe_response", "creation_time", "last_update")
+		("uid", "owner_uid", "stripe_customer_token", "stripe_charge_token", "plan_id", "price", "end", "stripe_response", "creation_time", "last_update")
 		VALUES
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 	`, uid, u.Uid, u.StripeToken, chargeId, plan.Id, plan.Price, end, string(json), t, t); err != nil {
