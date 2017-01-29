@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"remy.io/memoiz/accounts"
@@ -51,6 +52,8 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// check for existence
 	// ----------------------
+
+	body.Email = strings.ToLower(body.Email)
 
 	var err error
 	if uid, err := accounts.DAO().UidByEmail(body.Email); err != nil {
