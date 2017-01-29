@@ -7,6 +7,8 @@ import (
 
 	"remy.io/memoiz/accounts"
 	"remy.io/memoiz/api"
+	"remy.io/memoiz/log"
+	"remy.io/memoiz/notify"
 	"remy.io/memoiz/uuid"
 )
 
@@ -83,6 +85,13 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := accounts.DAO().Create(uid, body.Firstname, body.Email, hash, unsubTok, now); err != nil {
 		api.RenderErrJson(w, err)
 		return
+	}
+
+	// send subscription email
+	// ----------------------
+
+	if err := notify.SendNewUserMail(body.Firstname, body.Email); err != nil {
+		log.Error("Accouts/Create: SendSubscriptionMail:", err)
 	}
 
 	// resp
