@@ -1,5 +1,6 @@
 # Short Term
 
+  * Password reset
   * Drag'nDrop entre 2 memos
   * Fix URL regexps for domains
   * Supprimer image+url quand un memo est édité
