@@ -2,22 +2,22 @@ package accounts
 
 import (
 	"net/http"
-	"time"
 
 	"remy.io/memoiz/accounts"
 	"remy.io/memoiz/api"
+	"remy.io/memoiz/storage"
 )
 
 type Infos struct{}
 
 type infosResp struct {
-	Firstname              string    `json:"firstname"`
-	Email                  string    `json:"email"`
-	Trial                  bool      `json:"trial"`
-	TrialValidUntil        time.Time `json:"free_trial_valid_until"`
-	Subscribed             bool      `json:"subscribed"`
-	Plan                   plan      `json:"plan"`
-	SubscriptionValidUntil time.Time `json:"subscription_valid_until"`
+	Firstname              string         `json:"firstname"`
+	Email                  string         `json:"email"`
+	Trial                  bool           `json:"trial"`
+	TrialValidUntil        storage.JSTime `json:"free_trial_valid_until"`
+	Subscribed             bool           `json:"subscribed"`
+	Plan                   plan           `json:"plan"`
+	SubscriptionValidUntil storage.JSTime `json:"subscription_valid_until"`
 }
 
 func (c Infos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,7 @@ func (c Infos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp.Trial = trial
-	resp.TrialValidUntil = trialValidUntil
+	resp.TrialValidUntil = storage.JSTime(trialValidUntil)
 
 	hasSub, plan, planValidUntil, err := accounts.SubscriptionInfos(uid)
 	if err != nil {
@@ -59,7 +59,7 @@ func (c Infos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resp.Subscribed = hasSub
 	resp.Plan = planToPlan(plan.Name, plan)
-	resp.SubscriptionValidUntil = planValidUntil
+	resp.SubscriptionValidUntil = storage.JSTime(planValidUntil)
 
 	api.RenderJson(w, 200, resp)
 }

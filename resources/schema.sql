@@ -48,7 +48,7 @@ CREATE TABLE "subscription" (
     "stripe_charge_token" text NOT NULL,
 
     -- which plan has been chosen and when does it end
-    "plan" text NOT NULL,
+    "plan_id" text NOT NULL,
     "price" int NOT NULL,
     "end" timestamp with time zone NOT NULL,
 
