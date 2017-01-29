@@ -114,7 +114,6 @@ func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 			AND
 			"state" = 'MemoActive'
 		GROUP BY "owner_uid"
-		ORDER BY "creation_time" DESC
 	`, p...); err != nil {
 		return nil, log.Err("getMemos", err)
 	}
