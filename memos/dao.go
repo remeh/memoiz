@@ -89,6 +89,22 @@ func (d *MemosDAO) GetRichInfo(owner, uid uuid.UUID) (MemoRichInfo, error) {
 	return ri, nil
 }
 
+func (d *MemosDAO) Restore(owner, uid uuid.UUID, t time.Time) error {
+	if _, err := d.DB.Exec(`
+		UPDATE "memo"
+		SET
+			"archive_time" = $1,
+			"state" = $2
+		WHERE
+			"uid" = $3
+			AND
+			"owner_uid" = $4
+	`, nil, MemoActive, uid, owner); err != nil {
+		return log.Err("memos.Restore", err)
+	}
+	return nil
+}
+
 func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
 		UPDATE "memo"
