@@ -89,6 +89,8 @@ func (d *MemosDAO) GetRichInfo(owner, uid uuid.UUID) (MemoRichInfo, error) {
 	return ri, nil
 }
 
+// Restore changes back the state of the memo to MemoActive
+// and delete its archive time.
 func (d *MemosDAO) Restore(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
 		UPDATE "memo"
@@ -105,6 +107,8 @@ func (d *MemosDAO) Restore(owner, uid uuid.UUID, t time.Time) error {
 	return nil
 }
 
+// Archive changes the state of the memo to MemoArchived
+// and sets its archive time.
 func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
 		UPDATE "memo"
@@ -118,6 +122,36 @@ func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 	`, t, MemoArchived, uid, owner); err != nil {
 		return log.Err("memos.Archive", err)
 	}
+	return nil
+}
+
+// UpdateLastNotif updates the last notification time of
+// each given memo.
+func (d *MemosDAO) UpdateLastNotif(uid uuid.UUID, memoUids []uuid.UUID, t time.Time) error {
+	switch {
+	case uid.IsNil():
+		return fmt.Errorf("UpdateLastNotif: uid.IsNil()")
+	case len(memoUids) == 0:
+		return fmt.Errorf("UpdateLastNotif: len(memoUids) == 0")
+	}
+
+	vals := storage.Values(t, uid)
+	for _, m := range memoUids {
+		vals = append(vals, m)
+	}
+
+	if _, err := d.DB.Exec(`
+		UPDATE "memo"
+		SET
+			"last_notification_time" = $1
+		WHERE
+			"owner_uid" = $2
+			AND
+			"uid" IN `+storage.InClause(len(memoUids))+`
+	`, vals...); err != nil {
+		return err
+	}
+
 	return nil
 }
 
