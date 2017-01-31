@@ -1,7 +1,11 @@
 package mind
 
-type Description string
-type ImageUrl string
+type EnrichResult struct {
+	Content          string
+	ImageUrl         string
+	ContentCopyright string
+	ImageCopyright   string
+}
 
 // Enrichers are the engine allowing to
 // add many information to a memo in order
@@ -12,10 +16,10 @@ type Enricher interface {
 	// then analyzes the fetched data in order
 	// to return a small description and an image
 	// Url.
-	Enrich(string, Category) (bool, Description, ImageUrl, error)
+	Enrich(string, Category) (bool, EnrichResult, error)
 }
 
-func Enrich(text string, cat Category) (bool, Description, ImageUrl, error) {
+func Enrich(text string, cat Category) (bool, EnrichResult, error) {
 
 	es := make([]Enricher, 0)
 
@@ -25,14 +29,14 @@ func Enrich(text string, cat Category) (bool, Description, ImageUrl, error) {
 	}
 
 	for _, e := range es {
-		if found, desc, imgUrl, err := e.Enrich(text, cat); err != nil {
-			return false, "", "", err
+		if found, result, err := e.Enrich(text, cat); err != nil {
+			return false, EnrichResult{}, err
 		} else if !found {
 			continue
 		} else {
-			return found, desc, imgUrl, nil
+			return found, result, nil
 		}
 	}
 
-	return false, "", "", nil
+	return false, EnrichResult{}, nil
 }

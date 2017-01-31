@@ -21,13 +21,13 @@ type Wikipedia struct {
 
 var rxDelBrackets = regexp.MustCompile(`(\[.*?\]) *`)
 
-func (w *Wikipedia) Enrich(text string, cat Category) (bool, Description, ImageUrl, error) {
+func (w *Wikipedia) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 
 	w.text = text
 	w.cat = cat
 
 	if !w.validate() {
-		return false, "", "", nil
+		return false, EnrichResult{}, nil
 	}
 
 	// TODO(remy): ensure there is no disambiguity with other pages
@@ -35,7 +35,7 @@ func (w *Wikipedia) Enrich(text string, cat Category) (bool, Description, ImageU
 	// get the content
 
 	if found, err := w.fetchContent(); !found || err != nil {
-		return found, "", "", err
+		return found, EnrichResult{}, err
 	}
 
 	return w.extract()
@@ -52,34 +52,31 @@ func (w *Wikipedia) validate() bool {
 	return true
 }
 
-func (w *Wikipedia) extract() (bool, Description, ImageUrl, error) {
+func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(w.data))
 	if err != nil {
-		return false, "", "", err
+		return false, EnrichResult{}, err
 	}
 
 	// read the meta
 	// ----------------------
 
-	var found bool
-	var desc Description
-	var imgUrl ImageUrl
+	var result EnrichResult
 
-	doc.Find("#mw-content-text p").Each(func(i int, s *goquery.Selection) {
-		if i != 0 { // we only want the first one
-			return
-
-		}
+	if selection := doc.Find("#mw-content-text p").First(); selection != nil {
 		// remove text inside []
-		str := s.Text()
-		desc = Description(rxDelBrackets.ReplaceAll([]byte(str), []byte{}))
+		str := selection.Text()
+		result.Content = string(rxDelBrackets.ReplaceAll([]byte(str), []byte{}))
+	}
 
-		// TODO(remy): imgUrl
-		found = len(desc) != 0
-	})
+	if selection := doc.Find("#footer-info-copyright").First(); selection != nil {
+		result.ContentCopyright = contentCopyright(selection.Text())
+	}
 
-	return true, desc, imgUrl, nil
+	// TODO(remy): imgUrl and image license
+
+	return len(result.Content) != 0, result, nil
 }
 
 func (w *Wikipedia) fetchContent() (bool, error) {
@@ -127,4 +124,11 @@ func (w *Wikipedia) fetchContent() (bool, error) {
 
 func (w *Wikipedia) generateUrl() string {
 	return "https://en.wikipedia.org/wiki/" + strings.Replace(url.QueryEscape(w.text), "+", "%20", -1)
+}
+
+func contentCopyright(str string) string {
+	// we do not want this part of the response
+	str = strings.Replace(str, " By using this site, you agree to the Terms of Use and Privacy Policy. Wikipedia® is a registered trademark of the Wikimedia Foundation, Inc., a non-profit organization.", "", -1)
+	str = strings.Replace(str, "\n", " ", -1)
+	return str
 }
