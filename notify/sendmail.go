@@ -39,7 +39,8 @@ type scmParam struct {
 	Memos      map[mind.Category]memos.Memos
 }
 
-// TODO(remy): comment me.
+// SendNewUserMail sends the email for a new subscription.
+// TODO(remy): send the email validation email.
 func SendNewUserMail(firstname, email string) error {
 	return sendUserSignupMail(firstname, email)
 }
