@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/memos"
 	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
+	"remy.io/memoiz/memos"
 	"remy.io/memoiz/notify"
 	"remy.io/memoiz/storage"
 	"remy.io/memoiz/uuid"
@@ -81,7 +81,8 @@ func fetch() (map[string]memos.Memos, error) {
 	return getMemos(uids)
 }
 
-// TODO(remy): comment me.
+// send sends, per user, a list of memos per email
+// in order to remind the user they've added them.
 func send(memos map[string]memos.Memos, t time.Time) error {
 	for owner, memos := range memos {
 		memos = memos
