@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"remy.io/memoiz/log"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/buger/jsonparser"
 )
@@ -86,11 +88,32 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 		result.ContentCopyright = contentCopyright(selection.Text())
 	}
 
+	if len(result.Content) == 0 {
+		return false, result, nil // do not continue if we've not found any content
+	}
+
 	// extract the image
 	// ----------------------
 
-	// TODO(remy): imgUrl and image license
-	// choose the Url depending on license, size?
+	if len(w.imagesUrls) != len(w.imagesLicenses) {
+		log.Error("Wikipedia: extract: len(w.imagesUrls) != len(w.imagesLicenses) ignoring image")
+		return true, result, nil
+	}
+
+	if len(w.imagesUrls) == 0 {
+		return true, result, nil
+	}
+
+	for i, license := range w.imagesLicenses {
+		if !acceptedLicense(license) {
+			continue
+		}
+
+		// TODO(remy): do not send epicly large images
+
+		result.ImageUrl = w.imagesUrls[i]
+		result.ImageCopyright = license // TODO(remy): put a copyright notice, not the license title
+	}
 
 	return len(result.Content) != 0, result, nil
 }
@@ -146,9 +169,24 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 		return false, err
 	}
 
-	// TODO(remy): stantardize the page id
-	if elements, _, _, err = jsonparser.Get(data, "query", "pages", "901022", "images"); err != nil {
+	if buf, _, _, err := jsonparser.Get(data, "query", "pages"); err != nil {
 		return false, err
+	} else {
+		i := 0 // we will only take the first successful
+		jsonparser.ObjectEach(buf, func(key []byte, value []byte, dataType jsonparser.ValueType, offset int) error {
+			if i != 0 {
+				return nil
+			}
+
+			if d, _, _, err := jsonparser.Get(value, "images"); err != nil {
+				return err
+			} else {
+				elements = d
+			}
+
+			i++
+			return nil
+		})
 	}
 
 	// look for images titles.
@@ -193,18 +231,36 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 
 		var err error
 		var data []byte
+		var license string
 
 		if data, err = Read(resp); err != nil {
 			return false, err
 		}
 
-		license, err := jsonparser.GetString(data, "query", "pages", "-1", "imageinfo", "[0]", "extmetadata", "LicenseShortName", "value")
-		if err != nil {
+		if buf, _, _, err := jsonparser.Get(data, "query", "pages"); err != nil {
 			return false, err
+		} else {
+			i := 0 // we will only take the first successful
+			jsonparser.ObjectEach(buf, func(key []byte, value []byte, dataType jsonparser.ValueType, offset int) error {
+				if i != 0 {
+					return nil
+				}
+
+				if d, err := jsonparser.GetString(value, "imageinfo", "[0]", "extmetadata", "LicenseShortName", "value"); err != nil {
+					return err
+				} else {
+					license = d
+				}
+
+				i++
+				return nil
+			})
 		}
 
 		// look for its url
 		// ----------------------
+
+		var url string
 
 		if resp, err = Fetch(w.generateImageUrl(image)); err != nil {
 			return false, err
@@ -216,9 +272,24 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 			return false, err
 		}
 
-		url, err := jsonparser.GetString(data, "query", "pages", "-1", "imageinfo", "[0]", "url")
-		if err != nil {
+		if buf, _, _, err := jsonparser.Get(data, "query", "pages"); err != nil {
 			return false, err
+		} else {
+			i := 0 // we will only take the first successful
+			jsonparser.ObjectEach(buf, func(key []byte, value []byte, dataType jsonparser.ValueType, offset int) error {
+				if i != 0 {
+					return nil
+				}
+
+				if d, err := jsonparser.GetString(value, "imageinfo", "[0]", "url"); err != nil {
+					return err
+				} else {
+					url = d
+				}
+
+				i++
+				return nil
+			})
 		}
 
 		// ok!
@@ -252,6 +323,15 @@ func (w *Wikipedia) escape(str string) string {
 }
 
 // ----------------------
+
+func acceptedLicense(license string) bool {
+	for _, l := range licenses {
+		if l == license {
+			return true
+		}
+	}
+	return false
+}
 
 func contentCopyright(str string) string {
 	// we do not want this part of the response
