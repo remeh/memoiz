@@ -15,10 +15,12 @@ import (
 
 const (
 	CategoryReminderEmail = "CategoryReminderEmail"
-	RunFrequency          = time.Minute
-	EmailFrequency        = time.Hour * 24
-	EmailFrequencyPg      = "1 day"
-	EmailFirstAfter       = "1 day"
+	CategoryEnrichedEmail = "CategoryEnrichedEmail"
+
+	RunFrequency     = time.Minute
+	EmailFrequency   = time.Hour * 24
+	EmailFrequencyPg = "1 day"
+	EmailFirstAfter  = "1 day"
 	//RunFrequency     = time.Second * 10
 	//EmailFrequency   = time.Minute * 3
 	//EmailFrequencyPg = "3 minute"
@@ -67,7 +69,7 @@ func fetch() (map[string]memos.Memos, error) {
 	var err error
 	var uids uuid.UUIDs
 
-	if uids, err = getOwners(EmailFrequency, 5); err != nil {
+	if uids, err = getOwners(CategoryReminderEmail, EmailFrequency, 5); err != nil {
 		return nil, log.Err("fetch", err)
 	}
 
@@ -78,7 +80,7 @@ func fetch() (map[string]memos.Memos, error) {
 		return make(map[string]memos.Memos), nil
 	}
 
-	return getMemos(uids)
+	return getRecentMemos(uids)
 }
 
 // send sends, per user, a list of memos per email

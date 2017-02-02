@@ -17,8 +17,9 @@ import (
 
 // getOwners returns a given amount of owner
 // which must receive a notification because last time they
-// have been notified is bigger than the given duration.
-func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
+// have been notified with the given type of reminder
+// is bigger than the given duration.
+func getOwners(cat string, d time.Duration, limit int) (uuid.UUIDs, error) {
 	// query
 	// ----------------------
 
@@ -27,6 +28,8 @@ func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
 		FROM "user" u
 		LEFT JOIN "emailing_sent" es ON
 			u."uid" = es."owner_uid"
+			AND
+			es."type" = $1
 		LEFT JOIN "emailing_unsubscribe" eu ON
 			eu."owner_uid" = u."uid"
 		WHERE
@@ -38,8 +41,8 @@ func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
 			eu."creation_time" IS NULL
 		GROUP BY u."uid"
 		ORDER BY max(es."creation_time") DESC
-		LIMIT $1
-	`, limit)
+		LIMIT $2
+	`, cat, limit)
 	if err != nil {
 		return nil, log.Err("getOwners", err)
 	}
@@ -68,8 +71,9 @@ func getOwners(d time.Duration, limit int) (uuid.UUIDs, error) {
 	return uids, nil
 }
 
-// getMemos returns the memos per owners.
-func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
+// getRecentMemos returns recent memos per owners
+// recently created and not already sent to the owner.
+func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -89,7 +93,7 @@ func getMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 
 	// build in clause
 
-	in := "("
+	in := "(" // TODO(remy): use InClause helper in storage pkg
 	for i := range p {
 		in += fmt.Sprintf("$%d", i+1)
 		switch {
