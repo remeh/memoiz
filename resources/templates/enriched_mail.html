@@ -1,0 +1,12 @@
+{{ template "header.html" . }}
+
+  <div style="padding: 2em; background-color: rgb(2, 136, 209); color: white;">
+    <div class="mui--text-display2"><strong>Focus</strong></div>
+    <div class="mui--text-title">We have noted that these memos need some attention!</div>
+  </div>
+
+  {{ range .Memos }}
+    {{ template "enriched_memo.html" . }}
+  {{ end }}
+
+{{ template "footer.html" . }}

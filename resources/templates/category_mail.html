@@ -1,0 +1,12 @@
+{{ template "header.html" . }}
+
+  <div style="padding: 2em; background-color: rgb(2, 136, 209); color: white;">
+    <div class="mui--text-display2"><strong>Weekly reminder</strong></div>
+    <div class="mui--text-title">Your memos are waiting for you. We're here to remind you!</div>
+  </div>
+
+  {{ range .Memos }}
+    {{ template "category.html" . }}
+  {{ end }}
+
+{{ template "footer.html" . }}

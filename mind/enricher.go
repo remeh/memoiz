@@ -7,6 +7,8 @@ type EnrichResult struct {
 	ImageCopyright   string
 }
 
+type EnrichResults []EnrichResult
+
 // Enrichers are the engine allowing to
 // add many information to a memo in order
 // to send emails with a lot of information.
