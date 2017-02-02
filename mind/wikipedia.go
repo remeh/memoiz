@@ -40,7 +40,9 @@ func (w *Wikipedia) Enrich(text string, cat Category) (bool, EnrichResult, error
 		return false, EnrichResult{}, nil
 	}
 
-	// TODO(remy): ensure there is no disambiguity with other pages
+	if err := w.redirect(); err != nil {
+		return false, EnrichResult{}, err
+	}
 
 	// get the content
 
@@ -66,6 +68,44 @@ func (w *Wikipedia) validate() bool {
 	return true
 }
 
+// redirects queries wikipedia to know whether we should
+// fetch another title name or not.
+func (w *Wikipedia) redirect() error {
+
+	// TODO(remy): try to fetch the page, could be not found!
+	// ----------------------
+
+	var err error
+	var resp *http.Response
+
+	if resp, err = Fetch(w.generateRedirects(w.text)); err != nil {
+		return err
+	} else if resp == nil {
+		return nil
+	}
+
+	// read the response
+	// ----------------------
+
+	var data []byte
+
+	if data, err = Read(resp); err != nil {
+		return err
+	}
+
+	var title string
+
+	if title, err = jsonparser.GetString(data, "query", "redirects", "[0]", "to"); err != nil {
+		// no redirection, it's not really an error
+		// we silent this because we can't do better
+		return nil
+	}
+
+	log.Debug("Wikipedia:", w.text, "redirected to", title)
+	w.text = title
+	return nil
+}
+
 func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(w.contentData))
@@ -78,7 +118,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 
 	var result EnrichResult
 
-	if selection := doc.Find("#mw-content-text p").First(); selection != nil {
+	if selection := doc.Find("#mw-content-text > p").First(); selection != nil {
 		// remove text inside []
 		str := selection.Text()
 		result.Content = string(rxDelBrackets.ReplaceAll([]byte(str), []byte{}))
@@ -316,6 +356,10 @@ func (w *Wikipedia) generateImagesUrl(title string) string {
 
 func (w *Wikipedia) generateContentUrl(title string) string {
 	return "https://en.wikipedia.org/wiki/" + w.escape(title)
+}
+
+func (w *Wikipedia) generateRedirects(title string) string {
+	return "https://en.wikipedia.org/w/api.php?action=query&redirects&format=json&titles=" + w.escape(title)
 }
 
 func (w *Wikipedia) escape(str string) string {
