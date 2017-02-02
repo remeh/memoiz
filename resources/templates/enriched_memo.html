@@ -1,9 +1,18 @@
 <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="mui-panel">
   <div class="mui--text-body1">
   <div>
-    {{.Memo.Text}} - {{.Memo.Category}}
+    <h2>{{.Memo.Text}}</h2>
+    <h4>{{.Memo.Category}}</h4>
     <hr>
-    {{.EnrichInfos.Content}}
-    <img src="{{.EnrichInfos.ImageUrl}}" />
+    <table style="border: 0;">
+      <tr>
+        <td style="width: 80%;">
+          {{.EnrichInfos.Content}}
+        </td>
+        <td style="width: 20%;">
+          <img style="width: 200px;" src="{{.EnrichInfos.ImageUrl}}" />
+        </td>
+      </tr>
+    </table>
   </div>
 </td></tr></table>
