@@ -121,7 +121,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 	if selection := doc.Find("#mw-content-text > p").First(); selection != nil {
 		// remove text inside []
 		str := selection.Text()
-		result.Content = string(rxDelBrackets.ReplaceAll([]byte(str), []byte{}))
+		result.Content = string(rxDelBrackets.ReplaceAll([]byte(str), []byte(" ")))
 	}
 
 	if selection := doc.Find("#footer-info-copyright").First(); selection != nil {
@@ -245,7 +245,8 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 			return
 		}
 
-		if title == "File:Commons-logo.svg" { // ignore this image
+		if title == "File:Commons-logo.svg" || // ignore this image
+			strings.HasSuffix(strings.ToLower(title), "svg") { // no support for SVG in gmail
 			return
 		}
 
