@@ -47,7 +47,7 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 	// content
 	html := template.Root.Lookup("enriched_mail.html")
 	if html == nil {
-		return fmt.Errorf("SendEnrichedMail: can't find enriched template")
+		return fmt.Errorf("SendEnrichedMemos: can't find enriched template")
 	}
 
 	p := semParam{

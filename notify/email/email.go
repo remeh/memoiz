@@ -32,7 +32,9 @@ func init() {
 }
 
 func dumpToFile(b []byte) {
-	ioutil.WriteFile(fmt.Sprintf("/tmp/tmp%d.html", time.Now().Unix()), b, 0644)
+	n := fmt.Sprintf("/tmp/tmp%d.html", time.Now().Unix())
+	ioutil.WriteFile(n, b, 0644)
+	println("Dumped into " + n)
 }
 
 func mailHeader(buff *bytes.Buffer, email, title string) {

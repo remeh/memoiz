@@ -8,7 +8,7 @@ import (
 	"remy.io/memoiz/accounts"
 	"remy.io/memoiz/api"
 	"remy.io/memoiz/log"
-	"remy.io/memoiz/notify/mail"
+	"remy.io/memoiz/notify/email"
 	"remy.io/memoiz/uuid"
 )
 
@@ -90,7 +90,7 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// send subscription email
 	// ----------------------
 
-	if err := mail.SendNewUserMail(body.Firstname, body.Email); err != nil {
+	if err := email.SendNewUserMail(body.Firstname, body.Email); err != nil {
 		log.Error("Accouts/Create: SendSubscriptionMail:", err)
 	}
 

@@ -1,0 +1,13 @@
+.copyright {
+  font-size: 8px;
+  color: #aaaaaa;
+  padding-top: 2px;
+}
+
+.tag {
+  background-color: rgb(2, 136, 209);
+  border-radius: 2px;
+  color: white;
+  font-weight: bold;
+  padding: 0.5em;
+}

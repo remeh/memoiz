@@ -1,16 +1,32 @@
 <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="mui-panel">
   <div class="mui--text-body1">
   <div>
-    <h2>{{.Memo.Text}}</h2>
-    <h4>{{.Memo.Category}}</h4>
-    <hr>
-    <table style="border: 0;">
+    <table style="border: 0; width: 100%;">
       <tr>
-        <td style="width: 80%;">
+        <td style="width:90%">
+          <h2>{{.Memo.Text}}</h2>
+        </td>
+        <td style="width:10%">
+          <h4><span class="tag">{{.Memo.Category}}</span></h4>
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <table style="border: 0; padding: 1em;">
+      <tr>
+        <td class="mui--text-justify" style="width: 90%; padding: 1em;">
           {{.EnrichInfos.Content}}
         </td>
-        <td style="width: 20%;">
+        <td style="width: 10%;">
           <img style="width: 200px;" src="{{.EnrichInfos.ImageUrl}}" />
+        </td>
+      </tr>
+      <tr class="copyright">
+        <td class="mui--text-center">
+          {{.EnrichInfos.ContentCopyright}}
+        </td>
+        <td class="mui--text-center">
+          {{.EnrichInfos.ImageCopyright}}
         </td>
       </tr>
     </table>
