@@ -125,14 +125,14 @@ func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 	return nil
 }
 
-// UpdateLastNotif updates the last notification time of
+// UpdateLastEmail updates the last email time of
 // each given memo.
-func (d *MemosDAO) UpdateLastNotif(uid uuid.UUID, memoUids []uuid.UUID, t time.Time) error {
+func (d *MemosDAO) UpdateLastEmail(uid uuid.UUID, memoUids uuid.UUIDs, t time.Time) error {
 	switch {
 	case uid.IsNil():
-		return fmt.Errorf("UpdateLastNotif: uid.IsNil()")
+		return fmt.Errorf("UpdateLastEmail: uid.IsNil()")
 	case len(memoUids) == 0:
-		return fmt.Errorf("UpdateLastNotif: len(memoUids) == 0")
+		return fmt.Errorf("UpdateLastEmail: len(memoUids) == 0")
 	}
 
 	vals := storage.Values(t, uid)
@@ -143,13 +143,13 @@ func (d *MemosDAO) UpdateLastNotif(uid uuid.UUID, memoUids []uuid.UUID, t time.T
 	if _, err := d.DB.Exec(`
 		UPDATE "memo"
 		SET
-			"last_notification_time" = $1
+			"last_email" = $1
 		WHERE
 			"owner_uid" = $2
 			AND
-			"uid" IN `+storage.InClause(len(memoUids))+`
+			"uid" IN `+storage.InClause(3, len(memoUids))+`
 	`, vals...); err != nil {
-		return err
+		return log.Err("UpdateLastEmail", err)
 	}
 
 	return nil

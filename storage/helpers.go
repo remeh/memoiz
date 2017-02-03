@@ -7,18 +7,18 @@ import (
 )
 
 // InClause generates the IN clause such as,
-// calling with 2 returns:
-// ($1,$2)
-func InClause(c int) string {
-	if c == 0 {
+// calling InClause(3,4) returns:
+// ($3,$4,$5,$6)
+func InClause(start, count int) string {
+	if count == 0 {
 		log.Error("InClause: called with c == 0")
 		return ""
 	}
 
 	str := "("
-	for i := 0; i < c; i++ {
-		str = fmt.Sprintf("%s ?%d", str, i+1)
-		if i != c-1 {
+	for i := 0; i < count; i++ {
+		str = fmt.Sprintf("%s$%d", str, i+start)
+		if i != count-1 {
 			str += ","
 		}
 	}
@@ -28,9 +28,9 @@ func InClause(c int) string {
 }
 
 func Values(d ...interface{}) []interface{} {
-	rv := make([]interface{}, len(d))
-	for i, v := range d {
-		rv[i] = v
+	rv := make([]interface{}, 0)
+	for _, v := range d {
+		rv = append(rv, v)
 	}
 	return rv
 }

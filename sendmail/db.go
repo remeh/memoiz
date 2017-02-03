@@ -76,7 +76,8 @@ func getOwners(cat string, d time.Duration, limit int) (uuid.UUIDs, error) {
 // enrichableMemos return enrichable memos available
 // to be sent to their owner because they were not been
 // sent since the given duration.
-func enrichableMemos(owner uuid.UUID, d time.Duration) (memos.Memos, error) {
+// Interval use the postgresql interval syntax.
+func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -84,8 +85,6 @@ func enrichableMemos(owner uuid.UUID, d time.Duration) (memos.Memos, error) {
 		return nil, fmt.Errorf("notify/email: enrichableMemos: nil owner provided")
 	}
 
-	// TODO(remy): use the duration and last_email
-	// to not select each time the same memo.
 	if rows, err = storage.DB().Query(`
 		SELECT "uid", text, "r_category"
 		FROM "memo"
@@ -93,6 +92,8 @@ func enrichableMemos(owner uuid.UUID, d time.Duration) (memos.Memos, error) {
 			"owner_uid" = $1
 			AND
 			"state" = $2
+			AND
+			COALESCE("last_email", "creation_time") + interval '`+interval+`'  < now()
 		ORDER BY last_email DESC
 	`, owner, memos.MemoActive); err != nil {
 		return nil, err
@@ -226,13 +227,13 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 
 // emailSent stores in the database that an email has been sent
 // to the given user at the given time.
-func emailSent(acc accounts.SimpleUser, t time.Time) error {
+func emailSent(acc accounts.SimpleUser, cat string, t time.Time) error {
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "emailing_sent"
 		("uid", "owner_uid", "type", "creation_time")
 		VALUES
 		($1, $2, $3, $4)
-	`, uuid.New(), acc.Uid, CategoryReminderEmail, t); err != nil {
+	`, uuid.New(), acc.Uid, cat, t); err != nil {
 		return log.Err("emailSent", err)
 	}
 	return nil

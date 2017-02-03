@@ -26,9 +26,14 @@ func Enrich(text string, cat Category) (bool, EnrichResult, error) {
 	es := make([]Enricher, 0)
 
 	switch cat {
+	// TODO(remy): imdb, allociné
+	// TODO(remy): yelp
+	// TODO(remy): bandcamp ?
 	case Artist, Actor, Movie, Person, Place, Serie, VideoGame, Food:
 		es = append(es, &Wikipedia{})
 	}
+
+	// TODO(remy): long text can probably be sent as is in an email.
 
 	for _, e := range es {
 		if found, result, err := e.Enrich(text, cat); err != nil {

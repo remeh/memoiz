@@ -12,13 +12,21 @@ import (
 )
 
 const (
+	// Amount maximum of enriched memo
+	// in an email.
 	MaxEnrichedPerMail = 2
+	// Frequency on which should be sent at maximum
+	// each memo.
+	// Meaning if this is '3 day' , should be sent
+	// only each 3 day
+	// Must use the postgresql interval syntax
+	IntervalBetweenEachSend = "3 day"
 )
 
 func enrichEmailing() error {
-	// TODO(remy): pick maximum 2 of its notes, not recently sent to him, for which we can find content
-	// TODO(remy): build an email using all these information and the enriched template
-	// TODO(remy): send it this email
+	// TODO(remy): store last time when this user has received an email of this type
+	// TODO(remy): store last time a memo has been sent to the user.
+	// TODO(remy): store that this user has received a CategoryEnrichedEmail
 
 	var uids uuid.UUIDs
 	var err error
@@ -35,13 +43,17 @@ func enrichEmailing() error {
 		var toSend memos.Memos
 		var results mind.EnrichResults
 
-		// retrieve memos to do for this user
+		now := time.Now()
 
-		if ms, err = enrichableMemos(uid, time.Hour); err != nil {
+		// retrieve memos to do for this user
+		// ----------------------
+
+		if ms, err = enrichableMemos(uid, IntervalBetweenEachSend); err != nil {
 			return err
 		}
 
-		// nrich these memos
+		// enrich these memos
+		// ----------------------
 
 		for _, m := range ms {
 			var found bool
@@ -57,26 +69,44 @@ func enrichEmailing() error {
 				results = append(results, res)
 			}
 
-			if len(toSend) > MaxEnrichedPerMail {
+			if len(toSend) >= MaxEnrichedPerMail {
 				break
 			}
 		}
 
-		// we've no memos to send to this user
+		// no memos to send to this user
 		if len(toSend) == 0 {
 			continue
 		}
 
-		var su accounts.SimpleUser
-
 		// gets this user account
+		// ----------------------
+		var su accounts.SimpleUser
 
 		if su, _, err = accounts.DAO().UserByUid(uid); err != nil {
 			log.Error("enrichEmailing:", err)
 			continue
 		}
 
+		// store that we have send this email
+		// ----------------------
+		//
+		// NOTE(remy): we store it before actually sending it
+		// because if one the update/insert fail, we will send zero time the email.
+		// In the other order (update/insert after send), if the update fail,
+		// we will send an infinite amount of time the email...
+
+		if err := memos.DAO().UpdateLastEmail(uid, ms.Uids(), now); err != nil {
+			log.Error("enrichEmailing:", err)
+			continue
+		}
+
+		if err := emailSent(acc, CategoryReminderEmail, t); err != nil {
+			return log.Err("send", err)
+		}
+
 		// send the mail
+		// ----------------------
 
 		if err := email.SendEnrichedMemos(su, toSend, results); err != nil {
 			log.Error("enrichEmailing:", err)

@@ -56,10 +56,10 @@ type MemoRichInfo struct {
 // ----------------------
 
 // GroupByCategory regroups the slice of memos per Category.
-func (cs Memos) GroupByCategory() map[mind.Category]Memos {
+func (ms Memos) GroupByCategory() map[mind.Category]Memos {
 	rv := make(map[mind.Category]Memos)
 
-	for _, c := range cs {
+	for _, c := range ms {
 		v, exists := rv[c.MemoRichInfo.Category]
 
 		if !exists {
@@ -71,4 +71,12 @@ func (cs Memos) GroupByCategory() map[mind.Category]Memos {
 	}
 
 	return rv
+}
+
+func (ms Memos) Uids() uuid.UUIDs {
+	ids := make(uuid.UUIDs, len(ms))
+	for i, m := range ms {
+		ids[i] = m.Uid
+	}
+	return ids
 }
