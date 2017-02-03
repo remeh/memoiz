@@ -149,7 +149,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 			continue
 		}
 
-		// TODO(remy): do not send epicly large images
+		// TODO(remy): try to not send epicly large images
 
 		result.ImageUrl = w.imagesUrls[i]
 		result.ImageCopyright = license // TODO(remy): put a copyright notice, not the license title
@@ -160,7 +160,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 
 func (w *Wikipedia) fetchContent() (bool, error) {
 
-	// TODO(remy): try to fetch the page, could be not found!
+	// TODO(remy): try to fetch the page, could not existing!
 	// ----------------------
 
 	var err error

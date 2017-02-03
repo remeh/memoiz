@@ -1,9 +1,10 @@
 package mind
 
 type EnrichResult struct {
+	Title            string
 	Content          string
-	ImageUrl         string
 	ContentCopyright string
+	ImageUrl         string
 	ImageCopyright   string
 }
 
@@ -24,6 +25,19 @@ type Enricher interface {
 func Enrich(text string, cat Category) (bool, EnrichResult, error) {
 
 	es := make([]Enricher, 0)
+
+	// looks whether the text contains an URL
+	// ---------------------
+
+	url := rxUrl.FindString(text)
+	if len(url) != 0 {
+		// we have an URL: start only the URL
+		// analyzer.
+		es = append(es, &Url{url: url})
+	}
+
+	// other engines
+	// ----------------------
 
 	switch cat {
 	// TODO(remy): imdb, allociné

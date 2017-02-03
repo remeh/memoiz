@@ -43,7 +43,7 @@ func enrichEmailing() error {
 		var toSend memos.Memos
 		var results mind.EnrichResults
 
-		now := time.Now()
+		t := time.Now()
 
 		// retrieve memos to do for this user
 		// ----------------------
@@ -81,9 +81,9 @@ func enrichEmailing() error {
 
 		// gets this user account
 		// ----------------------
-		var su accounts.SimpleUser
+		var acc accounts.SimpleUser
 
-		if su, _, err = accounts.DAO().UserByUid(uid); err != nil {
+		if acc, _, err = accounts.DAO().UserByUid(uid); err != nil {
 			log.Error("enrichEmailing:", err)
 			continue
 		}
@@ -96,19 +96,19 @@ func enrichEmailing() error {
 		// In the other order (update/insert after send), if the update fail,
 		// we will send an infinite amount of time the email...
 
-		if err := memos.DAO().UpdateLastEmail(uid, ms.Uids(), now); err != nil {
+		if err := memos.DAO().UpdateLastEmail(uid, ms.Uids(), t); err != nil {
 			log.Error("enrichEmailing:", err)
 			continue
 		}
 
-		if err := emailSent(acc, CategoryReminderEmail, t); err != nil {
+		if err := emailSent(acc, CategoryEnrichedEmail, t); err != nil {
 			return log.Err("send", err)
 		}
 
 		// send the mail
 		// ----------------------
 
-		if err := email.SendEnrichedMemos(su, toSend, results); err != nil {
+		if err := email.SendEnrichedMemos(acc, toSend, results); err != nil {
 			log.Error("enrichEmailing:", err)
 		}
 	}

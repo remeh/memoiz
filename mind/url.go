@@ -37,7 +37,8 @@ type Url struct {
 	url    string
 	domain string
 	image  string
-	title  string
+	title  string // short desc
+	desc   string // long desc
 	data   []byte
 
 	category Category
@@ -162,7 +163,7 @@ func (u *Url) Analyze() error {
 		}
 	})
 
-	u.title = chooseTitle(u.domain, title, ogTitle, ogDescription)
+	u.title, u.desc = titleAndDesc(u.domain, title, ogTitle, ogDescription)
 
 	return nil
 }
@@ -193,32 +194,60 @@ func (u *Url) Categories() Categories {
 	return Categories{Uncategorized}
 }
 
+func (u *Url) Enrich(text string, cat Category) (bool, EnrichResult, error) {
+	if err := u.Fetch(text); err != nil {
+		return false, EnrichResult{}, err
+	}
+
+	if err := u.Analyze(); err != nil {
+		return false, EnrichResult{}, err
+	}
+
+	rv := EnrichResult{
+		ImageUrl: u.image,
+		Content:  u.desc,
+		Title:    u.title,
+	}
+
+	if len(u.desc) == 0 { // when no desc, use the title as description instead
+		rv.Content = rv.Title
+		rv.Title = ""
+	}
+
+	return true, rv, nil
+}
+
 // ----------------------
 
-// chooseTitle chooses the best title for the given URL
+// titleAndDesc chooses the best title for the given URL
 // and given read title, og:title and og:description.
-func chooseTitle(domain string, title, ogTitle, ogDescription string) string {
-	var rv string
+func titleAndDesc(domain string, title, ogTitle, ogDescription string) (string, string) {
+	var t string
+	var d string
 
 	if len(domain) != 0 {
 		switch domain {
 		case "youtube", "twitter":
-			rv = ogDescription
+			t = ogDescription
+			d = ogTitle
 		default:
-			rv = ogTitle
+			t = ogTitle
+			d = ogDescription
 		}
 	}
 
-	if len(rv) == 0 && len(ogDescription) != 0 {
-		rv = ogDescription
+	if len(t) == 0 && len(ogDescription) != 0 {
+		t = ogDescription
+		d = ""
 	}
 
 	// fallback on title
-	if len(rv) == 0 {
-		rv = title
+	if len(t) == 0 {
+		t = title
+		d = ""
 	}
 
-	return rv
+	return t, d
 }
 
 var uas []string = []string{
