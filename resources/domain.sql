@@ -115,6 +115,9 @@ INSERT INTO "domain" VALUES ('yidio', 9, 50);
 INSERT INTO "domain" VALUES ('youtube', 10, 75); -- video
 INSERT INTO "domain" VALUES ('youtube', 6, 25); -- music
 
+INSERT INTO "domain" VALUES ('youtu', 10, 75); -- video
+INSERT INTO "domain" VALUES ('youtu', 6, 25); -- music
+
 INSERT INTO "domain" VALUES ('dailymotion', 10, 75); -- video
 INSERT INTO "domain" VALUES ('dailymotion', 6, 25); -- music
 
