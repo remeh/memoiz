@@ -14,17 +14,21 @@
     <hr>
     <table style="border: 0; padding: 1em;">
       <tr>
-        <td class="mui--text-justify" style="width: 90%; padding: 1em;">
+        <td class="mui--text-justify" style="width: 100%; padding: 1em;">
           {{.EnrichInfos.Content}}
-        </td>
-        <td style="width: 10%;">
-          <img style="width: 200px;" src="{{.EnrichInfos.ImageUrl}}" />
         </td>
       </tr>
       <tr class="copyright">
         <td class="mui--text-center">
           {{.EnrichInfos.ContentCopyright}}
         </td>
+      </tr>
+      <tr>
+        <td style="width: 10%;">
+          <img style="width: 300px;" src="{{.EnrichInfos.ImageUrl}}" />
+        </td>
+      </tr>
+      <tr>
         <td class="mui--text-center">
           {{.EnrichInfos.ImageCopyright}}
         </td>
