@@ -3,36 +3,37 @@
   <div>
     <table style="border: 0; width: 100%;">
       <tr>
-        <td style="width:90%">
-          <h2>{{.Memo.Text}}</h2>
-        </td>
-        <td style="width:10%">
-          <h4><span class="tag">{{.Memo.Category}}</span></h4>
+        <td style="width:100%">
+          <h2>{{.Memo.Text}} <span class="tag">{{.Memo.Category}}</span></h2>
         </td>
       </tr>
     </table>
     <hr>
     <table style="border: 0; padding: 1em;">
       <tr>
-        <td class="mui--text-justify" style="width: 100%; padding: 1em;">
+        <td class="mui--text-justify" style="width: 100%; padding-bottom: 0.5em; padding: 1em;">
           {{.EnrichInfos.Content}}
         </td>
       </tr>
+      {{ if .EnrichInfos.ImageUrl }}
+      <tr>
+        <td class="mui--text-center">
+          <img style="width: 300px;" src="{{.EnrichInfos.ImageUrl}}" />
+        </td>
+      </tr>
+      {{ end }}
       <tr class="copyright">
         <td class="mui--text-center">
           {{.EnrichInfos.ContentCopyright}}
         </td>
       </tr>
-      <tr>
-        <td style="width: 10%;">
-          <img style="width: 300px;" src="{{.EnrichInfos.ImageUrl}}" />
-        </td>
-      </tr>
-      <tr>
+      {{ if .EnrichInfos.ImageCopyright }}
+      <tr class="copyright">
         <td class="mui--text-center">
           {{.EnrichInfos.ImageCopyright}}
         </td>
       </tr>
+      {{ end }}
     </table>
   </div>
 </td></tr></table>

@@ -24,10 +24,6 @@ const (
 )
 
 func enrichEmailing() error {
-	// TODO(remy): store last time when this user has received an email of this type
-	// TODO(remy): store last time a memo has been sent to the user.
-	// TODO(remy): store that this user has received a CategoryEnrichedEmail
-
 	var uids uuid.UUIDs
 	var err error
 
@@ -40,8 +36,15 @@ func enrichEmailing() error {
 	for _, uid := range uids {
 		var ms memos.Memos
 		var err error
+		// memos for which we've find enrich infos
+		// and that we'll send to the user.
 		var toSend memos.Memos
+		// found information
 		var results mind.EnrichResults
+		// memos for which we've looked for enrich infos
+		// but we didn't find anything: we still want to
+		// store the information that we've tried to send them.
+		var lookedButNotFound memos.Memos
 
 		t := time.Now()
 
@@ -49,7 +52,7 @@ func enrichEmailing() error {
 		// ----------------------
 
 		if ms, err = enrichableMemos(uid, IntervalBetweenEachSend); err != nil {
-			return err
+			return log.Err("enrichEmailing", err)
 		}
 
 		// enrich these memos
@@ -67,6 +70,8 @@ func enrichEmailing() error {
 			if found {
 				toSend = append(toSend, m)
 				results = append(results, res)
+			} else {
+				lookedButNotFound = append(lookedButNotFound, m)
 			}
 
 			if len(toSend) >= MaxEnrichedPerMail {
@@ -78,6 +83,8 @@ func enrichEmailing() error {
 		if len(toSend) == 0 {
 			continue
 		}
+
+		log.Info("Sending Enriched Email to", uid)
 
 		// gets this user account
 		// ----------------------
@@ -96,20 +103,22 @@ func enrichEmailing() error {
 		// In the other order (update/insert after send), if the update fail,
 		// we will send an infinite amount of time the email...
 
-		if err := memos.DAO().UpdateLastEmail(uid, ms.Uids(), t); err != nil {
+		allLooked := append(toSend, lookedButNotFound...)
+
+		if err := memos.DAO().UpdateLastEmail(uid, allLooked.Uids(), t); err != nil {
 			log.Error("enrichEmailing:", err)
 			continue
 		}
 
 		if err := emailSent(acc, CategoryEnrichedEmail, t); err != nil {
-			return log.Err("send", err)
+			return log.Err("enrichEmailing", err)
 		}
 
 		// send the mail
 		// ----------------------
 
 		if err := email.SendEnrichedMemos(acc, toSend, results); err != nil {
-			log.Error("enrichEmailing:", err)
+			return log.Err("enrichEmailing", err)
 		}
 	}
 

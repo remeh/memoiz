@@ -37,18 +37,11 @@ func main() {
 	}
 
 	for t := range ticker.C {
-		log.Debug("sendmail: waking up", t)
-		memos, err := fetch()
-		if err != nil {
-			log.Error("sendmail:", err)
+		if err := categoryEmailing(); err != nil {
+			log.Error(err)
 		}
-
-		if len(memos) == 0 {
-			continue
-		}
-
-		if err := send(memos, t); err != nil {
-			log.Error("sendmail", err)
+		if err := enrichEmailing(); err != nil {
+			log.Error(err)
 		}
 	}
 }

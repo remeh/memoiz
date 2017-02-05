@@ -1,5 +1,5 @@
 .copyright {
-  font-size: 8px;
+  font-size: 10px;
   color: #aaaaaa;
   padding-top: 2px;
 }
@@ -9,5 +9,7 @@
   border-radius: 2px;
   color: white;
   font-weight: bold;
+  font-size: 0.7em;
   padding: 0.5em;
+  margin-left: 0.5em;
 }

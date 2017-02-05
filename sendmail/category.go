@@ -11,6 +11,22 @@ import (
 	"remy.io/memoiz/uuid"
 )
 
+func categoryEmailing() error {
+	log.Debug("categoryEmailing: waking up", t)
+	memos, err := fetch()
+	if err != nil {
+		return err
+	}
+
+	if len(memos) == 0 {
+		return nil
+	}
+
+	if err := send(memos, t); err != nil {
+		return err
+	}
+}
+
 // fetch fetches Ids of memos for which notification
 // has never been done.
 func fetch() (map[string]memos.Memos, error) {
@@ -41,7 +57,7 @@ func fetch() (map[string]memos.Memos, error) {
 func send(memos map[string]memos.Memos, t time.Time) error {
 	for owner, memos := range memos {
 		memos = memos
-		log.Info("Sending for", owner)
+		log.Info("Sending Category Email to", owner)
 
 		// get the user
 		// ----------------------

@@ -22,17 +22,21 @@ type Enricher interface {
 	Enrich(string, Category) (bool, EnrichResult, error)
 }
 
+// Enrich builds an EnrichResult containing description and image
+// to complete the information guessed from the given text.
+// The current purpose is to use these information to send contextual
+// and interesting emails.
 func Enrich(text string, cat Category) (bool, EnrichResult, error) {
 
 	es := make([]Enricher, 0)
 
-	// looks whether the text contains an URL
+	// looks whether the text contains an Url
 	// ---------------------
 
 	url := rxUrl.FindString(text)
 	if len(url) != 0 {
-		// we have an URL: start only the URL
-		// analyzer.
+		// we have an URL: starts with the Url enricher
+		// because it'll probably be enough.
 		es = append(es, &Url{url: url})
 	}
 

@@ -82,7 +82,7 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	var err error
 
 	if owner == nil {
-		return nil, fmt.Errorf("notify/email: enrichableMemos: nil owner provided")
+		return nil, fmt.Errorf("sendmail: enrichableMemos: nil owner provided")
 	}
 
 	if rows, err = storage.DB().Query(`
@@ -96,7 +96,7 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 			COALESCE("last_email", "creation_time") + interval '`+interval+`'  < now()
 		ORDER BY last_email DESC
 	`, owner, memos.MemoActive); err != nil {
-		return nil, err
+		return nil, log.Err("enrichableMemos", err)
 	}
 
 	if rows == nil {
@@ -115,7 +115,7 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 		var cat int64
 
 		if err := rows.Scan(&uid, &text, &cat); err != nil {
-			log.Error("notify/email: enrichableMemos:", err, "Continuing.")
+			log.Error("sendmail: enrichableMemos:", err, "Continuing.")
 			continue
 		}
 
