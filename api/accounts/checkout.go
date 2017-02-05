@@ -19,12 +19,13 @@ import (
 type Checkout struct{}
 
 type checkoutBody struct {
-	Card      checkoutCard `json:"card"`
-	ClientIp  string       `json:"client_ip"`
-	CreatedTs int          `json:"created"`
-	LiveMode  bool         `json:"livemode"`
-	Tok       string       `json:"id"`
-	Plan      string       `json:"plan"`
+	Card       checkoutCard `json:"card"`
+	ClientIp   string       `json:"client_ip"`
+	CreatedTs  int          `json:"created"`
+	LiveMode   bool         `json:"livemode"`
+	Tok        string       `json:"id"`
+	Plan       string       `json:"plan"`
+	CardHolder string       `json:"card_holder"`
 }
 
 type checkoutCard struct {
@@ -100,7 +101,7 @@ func (c Checkout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// ----------------------
 
 		customerParams := &stripe.CustomerParams{
-			Desc: acc.Email,
+			Email: acc.Email,
 		}
 		customerParams.SetSource(body.Tok) // obtained with Stripe.js
 		cus, err := customer.New(customerParams)
@@ -141,6 +142,10 @@ func (c Checkout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Amount:   plan.Price,
 		Currency: "eur",
 		Desc:     fmt.Sprintf("%s %s exp: %s", plan.Name, acc.Email, now.Add(plan.Duration)),
+	}
+	params.Meta = map[string]string{
+		"CardHolder": body.CardHolder,
+		"Email":      acc.Email,
 	}
 
 	params.Customer = acc.StripeToken
