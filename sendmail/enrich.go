@@ -12,15 +12,17 @@ import (
 )
 
 const (
-	// Amount maximum of enriched memo
+	// Amount maximum of enriched memos
 	// in an email.
 	MaxEnrichedPerMail = 2
 	// Frequency on which should be sent at maximum
 	// each memo.
-	// Meaning if this is '3 day' , should be sent
+	// Meaning if this is '3 day', should be sent
 	// only each 3 day
 	// Must use the postgresql interval syntax
-	IntervalBetweenEachSend = "3 day"
+	IntervalBetweenEachAppearance = "3 day"
+	// Frequency of sending enriched email.
+	IntervalBetweenEachMail = time.Hour * 24 * 1
 )
 
 func enrichEmailing(t time.Time) error {
@@ -29,7 +31,7 @@ func enrichEmailing(t time.Time) error {
 	var uids uuid.UUIDs
 	var err error
 
-	if uids, err = getOwners(CategoryEnrichedEmail, time.Hour*24*2, 5); err != nil {
+	if uids, err = getOwners(CategoryEnrichedEmail, IntervalBetweenEachMail, 5); err != nil {
 		return err
 	}
 
@@ -51,7 +53,7 @@ func enrichEmailing(t time.Time) error {
 		// retrieve memos to do for this user
 		// ----------------------
 
-		if ms, err = enrichableMemos(uid, IntervalBetweenEachSend); err != nil {
+		if ms, err = enrichableMemos(uid, IntervalBetweenEachAppearance); err != nil {
 			return log.Err("enrichEmailing", err)
 		}
 
