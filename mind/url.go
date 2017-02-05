@@ -203,6 +203,10 @@ func (u *Url) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 		return false, EnrichResult{}, err
 	}
 
+	if !validImage(u.image) {
+		u.image = ""
+	}
+
 	rv := EnrichResult{
 		ImageUrl: u.image,
 		Content:  u.desc,
@@ -248,6 +252,23 @@ func titleAndDesc(domain string, title, ogTitle, ogDescription string) (string, 
 	}
 
 	return t, d
+}
+
+// validImage returns whether or not this image
+// should be considered valid to send.
+func validImage(imgUrl string) bool {
+	for _, img := range igImages {
+		if img == imgUrl {
+			return false
+		}
+	}
+	return true
+}
+
+// igImages are images to ignored, they're not valid
+// to send to the user.
+var igImages []string = []string{
+	"https://s0.wp.com/i/blank.jpg",
 }
 
 var uas []string = []string{
