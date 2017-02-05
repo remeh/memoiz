@@ -37,5 +37,5 @@ func Debug(data ...interface{}) {
 }
 
 func Err(prefix string, err error) error {
-	return fmt.Errorf("%s %v", prefix, err)
+	return fmt.Errorf("%s: %v", prefix, err)
 }
