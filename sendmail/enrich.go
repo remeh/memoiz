@@ -23,7 +23,7 @@ const (
 	IntervalBetweenEachSend = "3 day"
 )
 
-func enrichEmailing() error {
+func enrichEmailing(t time.Time) error {
 	var uids uuid.UUIDs
 	var err error
 
@@ -45,8 +45,6 @@ func enrichEmailing() error {
 		// but we didn't find anything: we still want to
 		// store the information that we've tried to send them.
 		var lookedButNotFound memos.Memos
-
-		t := time.Now()
 
 		// retrieve memos to do for this user
 		// ----------------------

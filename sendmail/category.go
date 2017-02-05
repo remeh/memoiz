@@ -11,7 +11,7 @@ import (
 	"remy.io/memoiz/uuid"
 )
 
-func categoryEmailing() error {
+func categoryEmailing(t time.Time) error {
 	log.Debug("categoryEmailing: waking up", t)
 	memos, err := fetch()
 	if err != nil {
@@ -25,6 +25,8 @@ func categoryEmailing() error {
 	if err := send(memos, t); err != nil {
 		return err
 	}
+
+	return nil
 }
 
 // fetch fetches Ids of memos for which notification

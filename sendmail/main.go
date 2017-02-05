@@ -32,15 +32,11 @@ func main() {
 		log.Error("sendmail:", err)
 	}
 
-	if err := enrichEmailing(); err != nil {
-		log.Error(err)
-	}
-
 	for t := range ticker.C {
-		if err := categoryEmailing(); err != nil {
+		if err := categoryEmailing(t); err != nil {
 			log.Error(err)
 		}
-		if err := enrichEmailing(); err != nil {
+		if err := enrichEmailing(t); err != nil {
 			log.Error(err)
 		}
 	}
