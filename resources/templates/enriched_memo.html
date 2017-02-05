@@ -4,12 +4,14 @@
     <table style="border: 0; width: 100%;">
       <tr>
         <td style="width:100%">
+          <a href="https://app.memoiz.com" alt="Open on Memoiz">
           <h2>
             {{.Memo.Text}}
             {{if (ne .Memo.MemoRichInfo.Category.String "Uncategorized")}}
               <span class="tag">{{.Memo.MemoRichInfo.Category}}</span>
             {{end}}
           </h2>
+          </a>
         </td>
       </tr>
     </table>
@@ -29,16 +31,13 @@
       {{ end }}
       <tr class="copyright">
         <td class="mui--text-center">
-          {{.EnrichInfos.ContentCopyright}}
+          <span>Content: {{.EnrichInfos.ContentCopyright}}</span> {{if .EnrichInfos.ContentSource}}<a class="copyright" href="{{.EnrichInfos.ContentSource}}" alt="Go to source"><span>Source</span></a>{{end}}
+          {{ if .EnrichInfos.ImageCopyright }}
+            <br/>
+            <span>Image: {{.EnrichInfos.ImageCopyright}}</span> {{if .EnrichInfos.ImageSource}}<a class="copyright" href="{{.EnrichInfos.ImageSource}}" alt="Go to source"><span>Source</span></a>{{end}}
+          {{ end }}
         </td>
       </tr>
-      {{ if .EnrichInfos.ImageCopyright }}
-      <tr class="copyright">
-        <td class="mui--text-center">
-          {{.EnrichInfos.ImageCopyright}}
-        </td>
-      </tr>
-      {{ end }}
     </table>
   </div>
 </td></tr></table>

@@ -4,8 +4,10 @@ type EnrichResult struct {
 	Title            string
 	Content          string
 	ContentCopyright string
+	ContentSource    string
 	ImageUrl         string
 	ImageCopyright   string
+	ImageSource      string
 }
 
 type EnrichResults []EnrichResult

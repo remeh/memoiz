@@ -4,6 +4,12 @@
   padding-top: 2px;
 }
 
+a.copyright {
+  font-size: 10px;
+  color: #aaaaaa;
+  text-decoration: underline;
+}
+
 .tag {
   background-color: rgb(2, 136, 209);
   border-radius: 2px;

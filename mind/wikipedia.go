@@ -23,6 +23,7 @@ type Wikipedia struct {
 
 	imagesUrls     []string
 	imagesLicenses []string
+	imagesFiles    []string
 }
 
 var rxDelBrackets = regexp.MustCompile(`(\[.*?\]) *`)
@@ -126,6 +127,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 
 	if selection := doc.Find("#footer-info-copyright").First(); selection != nil {
 		result.ContentCopyright = contentCopyright(selection.Text())
+		result.ContentSource = w.generateContentUrl(w.text)
 	}
 
 	if len(result.Content) == 0 {
@@ -135,7 +137,8 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 	// extract the image
 	// ----------------------
 
-	if len(w.imagesUrls) != len(w.imagesLicenses) {
+	if len(w.imagesUrls) != len(w.imagesLicenses) ||
+		len(w.imagesUrls) != len(w.imagesFiles) {
 		log.Error("Wikipedia: extract: len(w.imagesUrls) != len(w.imagesLicenses) ignoring image")
 		return true, result, nil
 	}
@@ -153,6 +156,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 
 		result.ImageUrl = w.imagesUrls[i]
 		result.ImageCopyright = license // TODO(remy): put a copyright notice, not the license title
+		result.ImageSource = w.generateContentUrl(w.imagesFiles[i])
 	}
 
 	return len(result.Content) != 0, result, nil
@@ -232,7 +236,7 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 	// look for images titles.
 	// ----------------------
 
-	var titles []string
+	var files []string
 
 	jsonparser.ArrayEach(elements, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		// ignore this file
@@ -250,21 +254,21 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 			return
 		}
 
-		titles = append(titles, title)
+		files = append(files, title)
 	})
 
 	// gets each image license
 	// ----------------------
 
-	if len(titles) == 0 {
+	if len(files) == 0 {
 		return false, nil
 	}
 
-	for _, image := range titles {
+	for _, file := range files {
 		// look for the field license
 		// ----------------------
 
-		if resp, err = Fetch(w.generateImageLicense(image)); err != nil {
+		if resp, err = Fetch(w.generateImageLicense(file)); err != nil {
 			return false, err
 		} else if resp == nil {
 			return false, nil
@@ -303,7 +307,7 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 
 		var url string
 
-		if resp, err = Fetch(w.generateImageUrl(image)); err != nil {
+		if resp, err = Fetch(w.generateImageUrl(file)); err != nil {
 			return false, err
 		} else if resp == nil {
 			return false, nil
@@ -338,6 +342,7 @@ func (w *Wikipedia) fetchImages() (bool, error) {
 
 		w.imagesLicenses = append(w.imagesLicenses, license)
 		w.imagesUrls = append(w.imagesUrls, url)
+		w.imagesFiles = append(w.imagesFiles, file) // e.g. File:Streetlight%20Manifesto.jpg
 	}
 
 	return true, nil
