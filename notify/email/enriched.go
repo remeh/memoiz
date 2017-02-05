@@ -6,7 +6,6 @@ import (
 	"net/smtp"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
 	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
@@ -43,9 +42,6 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 		return fmt.Errorf("SendEnrichedMemos: len(ms) != len(infos)")
 	}
 
-	host := fmt.Sprintf("%s:%d", config.Config.SmtpHost, config.Config.SmtpPort)
-
-	auth := auth()
 	buff := bytes.Buffer{}
 
 	// TODO(remy): use the text of the memos to generate a title !!
@@ -73,7 +69,7 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 	dumpToFile(dumpDir, sendUid.String(), buff.Bytes())
 
 	// send
-	err := smtp.SendMail(host, auth, Sender, []string{acc.Email}, buff.Bytes())
+	err := smtp.SendMail(host(), auth(), Sender, []string{acc.Email}, buff.Bytes())
 	if err != nil {
 		return log.Err("SendEnrichedMemos", err)
 	}

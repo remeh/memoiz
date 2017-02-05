@@ -6,7 +6,6 @@ import (
 	"net/smtp"
 
 	"remy.io/memoiz/accounts"
-	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
 	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
@@ -26,9 +25,6 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos,
 		return nil
 	}
 
-	host := fmt.Sprintf("%s:%d", config.Config.SmtpHost, config.Config.SmtpPort)
-
-	auth := auth()
 	buff := bytes.Buffer{}
 
 	// headers
@@ -54,7 +50,7 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos,
 	dumpToFile(dumpDir, sendUid.String(), buff.Bytes())
 
 	// send
-	err := smtp.SendMail(host, auth, Sender, []string{acc.Email}, buff.Bytes())
+	err := smtp.SendMail(host(), auth(), Sender, []string{acc.Email}, buff.Bytes())
 	if err != nil {
 		return log.Err("SendCategoryMail", err)
 	}

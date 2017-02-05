@@ -14,7 +14,8 @@ import (
 var (
 	UseMail = false
 
-	Sender = "memos@mail.memoiz.com"
+	Sender  = "memos@mail.memoiz.com"
+	Support = "support@memoiz.com"
 )
 
 func init() {
@@ -40,7 +41,12 @@ func mailHeader(buff *bytes.Buffer, email, title string) {
 	buff.WriteString("MIME-version: 1.0;\r\n")
 	buff.WriteString("Content-Type: text/html; charset=\"UTF-8\";\r\n")
 	buff.WriteString(fmt.Sprintf("To: %s\r\n", email))
+	buff.WriteString(fmt.Sprintf("Reply-To: %s\r\n", Support))
 	buff.WriteString(fmt.Sprintf("Subject: %s\r\n\r\n", title))
+}
+
+func host() string {
+	return fmt.Sprintf("%s:%d", config.Config.SmtpHost, config.Config.SmtpPort)
 }
 
 func auth() smtp.Auth {
