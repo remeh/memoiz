@@ -11,6 +11,7 @@ import (
 	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
 	"remy.io/memoiz/notify/template"
+	"remy.io/memoiz/uuid"
 )
 
 type scmParam struct {
@@ -20,7 +21,7 @@ type scmParam struct {
 
 // SendCategoryMail sends an email to the given email
 // to remind him he has recently added some new memos.
-func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos) error {
+func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos, dumpDir string, sendUid uuid.UUID) error {
 	if !UseMail {
 		return nil
 	}
@@ -49,6 +50,8 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos)
 	}
 
 	buff.WriteString("\r\n")
+
+	dumpToFile(dumpDir, sendUid.String(), buff.Bytes())
 
 	// send
 	err := smtp.SendMail(host, auth, Sender, []string{acc.Email}, buff.Bytes())

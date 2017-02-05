@@ -227,13 +227,13 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 
 // emailSent stores in the database that an email has been sent
 // to the given user at the given time.
-func emailSent(acc accounts.SimpleUser, cat string, t time.Time) error {
+func emailSent(acc accounts.SimpleUser, sendUid uuid.UUID, cat string, t time.Time) error {
 	if _, err := storage.DB().Exec(`
 		INSERT INTO "emailing_sent"
 		("uid", "owner_uid", "type", "creation_time")
 		VALUES
 		($1, $2, $3, $4)
-	`, uuid.New(), acc.Uid, cat, t); err != nil {
+	`, sendUid, acc.Uid, cat, t); err != nil {
 		return log.Err("emailSent", err)
 	}
 	return nil

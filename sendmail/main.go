@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"remy.io/memoiz/config"
@@ -22,6 +25,10 @@ const (
 	//EmailFirstAfter  = "3 minute"
 )
 
+var (
+	EmailDumpDir = ""
+)
+
 func main() {
 
 	ticker := time.NewTicker(RunFrequency)
@@ -30,6 +37,7 @@ func main() {
 
 	if err := prepare(); err != nil {
 		log.Error("sendmail:", err)
+		os.Exit(1)
 	}
 
 	for t := range ticker.C {
@@ -44,5 +52,16 @@ func main() {
 
 func prepare() error {
 	_, err := storage.Init(config.Config.ConnString)
+
+	EmailDumpDir = os.Getenv("EMAIL_DUMP_DIR")
+	if len(EmailDumpDir) == 0 {
+		return log.Err("prepare:", fmt.Errorf("EMAIL_DUMP_DIR not set. Please set it."))
+	}
+
+	// remove trailing /
+	if strings.HasSuffix(EmailDumpDir, "/") {
+		EmailDumpDir = strings.TrimRight(EmailDumpDir, "/")
+	}
+
 	return err
 }

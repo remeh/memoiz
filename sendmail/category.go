@@ -77,17 +77,19 @@ func send(memos map[string]memos.Memos, t time.Time) error {
 			return fmt.Errorf("send: unknown user %q", owner)
 		}
 
-		// send the email
-		// ----------------------
-
-		if err := email.SendCategoryMail(acc, memos.GroupByCategory()); err != nil {
-			return log.Err("send", err)
-		}
-
 		// store that the email has been sent.
 		// ----------------------
 
-		if err := emailSent(acc, CategoryReminderEmail, t); err != nil {
+		sendUid := uuid.New()
+
+		if err := emailSent(acc, sendUid, CategoryReminderEmail, t); err != nil {
+			return log.Err("send", err)
+		}
+
+		// send the email
+		// ----------------------
+
+		if err := email.SendCategoryMail(acc, memos.GroupByCategory(), EmailDumpDir, sendUid); err != nil {
 			return log.Err("send", err)
 		}
 	}

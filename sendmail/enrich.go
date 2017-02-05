@@ -24,6 +24,8 @@ const (
 )
 
 func enrichEmailing(t time.Time) error {
+	log.Debug("enrichEmailing: waking up", t)
+
 	var uids uuid.UUIDs
 	var err error
 
@@ -108,14 +110,16 @@ func enrichEmailing(t time.Time) error {
 			continue
 		}
 
-		if err := emailSent(acc, CategoryEnrichedEmail, t); err != nil {
+		sendUid := uuid.New()
+
+		if err := emailSent(acc, sendUid, CategoryEnrichedEmail, t); err != nil {
 			return log.Err("enrichEmailing", err)
 		}
 
 		// send the mail
 		// ----------------------
 
-		if err := email.SendEnrichedMemos(acc, toSend, results); err != nil {
+		if err := email.SendEnrichedMemos(acc, toSend, results, EmailDumpDir, sendUid); err != nil {
 			return log.Err("enrichEmailing", err)
 		}
 	}

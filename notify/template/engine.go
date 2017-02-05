@@ -37,15 +37,11 @@ func ReadTemplates() (*template.Template, error) {
 	}
 
 	// assign custom functions and parse templates.
-	t, err := template.New("").Funcs(TemplateHelpers()).ParseFiles(rv...)
-	if err != nil {
-		return nil, err
-	}
-
-	// attach method helpers
-	return t, nil
+	return template.New("").Funcs(TemplateHelpers()).ParseFiles(rv...)
 }
 
+// lookForTemplates goes in the given path to
+// look for HTML and CSS templates.
 func lookForTemplates(path string) ([]string, error) {
 	if !strings.HasSuffix(path, "/") {
 		path += "/"

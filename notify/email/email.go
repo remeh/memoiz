@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/smtp"
-	"time"
 
 	"remy.io/memoiz/config"
 	"remy.io/memoiz/log"
@@ -31,10 +30,10 @@ func init() {
 	}
 }
 
-func dumpToFile(b []byte) {
-	n := fmt.Sprintf("/tmp/tmp%d.html", time.Now().Unix())
-	ioutil.WriteFile(n, b, 0644)
-	println("Dumped into " + n)
+func dumpToFile(dir, filename string, data []byte) {
+	n := fmt.Sprintf("%s/%s.html", dir, filename)
+	ioutil.WriteFile(n, data, 0644)
+	log.Debug("Email dumped into " + n)
 }
 
 func mailHeader(buff *bytes.Buffer, email, title string) {

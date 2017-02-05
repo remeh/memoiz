@@ -11,6 +11,7 @@ import (
 	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
 	"remy.io/memoiz/notify/template"
+	"remy.io/memoiz/uuid"
 )
 
 type semParam struct {
@@ -25,7 +26,11 @@ type enrichedMemo struct {
 
 type enrichedMemos []enrichedMemo
 
-func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.EnrichResults) error {
+// SendEnrichedMemos sends to the given user the list of memos
+// enriched by the given infos.
+// It also stores the email in the dumpDir directory using
+// the sendUid as filename.
+func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.EnrichResults, dumpDir string, sendUid uuid.UUID) error {
 	if !UseMail {
 		return nil
 	}
@@ -60,12 +65,12 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 	}
 
 	if err := html.Execute(&buff, p); err != nil {
-		log.Err("SendEnrichedMemos", err)
+		return log.Err("SendEnrichedMemos", err)
 	}
 
 	buff.WriteString("\r\n")
 
-	dumpToFile(buff.Bytes())
+	dumpToFile(dumpDir, sendUid.String(), buff.Bytes())
 
 	// send
 	err := smtp.SendMail(host, auth, Sender, []string{acc.Email}, buff.Bytes())
