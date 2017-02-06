@@ -55,10 +55,29 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// get the user subscription info
+	// ----------------------
+
+	var plan accounts.Plan
+	var validUntil time.Time
+
+	if _, plan, validUntil, err = accounts.SubscriptionInfos(su.Uid); err != nil {
+		api.RenderForbiddenJson(w)
+		return
+	}
+
+	// no plan, look for trial infos
+	if plan == accounts.NoPlan {
+		if _, validUntil, err = accounts.TrialInfos(su.Uid); err != nil {
+			api.RenderForbiddenJson(w)
+			return
+		}
+	}
+
 	// create session
 	// ----------------------
 
-	s := accounts.NewSession(su.Uid, now)
+	s := accounts.NewSession(su.Uid, now, validUntil, plan)
 	accounts.SetSessionCookie(w, s)
 	api.RenderOk(w)
 }

@@ -143,6 +143,14 @@ func RenderBadParameter(w http.ResponseWriter, param string) {
 	})
 }
 
+func RenderPaymentRequired(w http.ResponseWriter, plan accounts.Plan) {
+	RenderJson(w, 402, Response{
+		Msg: plan.Name,
+		Ok:  false,
+	})
+
+}
+
 func RenderOk(w http.ResponseWriter) {
 	RenderBaseJson(w, 200, "ok")
 }

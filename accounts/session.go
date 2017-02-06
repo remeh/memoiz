@@ -18,6 +18,13 @@ type Session struct {
 	// user uid
 	Uid uuid.UUID
 
+	// ValidUntil is the moment after when
+	// the user should pay.
+	ValidUntil time.Time
+
+	// User plan
+	Plan Plan
+
 	CreationTime time.Time
 	LastHit      time.Time
 }
@@ -40,11 +47,13 @@ func SetSessionCookie(w http.ResponseWriter, s Session) {
 	http.SetCookie(w, cookie)
 }
 
-func NewSession(userUid uuid.UUID, t time.Time) Session {
+func NewSession(userUid uuid.UUID, t, validUntil time.Time, plan Plan) Session {
 	token := randTok()
 	sessions[token] = Session{
 		Token:        token,
 		Uid:          userUid,
+		ValidUntil:   validUntil,
+		Plan:         plan,
 		CreationTime: t,
 		LastHit:      t,
 	}

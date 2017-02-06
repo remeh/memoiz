@@ -25,6 +25,9 @@ var (
 	// 7 days trial
 	TrialDuration time.Duration = time.Hour * 24 * 7
 
+	NoPlan Plan = Plan{ // special case
+		Name: "NoPlan",
+	}
 	Basic Plan = Plan{
 		Id:          "1",
 		Name:        "Basic",
@@ -96,6 +99,8 @@ func TrialInfos(uid uuid.UUID) (bool, time.Time, error) {
 	return false, end, nil
 }
 
+// SubscriptionInfos returns if this user has a valid subscription,
+// which plan he has/had and when it will/has expire(d).
 func SubscriptionInfos(uid uuid.UUID) (bool, Plan, time.Time, error) {
 	var end time.Time
 	var planId string
@@ -109,14 +114,14 @@ func SubscriptionInfos(uid uuid.UUID) (bool, Plan, time.Time, error) {
 		ORDER BY "end" DESC
 		LIMIT 1
 	`, uid).Scan(&end, &planId); err != nil && err != sql.ErrNoRows {
-		return false, Basic, end, log.Err("SubscriptionInfos", err)
+		return false, NoPlan, end, log.Err("SubscriptionInfos", err)
 	}
 
 	var exists bool
 
 	// has no plan
 	if plan, exists = Plans[planId]; !exists {
-		return false, Basic, time.Time{}, nil
+		return false, NoPlan, time.Time{}, nil
 	}
 
 	// subscription still valid
