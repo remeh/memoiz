@@ -28,7 +28,7 @@ func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos,
 	buff := bytes.Buffer{}
 
 	// headers
-	mailHeader(&buff, acc.Email, "Hello!")
+	mailHeader(&buff, acc.Email, "Memos are waiting for you!")
 
 	// content
 	html := template.Root.Lookup("category_mail.html")

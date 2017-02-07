@@ -44,10 +44,8 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 
 	buff := bytes.Buffer{}
 
-	// TODO(remy): use the text of the memos to generate a title !!
-
 	// headers
-	mailHeader(&buff, acc.Email, "Hello!")
+	mailHeader(&buff, acc.Email, buildTitle(ms))
 
 	// content
 	html := template.Root.Lookup("enriched_mail.html")
@@ -75,6 +73,39 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 	}
 
 	return nil
+}
+
+func buildTitle(ms memos.Memos) string {
+	str := ""
+	for _, m := range ms {
+		if len(str) >= 70 {
+			// avoid too long title
+			break
+		}
+
+		if len(str) != 0 {
+			str += " — "
+		}
+
+		if len(m.Title) != 0 {
+			str += cutText(m.Title, 70)
+		} else {
+			str += cutText(m.Text, 70)
+		}
+	}
+
+	if len(str) == 0 {
+		return "Memos are waiting for you!"
+	}
+
+	return str
+}
+
+func cutText(str string, size int) string {
+	if len(str) > size {
+		return str[0:size] + "…"
+	}
+	return str
 }
 
 func buildEnrichedMemos(ms memos.Memos, infos mind.EnrichResults) enrichedMemos {
