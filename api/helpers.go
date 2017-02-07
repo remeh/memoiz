@@ -143,12 +143,21 @@ func RenderBadParameter(w http.ResponseWriter, param string) {
 	})
 }
 
-func RenderPaymentRequired(w http.ResponseWriter, plan accounts.Plan) {
-	RenderJson(w, 402, Response{
-		Msg: plan.Name,
-		Ok:  false,
-	})
+type payResp struct {
+	Response
+	Plan string
+}
 
+func RenderPaymentRequired(w http.ResponseWriter, plan accounts.Plan) {
+	// not valid anymore
+	r := payResp{
+		Response: Response{
+			Msg: "payment required",
+			Ok:  false,
+		},
+		Plan: plan.Name,
+	}
+	RenderJson(w, 402, r)
 }
 
 func RenderOk(w http.ResponseWriter) {

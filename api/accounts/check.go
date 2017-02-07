@@ -35,7 +35,6 @@ func (c Check) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// ----------------------
 
 	if s.ValidUntil.Before(time.Now()) {
-		// not valid anymore
 		api.RenderPaymentRequired(w, s.Plan)
 		return
 	}
