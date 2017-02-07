@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"remy.io/memoiz/log"
@@ -107,7 +108,7 @@ func (u *Url) Analyze() error {
 
 	matches := rxDomain.FindAllStringSubmatch(u.url, 2)
 	if len(matches) >= 1 && len(matches[0]) >= 2 {
-		u.domain = matches[0][1]
+		u.domain = strings.ToLower(matches[0][1])
 	}
 
 	// first, checks if we can find a category
@@ -211,6 +212,14 @@ func (u *Url) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 		ImageUrl: u.image,
 		Content:  u.desc,
 		Title:    u.title,
+		Format:   EnrichStandard,
+	}
+
+	switch u.domain {
+	case "youtube", "vimeo":
+		if len(u.image) > 0 && len(u.title) > 0 {
+			rv.Format = EnrichUrlFocusImage
+		}
 	}
 
 	if len(u.desc) == 0 { // when no desc, use the title as description instead
@@ -231,7 +240,7 @@ func titleAndDesc(domain string, title, ogTitle, ogDescription string) (string, 
 
 	if len(domain) != 0 {
 		switch domain {
-		case "youtube", "twitter":
+		case "twitter":
 			t = ogDescription
 			d = ogTitle
 		default:

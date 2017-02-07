@@ -6,7 +6,11 @@
   </div>
 
   {{ range .Memos }}
-    {{ template "enriched_memo.html" . }}
+    {{ if eq .EnrichInfos.Format "url_focus_image" }}
+      {{ template "enriched_memo_url_focus_image.html" . }}
+    {{ else }}
+      {{ template "enriched_memo_standard.html" . }}
+    {{ end }}
   {{ end }}
 
 {{ template "footer.html" . }}

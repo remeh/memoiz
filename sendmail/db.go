@@ -86,7 +86,7 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	}
 
 	if rows, err = storage.DB().Query(`
-		SELECT "uid", text, "r_category"
+		SELECT "uid", text, "r_category", "r_title", "r_url"
 		FROM "memo"
 		WHERE
 			"owner_uid" = $1
@@ -111,10 +111,10 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var uid uuid.UUID
-		var text string
+		var text, url, title string
 		var cat int64
 
-		if err := rows.Scan(&uid, &text, &cat); err != nil {
+		if err := rows.Scan(&uid, &text, &cat, &title, &url); err != nil {
 			log.Error("sendmail: enrichableMemos:", err, "Continuing.")
 			continue
 		}
@@ -124,6 +124,8 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 			Text: text,
 			MemoRichInfo: memos.MemoRichInfo{
 				Category: mind.Category(cat),
+				Title:    title,
+				Url:      url,
 			},
 		})
 	}

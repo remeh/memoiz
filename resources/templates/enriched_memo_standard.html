@@ -29,15 +29,7 @@
         </td>
       </tr>
       {{ end }}
-      <tr class="copyright">
-        <td class="mui--text-center">
-          <span>Content: {{.EnrichInfos.ContentCopyright}}</span> {{if .EnrichInfos.ContentSource}}<a class="copyright" href="{{.EnrichInfos.ContentSource}}" alt="Go to source"><span>Source</span></a>{{end}}
-          {{ if .EnrichInfos.ImageCopyright }}
-            <br/>
-            <span>Image: {{.EnrichInfos.ImageCopyright}}</span> {{if .EnrichInfos.ImageSource}}<a class="copyright" href="{{.EnrichInfos.ImageSource}}" alt="Go to source"><span>Source</span></a>{{end}}
-          {{ end }}
-        </td>
-      </tr>
+    {{ template "enriched_memo_copyright.html" . }}
     </table>
   </div>
 </td></tr></table>

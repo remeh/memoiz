@@ -8,7 +8,15 @@ type EnrichResult struct {
 	ImageUrl         string
 	ImageCopyright   string
 	ImageSource      string
+	Format           EnrichFormat
 }
+
+type EnrichFormat string
+
+var (
+	EnrichStandard      EnrichFormat = "standard"
+	EnrichUrlFocusImage EnrichFormat = "url_focus_image"
+)
 
 type EnrichResults []EnrichResult
 

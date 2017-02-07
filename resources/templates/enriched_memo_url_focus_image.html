@@ -1,0 +1,48 @@
+<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="mui-panel">
+  <div class="mui--text-body1">
+  <div>
+    <table style="border: 0; width: 100%;">
+      <tr>
+        <td style="width:100%">
+          <a href="https://app.memoiz.com" alt="Open on Memoiz">
+          <h2>
+            {{ if .Memo.MemoRichInfo.Url }}
+            <a href="{{.Memo.MemoRichInfo.Url}}" alt="Go to link">
+            {{ end }}
+
+            {{ if .Memo.MemoRichInfo.Title }}
+              {{ .Memo.MemoRichInfo.Title }}
+            {{ else }}
+              {{ .Memo.Text }}
+            {{ end }}
+            {{if (ne .Memo.MemoRichInfo.Category.String "Uncategorized")}}
+              <span class="tag">{{.Memo.MemoRichInfo.Category}}</span>
+            {{end}}
+
+            {{ if .Memo.MemoRichInfo.Url }}
+            </a>
+            {{ end }}
+          </h2>
+          </a>
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <table style="border: 0; padding: 1em;">
+      {{ if .EnrichInfos.ImageUrl }}
+      <tr>
+        <td class="mui--text-center">
+          {{ if .Memo.MemoRichInfo.Url }}
+          <a href="{{.Memo.MemoRichInfo.Url}}" alt="Go to link">
+          {{ end }}
+            <img style="width: 100%;" src="{{.EnrichInfos.ImageUrl}}" />
+          {{ if .Memo.MemoRichInfo.Url }}
+          </a>
+          {{ end }}
+        </td>
+      </tr>
+      {{ end }}
+    {{ template "enriched_memo_copyright.html" . }}
+    </table>
+  </div>
+</td></tr></table>

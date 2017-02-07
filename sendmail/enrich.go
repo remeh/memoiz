@@ -86,7 +86,7 @@ func enrichEmailing(t time.Time) error {
 			continue
 		}
 
-		log.Info("Sending Enriched Email to", uid)
+		log.Info("Sending (", len(toSend), "memos ) Enriched Email to", uid)
 
 		// gets this user account
 		// ----------------------
