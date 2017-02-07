@@ -174,7 +174,7 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 			"owner_uid" IN `+in+`
 			AND
 			-- memos created between last mail and this email
-			"creation_time" + interval '`+EmailFrequencyPg+`' > now()
+			"creation_time" + interval '`+EmailFrequencyPg+`' < now()
 			AND
 			"state" = 'MemoActive'
 		GROUP BY "owner_uid"
