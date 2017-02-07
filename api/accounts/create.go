@@ -90,9 +90,11 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// send subscription email
 	// ----------------------
 
-	if err := email.SendNewUserMail(body.Firstname, body.Email); err != nil {
-		log.Error("Accouts/Create: SendSubscriptionMail:", err)
-	}
+	go func() {
+		if err := email.SendNewUserMail(body.Firstname, body.Email); err != nil {
+			log.Error("Accouts/Create: SendSubscriptionMail:", err)
+		}
+	}()
 
 	// resp
 	// ----------------------
