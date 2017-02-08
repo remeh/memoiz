@@ -18,11 +18,13 @@ const (
 	RunFrequency     = time.Minute
 	EmailFrequency   = time.Hour * 24
 	EmailFrequencyPg = "1 day"
-	EmailFirstAfter  = "1 day"
+	// After how many time the very first email should be sent
+	// to the user (not counting the subscription email).
+	FirstEmailAfter = "1 day"
 	//RunFrequency     = time.Second * 10
 	//EmailFrequency   = time.Minute * 3
 	//EmailFrequencyPg = "3 minute"
-	//EmailFirstAfter  = "3 minute"
+	//FirstEmailAfter  = "3 minute"
 )
 
 var (
