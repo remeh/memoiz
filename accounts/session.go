@@ -60,13 +60,23 @@ func NewSession(userUid uuid.UUID, t, validUntil time.Time, plan Plan) Session {
 	return sessions[token]
 }
 
-func RefreshSession(token string, t time.Time) {
+func HitSession(token string, t time.Time) {
 	s, exists := sessions[token]
 	if !exists {
 		return
 	}
-
 	s.LastHit = t
+	sessions[token] = s
+}
+
+func RefreshSession(token string, t time.Time, plan Plan, validUntil time.Time) {
+	s, exists := sessions[token]
+	if !exists {
+		return
+	}
+	s.LastHit = t
+	s.Plan = plan
+	s.ValidUntil = validUntil
 	sessions[token] = s
 }
 

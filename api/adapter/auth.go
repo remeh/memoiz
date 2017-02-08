@@ -25,7 +25,7 @@ func (a AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// refresh the session in RAM
-	accounts.RefreshSession(api.ReadSessionToken(r), time.Now())
+	accounts.HitSession(api.ReadSessionToken(r), time.Now())
 
 	a.handler.ServeHTTP(w, r)
 }

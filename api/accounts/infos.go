@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"net/http"
+	"time"
 
 	"remy.io/memoiz/accounts"
 	"remy.io/memoiz/api"
@@ -60,6 +61,17 @@ func (c Infos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resp.Subscribed = hasSub
 	resp.Plan = planToPlan(plan.Name, plan)
 	resp.SubscriptionValidUntil = storage.JSTime(planValidUntil)
+
+	// refresh session in ram
+	// ----------------------
+
+	if t := api.ReadSessionToken(r); len(t) > 0 {
+		vu := trialValidUntil
+		if plan != accounts.NoPlan {
+			vu = planValidUntil
+		}
+		accounts.RefreshSession(t, time.Now(), plan, vu)
+	}
 
 	api.RenderJson(w, 200, resp)
 }
