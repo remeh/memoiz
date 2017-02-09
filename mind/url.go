@@ -222,6 +222,10 @@ func (u *Url) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 		}
 	}
 
+	if text == u.url {
+		rv.Format = EnrichUrlNoImage
+	}
+
 	if len(u.desc) == 0 { // when no desc, use the title as description instead
 		rv.Content = rv.Title
 		rv.Title = ""

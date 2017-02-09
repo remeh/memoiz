@@ -6,7 +6,9 @@
   </div>
 
   {{ range .Memos }}
-    {{ if eq .EnrichInfos.Format "url_focus_image" }}
+    {{ if eq .EnrichInfos.Format "url_no_image" }}
+      {{ template "enriched_memo_url_no_image.html" . }}
+    {{ else if eq .EnrichInfos.Format "url_focus_image" }}
       {{ template "enriched_memo_url_focus_image.html" . }}
     {{ else }}
       {{ template "enriched_memo_standard.html" . }}

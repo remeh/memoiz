@@ -15,6 +15,7 @@ type EnrichFormat string
 
 var (
 	EnrichStandard      EnrichFormat = "standard"
+	EnrichUrlNoImage    EnrichFormat = "url_no_image"
 	EnrichUrlFocusImage EnrichFormat = "url_focus_image"
 )
 
