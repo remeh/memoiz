@@ -20,7 +20,7 @@ type scmParam struct {
 
 // SendCategoryMail sends an email to the given email
 // to remind him he has recently added some new memos.
-func SendCategoryMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos, dumpDir string, sendUid uuid.UUID) error {
+func SendRecentlyAddedMail(acc accounts.SimpleUser, cs map[mind.Category]memos.Memos, dumpDir string, sendUid uuid.UUID) error {
 	if !UseMail {
 		return nil
 	}

@@ -174,16 +174,25 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 	// TODO(remy): use a dynamic state instead of directly MemoActive
 
 	if rows, err = storage.DB().Query(`
-		SELECT "owner_uid", array_agg("uid"), array_agg(text), array_agg("r_category")
+		SELECT "memo"."owner_uid", array_agg("memo"."uid"), array_agg(text), array_agg("r_category")
 		FROM "memo"
-		WHERE
-			"owner_uid" IN `+in+`
+		LEFT JOIN "emailing_memo" em ON
+			em."owner_uid" = "memo"."owner_uid"
 			AND
-			-- memos created between last mail and this email
-			"creation_time" + interval '`+EmailFrequencyPg+`' < now()
+			em."uid" = "memo"."uid"
+		WHERE
+			"memo"."owner_uid" IN `+in+`
 			AND
 			"state" = 'MemoActive'
-		GROUP BY "owner_uid"
+			AND
+			-- memos created between last email and this email
+			(
+					-- do not resend many times memos in "recently added"
+					em."last_sent" IS NULL
+					AND
+					"memo"."creation_time" + interval '`+RecentlyAddedFrequencyPg+`' < now()
+			)
+		GROUP BY "memo"."owner_uid"
 	`, p...); err != nil {
 		return nil, log.Err("getRecentMemos", err)
 	}

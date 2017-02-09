@@ -1,3 +1,5 @@
+// Mail for "Recently added" memos.
+
 package main
 
 import (
@@ -11,9 +13,9 @@ import (
 	"remy.io/memoiz/uuid"
 )
 
-func categoryEmailing(t time.Time) error {
+func recentEmailing(t time.Time) error {
 	log.Debug("categoryEmailing: waking up", t)
-	memos, err := fetch()
+	memos, err := fetchRecent()
 	if err != nil {
 		return err
 	}
@@ -22,7 +24,7 @@ func categoryEmailing(t time.Time) error {
 		return nil
 	}
 
-	if err := send(memos, t); err != nil {
+	if err := sendRecent(memos, t); err != nil {
 		return err
 	}
 
@@ -30,8 +32,8 @@ func categoryEmailing(t time.Time) error {
 }
 
 // fetch fetches Ids of memos for which notification
-// has never been done.
-func fetch() (map[string]memos.Memos, error) {
+// has never been done and that have been added recently.
+func fetchRecent() (map[string]memos.Memos, error) {
 
 	// first we want to retrieve for whom we'll
 	// send some emails
@@ -40,7 +42,7 @@ func fetch() (map[string]memos.Memos, error) {
 	var err error
 	var uids uuid.UUIDs
 
-	if uids, err = getOwners(CategoryReminderEmail, EmailFrequency, 5); err != nil {
+	if uids, err = getOwners(CategoryRecentlyAddedEmail, RecentlyAddedFrequency, 5); err != nil {
 		return nil, log.Err("fetch", err)
 	}
 
@@ -55,11 +57,11 @@ func fetch() (map[string]memos.Memos, error) {
 }
 
 // send sends, per user, a list of memos per email
-// in order to remind the user they've added them.
-func send(memos map[string]memos.Memos, t time.Time) error {
+// in order to remind the user they've recently added them.
+func sendRecent(memos map[string]memos.Memos, t time.Time) error {
 	for owner, memos := range memos {
 		memos = memos
-		log.Info("Sending Category Email to", owner)
+		log.Info("Sending Recently Added Email to", owner)
 
 		// get the user
 		// ----------------------
@@ -82,14 +84,14 @@ func send(memos map[string]memos.Memos, t time.Time) error {
 
 		sendUid := uuid.New()
 
-		if err := emailSent(acc, sendUid, CategoryReminderEmail, t); err != nil {
+		if err := emailSent(acc, sendUid, CategoryRecentlyAddedEmail, t); err != nil {
 			return log.Err("send", err)
 		}
 
 		// send the email
 		// ----------------------
 
-		if err := email.SendCategoryMail(acc, memos.GroupByCategory(), EmailDumpDir, sendUid); err != nil {
+		if err := email.SendRecentlyAddedMail(acc, memos.GroupByCategory(), EmailDumpDir, sendUid); err != nil {
 			return log.Err("send", err)
 		}
 	}

@@ -12,19 +12,19 @@ import (
 )
 
 const (
-	CategoryReminderEmail = "CategoryReminderEmail"
-	CategoryEnrichedEmail = "CategoryEnrichedEmail"
+	CategoryRecentlyAddedEmail = "CategoryRecentlyAddedEmail"
+	CategoryEnrichedEmail      = "CategoryEnrichedEmail"
 
-	RunFrequency     = time.Minute
-	EmailFrequency   = time.Hour * 24
-	EmailFrequencyPg = "1 day"
+	RunFrequency = time.Minute
+
+	// EmailFrequency is the frequency at which we send the recently
+	// added emails.
+	RecentlyAddedFrequency   = time.Hour * 24 * 3
+	RecentlyAddedFrequencyPg = "3 day"
+
 	// After how many time the very first email should be sent
 	// to the user (not counting the subscription email).
 	FirstEmailAfter = "1 day"
-	//RunFrequency     = time.Second * 10
-	//EmailFrequency   = time.Minute * 3
-	//EmailFrequencyPg = "3 minute"
-	//FirstEmailAfter  = "3 minute"
 )
 
 var (
@@ -43,7 +43,7 @@ func main() {
 	}
 
 	for t := range ticker.C {
-		if err := categoryEmailing(t); err != nil {
+		if err := recentEmailing(t); err != nil {
 			log.Error(err)
 		}
 		if err := enrichEmailing(t); err != nil {
