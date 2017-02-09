@@ -15,7 +15,7 @@ const (
 	CategoryReminderEmail = "CategoryReminderEmail"
 	CategoryEnrichedEmail = "CategoryEnrichedEmail"
 
-	RunFrequency     = time.Second
+	RunFrequency     = time.Minute
 	EmailFrequency   = time.Hour * 24
 	EmailFrequencyPg = "1 day"
 	// After how many time the very first email should be sent

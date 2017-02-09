@@ -86,15 +86,19 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	}
 
 	if rows, err = storage.DB().Query(`
-		SELECT "uid", text, "r_category", "r_title", "r_url"
+		SELECT "memo"."uid", text, "r_category", "r_title", "r_url"
 		FROM "memo"
+		LEFT JOIN "emailing_memo" em ON
+			em."owner_uid" = "memo"."owner_uid"
+			AND
+			em."uid" = "memo"."uid"
 		WHERE
-			"owner_uid" = $1
+			"memo"."owner_uid" = $1
 			AND
-			"state" = $2
+			"memo"."state" = $2
 			AND
-			COALESCE("last_email", "creation_time") + interval '`+interval+`'  < now()
-		ORDER BY last_email DESC
+			COALESCE(em."last_sent", "memo"."creation_time") + interval '`+interval+`'  < now()
+		ORDER BY em."last_sent" DESC
 	`, owner, memos.MemoActive); err != nil {
 		return nil, log.Err("enrichableMemos", err)
 	}

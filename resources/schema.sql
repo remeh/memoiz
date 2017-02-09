@@ -83,7 +83,6 @@ CREATE TABLE "memo" (
 
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now(),
-    "last_email" timestamp with time zone,
     "archive_time" timestamp with time zone,
     "deletion_time" timestamp with time zone
 );
