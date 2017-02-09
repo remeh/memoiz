@@ -154,6 +154,17 @@ CREATE INDEX ON "kg_result" ("category");
 -- Emailing
 ----------------------
 
+CREATE TABLE "emailing_memo" (
+    "uid" text NOT NULL, -- memo uid
+    "owner_uid" text NOT NULL, -- memo owner uid
+    "type" text NOT NULL, -- emailing type
+    "last_sent" timestamp with time zone DEFAULT now()
+);
+
+CREATE UNIQUE INDEX ON "emailing_memo" ("uid", "owner_uid", "type");
+ALTER TABLE "emailing_memo" ADD CONSTRAINT "emailing_memo_uid" FOREIGN KEY ("uid") REFERENCES "memo" ("uid") MATCH FULL;
+ALTER TABLE "emailing_memo" ADD CONSTRAINT "emailing_memo_owner_uid" FOREIGN KEY ("owner_uid") REFERENCES "user" ("uid") MATCH FULL;
+
 CREATE TABLE "emailing_sent" (
     "uid" text NOT NULL,
     "owner_uid" text NOT NULL,
