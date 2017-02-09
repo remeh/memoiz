@@ -107,7 +107,7 @@ func enrichEmailing(t time.Time) error {
 
 		allLooked := append(toSend, lookedButNotFound...)
 
-		if err := memos.DAO().UpdateLastEmail(uid, allLooked.Uids(), t); err != nil {
+		if err := memos.DAO().UpdateLastEmail(uid, allLooked.Uids(), CategoryEnrichedEmail, t); err != nil {
 			log.Error("enrichEmailing:", err)
 			continue
 		}

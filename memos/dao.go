@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lib/pq"
+
 	"remy.io/memoiz/log"
 	"remy.io/memoiz/storage"
 	"remy.io/memoiz/uuid"
@@ -126,8 +128,8 @@ func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 }
 
 // UpdateLastEmail updates the last email time of
-// each given memo.
-func (d *MemosDAO) UpdateLastEmail(uid uuid.UUID, memoUids uuid.UUIDs, t time.Time) error {
+// each given memo for the given category.
+func (d *MemosDAO) UpdateLastEmail(uid uuid.UUID, memoUids uuid.UUIDs, typ string, t time.Time) error {
 	switch {
 	case uid.IsNil():
 		return fmt.Errorf("UpdateLastEmail: uid.IsNil()")
@@ -135,21 +137,63 @@ func (d *MemosDAO) UpdateLastEmail(uid uuid.UUID, memoUids uuid.UUIDs, t time.Ti
 		return fmt.Errorf("UpdateLastEmail: len(memoUids) == 0")
 	}
 
-	vals := storage.Values(t, uid)
+	var err error
+
+	vals := storage.Values(t, uid, typ)
 	for _, m := range memoUids {
 		vals = append(vals, m)
 	}
 
-	if _, err := d.DB.Exec(`
-		UPDATE "memo"
+	r, err := d.DB.Exec(`
+		UPDATE "emailing_memo"
 		SET
-			"last_email" = $1
+			"last_sent" = $1
 		WHERE
 			"owner_uid" = $2
 			AND
-			"uid" IN `+storage.InClause(3, len(memoUids))+`
-	`, vals...); err != nil {
+			type = $3
+			AND
+			"uid" IN `+storage.InClause(4, len(memoUids))+`
+	`, vals...)
+	if err != nil {
 		return log.Err("UpdateLastEmail", err)
+	}
+
+	var ra int64
+
+	if ra, err = r.RowsAffected(); err != nil {
+		return log.Err("UpdateLastEmail", err)
+	}
+
+	if ra == 0 { // no rows affected → not existing, we'll insert them
+		var tx *sql.Tx
+		var stmt *sql.Stmt
+
+		if tx, err = d.DB.Begin(); err != nil {
+			return log.Err("UpdateLastEmail", err)
+		}
+
+		if stmt, err = tx.Prepare(pq.CopyIn("emailing_memo", "uid", "owner_uid", "type", "last_sent")); err != nil {
+			return log.Err("UpdateLastEmail", err)
+		}
+
+		for _, muid := range memoUids {
+			if _, err = stmt.Exec(muid, uid, typ, t); err != nil {
+				return log.Err("UpdateLastEmail", err)
+			}
+		}
+
+		if _, err := stmt.Exec(); err != nil {
+			return log.Err("UpdateLastEmail", err)
+		}
+
+		if err := stmt.Close(); err != nil {
+			return log.Err("UpdateLastEmail", err)
+		}
+
+		if err := tx.Commit(); err != nil {
+			return log.Err("UpdateLastEmail", err)
+		}
 	}
 
 	return nil
