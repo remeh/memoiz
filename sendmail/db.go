@@ -42,7 +42,7 @@ func getOwners(cat string, d time.Duration, limit int) (uuid.UUIDs, error) {
 			-- send only to people not unsubscribed
 			eu."creation_time" IS NULL
 		GROUP BY u."uid"
-		ORDER BY max(es."creation_time") DESC
+		ORDER BY max(es."creation_time")
 		LIMIT $2
 	`, cat, limit)
 	if err != nil {
