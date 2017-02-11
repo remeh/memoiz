@@ -215,15 +215,15 @@ func (u *Url) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 		Format:   EnrichStandard,
 	}
 
+	if text == u.url {
+		rv.Format = EnrichUrlNoImage
+	}
+
 	switch u.domain {
 	case "youtube", "vimeo":
 		if len(u.image) > 0 && len(u.title) > 0 {
 			rv.Format = EnrichUrlFocusImage
 		}
-	}
-
-	if text == u.url {
-		rv.Format = EnrichUrlNoImage
 	}
 
 	if len(u.desc) == 0 { // when no desc, use the title as description instead
