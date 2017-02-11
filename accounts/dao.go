@@ -57,7 +57,7 @@ func (d *AccountDAO) UidByEmail(email string) (uuid.UUID, error) {
 		WHERE
 			"email" = $1
 	`, email).Scan(&uid); err != nil && err != sql.ErrNoRows {
-		return nil, err
+		return nil, log.Err("UidByEmail", err)
 	}
 
 	return uid, nil
@@ -125,7 +125,8 @@ func (d *AccountDAO) UpdateStripeToken(u SimpleUser) error {
 	n, err := d.DB.Exec(`
 		UPDATE "user"
 		SET
-			"stripe_token" = $1
+			"stripe_token" = $1,
+			"last_update" = now()
 		WHERE
 			"uid" = $2
 	`, u.StripeToken, u.Uid)
@@ -138,6 +139,59 @@ func (d *AccountDAO) UpdateStripeToken(u SimpleUser) error {
 		return err
 	} else if n != 1 {
 		return fmt.Errorf("accounts: UpdateStripeToken: %d users updated.", n)
+	}
+
+	return nil
+}
+
+// UpdatePwdResetToken updates the password reset token in database
+// for the given user.
+func (d *AccountDAO) UpdatePwdResetToken(owner uuid.UUID, tok string, validUntil time.Time) error {
+	n, err := d.DB.Exec(`
+		UPDATE "user"
+		SET
+			"password_reset_token" = $1,
+			"password_reset_valid_until" = $2,
+			"last_update" = now()
+		WHERE
+			"uid" = $3
+	`, tok, validUntil, owner)
+
+	if err != nil {
+		return log.Err("UpdatePwdResetToken", err)
+	}
+
+	if n, err := n.RowsAffected(); err != nil {
+		return log.Err("UpdatePwdResetToken", err)
+	} else if n != 1 {
+		return fmt.Errorf("accounts: UpdatePwdResetToken: %d users updated.", n)
+	}
+
+	return nil
+}
+
+// PwdReset updates the password and resets pwd reset fields
+// for the given user.
+func (d *AccountDAO) PwdReset(tok, pwd string) error {
+	n, err := d.DB.Exec(`
+		UPDATE "user"
+		SET
+			"hash" = $1,
+			"password_reset_token" = NULL,
+			"password_reset_valid_until" = NULL,
+			"last_update" = now()
+		WHERE
+			"password_reset_token" = $2
+	`, pwd, tok)
+
+	if err != nil {
+		return log.Err("PwdReset", err)
+	}
+
+	if n, err := n.RowsAffected(); err != nil {
+		return log.Err("PwdReset", err)
+	} else if n != 1 {
+		return fmt.Errorf("accounts: PwdReset: %d users updated.", n)
 	}
 
 	return nil

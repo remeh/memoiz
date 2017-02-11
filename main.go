@@ -54,10 +54,12 @@ func declareApiRoutes(s *Server) {
 
 	s.AddApi("/1.0/accounts", log(accounts.Create{}), "POST")
 	s.AddApi("/1.0/accounts", log(accounts.Check{}), "GET")
+	s.AddApi("/1.0/accounts/checkout", log(auth(accounts.Checkout{})), "POST")
 	s.AddApi("/1.0/accounts/infos", log(auth(accounts.Infos{})), "GET")
 	s.AddApi("/1.0/accounts/login", log(accounts.Login{}), "POST")
 	s.AddApi("/1.0/accounts/logout", log(accounts.Logout{}), "POST")
-	s.AddApi("/1.0/accounts/checkout", log(auth(accounts.Checkout{})), "POST")
+	s.AddApi("/1.0/accounts/forgotpwd", log(accounts.ForgotPassword{}), "POST")
+	s.AddApi("/1.0/accounts/pwdreset", log(accounts.PasswordReset{}), "POST")
 
 	s.AddApi("/1.0/emailing/unsubscribe/{token}", log(accounts.Unsubscribe{}), "GET")
 

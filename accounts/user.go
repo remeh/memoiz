@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"strings"
+
 	"remy.io/memoiz/uuid"
 
 	"golang.org/x/crypto/bcrypt"
@@ -22,11 +24,10 @@ func IsPasswordSecure(password string) bool {
 	return true
 }
 
-// ValidEmail returns whether the given email is
-// valid or not.
+// ValidEmail basically valids the given email.
 func ValidEmail(email string) bool {
-	// TODO(remy): valid email
-	return true
+	return strings.Contains(email, "@") &&
+		strings.Contains(email, ".")
 }
 
 // Crypt crypts the given password using bcrypt.
@@ -51,6 +52,18 @@ func Check(hash, password string) bool {
 // - first 8 chars of the user uid
 // - with 3 randoms uuids (without -) appended.
 func UnsubToken(uid uuid.UUID) string {
+	end := randTok()
+	start := uid.String()[0:8]
+	return "1" + start + end
+}
+
+// Token generates a random password reset
+// token.
+// It is composed of:
+// - the char '1' (version)
+// - first 8 chars of the user uid
+// - with 3 randoms uuids (without -) appended.
+func PasswordResetToken(uid uuid.UUID) string {
 	end := randTok()
 	start := uid.String()[0:8]
 	return "1" + start + end

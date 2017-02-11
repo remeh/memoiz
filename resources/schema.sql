@@ -28,6 +28,10 @@ CREATE TABLE "user" (
     -- payment
    "stripe_token" text DEFAULT '',
 
+    -- password reset
+    "password_reset_token" text DEFAULT '',
+    "password_reset_valid_until" timestamp with time zone,
+
     -- time
     "creation_time" timestamp with time zone NOT NULL DEFAULT now(),
     "last_update" timestamp with time zone NOT NULL DEFAULT now()
