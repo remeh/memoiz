@@ -55,7 +55,7 @@ func (c Create) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// check for existence
 	// ----------------------
 
-	body.Email = strings.ToLower(body.Email)
+	body.Email = strings.Trim(strings.ToLower(body.Email), " ")
 
 	var err error
 	if uid, err := accounts.DAO().UidByEmail(body.Email); err != nil {

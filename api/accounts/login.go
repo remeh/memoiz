@@ -38,7 +38,7 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// gets user
 	// ----------------------
 
-	body.Email = strings.ToLower(body.Email)
+	body.Email = strings.Trim(strings.ToLower(body.Email), " ")
 
 	var su accounts.SimpleUser
 	var hash string
