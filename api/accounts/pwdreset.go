@@ -22,12 +22,16 @@ func (c PasswordReset) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body pwdResetBody
 	api.ReadJsonBody(r, &body)
 
-	if len(body.Password) == 0 || len(body.Token) == 0 {
-		api.RenderBadParameters(w)
+	// TODO(remy): validate password
+	if len(body.Password) == 0 {
+		api.RenderBadParameter(w, "password")
 		return
 	}
 
-	// TODO(remy): validate password
+	if len(body.Token) == 0 {
+		api.RenderBadParameter(w, "token")
+		return
+	}
 
 	// updates password with the email with this token
 	// ----------------------
@@ -40,8 +44,11 @@ func (c PasswordReset) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := accounts.DAO().PwdReset(body.Token, pwdc); err != nil {
+	if done, err := accounts.DAO().PwdReset(body.Token, pwdc); err != nil {
 		api.RenderErrJson(w, err)
+		return
+	} else if !done {
+		api.RenderBadParameter(w, "token")
 		return
 	}
 
