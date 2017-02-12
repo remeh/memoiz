@@ -145,8 +145,9 @@ func (d *AccountDAO) UpdateStripeToken(u SimpleUser) error {
 }
 
 // UpdatePwdResetToken updates the password reset token in database
-// for the given user.
-func (d *AccountDAO) UpdatePwdResetToken(owner uuid.UUID, tok string, validUntil time.Time) error {
+// for the given user. If the current token set in DB is still valid,
+// we do not update the token and the time and return false.
+func (d *AccountDAO) UpdatePwdResetToken(owner uuid.UUID, tok string, validUntil time.Time) (bool, error) {
 	n, err := d.DB.Exec(`
 		UPDATE "user"
 		SET
@@ -155,24 +156,29 @@ func (d *AccountDAO) UpdatePwdResetToken(owner uuid.UUID, tok string, validUntil
 			"last_update" = now()
 		WHERE
 			"uid" = $3
+			AND
+			coalesce("password_reset_valid_until", '1970-01-01') < now()
 	`, tok, validUntil, owner)
 
 	if err != nil {
-		return log.Err("UpdatePwdResetToken", err)
+		return false, log.Err("UpdatePwdResetToken", err)
 	}
 
 	if n, err := n.RowsAffected(); err != nil {
-		return log.Err("UpdatePwdResetToken", err)
-	} else if n != 1 {
-		return fmt.Errorf("accounts: UpdatePwdResetToken: %d users updated.", n)
+		return false, log.Err("UpdatePwdResetToken", err)
+	} else if n == 0 {
+		return false, nil
+	} else if n > 1 {
+		return false, fmt.Errorf("accounts: UpdatePwdResetToken: %d users updated.", n)
 	}
 
-	return nil
+	return true, nil
 }
 
 // PwdReset updates the password and resets pwd reset fields
-// for the given user.
-func (d *AccountDAO) PwdReset(tok, pwd string) error {
+// for the given user. If the token is not valid anymore or
+// the token is invalid, returns false.
+func (d *AccountDAO) PwdReset(tok, pwd string) (bool, error) {
 	n, err := d.DB.Exec(`
 		UPDATE "user"
 		SET
@@ -182,19 +188,23 @@ func (d *AccountDAO) PwdReset(tok, pwd string) error {
 			"last_update" = now()
 		WHERE
 			"password_reset_token" = $2
+			AND
+			"password_reset_valid_until" > now()
 	`, pwd, tok)
 
 	if err != nil {
-		return log.Err("PwdReset", err)
+		return false, log.Err("PwdReset", err)
 	}
 
 	if n, err := n.RowsAffected(); err != nil {
-		return log.Err("PwdReset", err)
-	} else if n != 1 {
-		return fmt.Errorf("accounts: PwdReset: %d users updated.", n)
+		return false, log.Err("PwdReset", err)
+	} else if n == 0 {
+		return false, nil
+	} else if n > 1 {
+		return false, fmt.Errorf("accounts: PwdReset: %d users updated.", n)
 	}
 
-	return nil
+	return true, nil
 }
 
 // Unsubscribe inserts an entry in the unsubscribe table indicating

@@ -42,7 +42,7 @@ func SendRecentlyAddedMail(acc accounts.SimpleUser, cs map[mind.Category]memos.M
 	}
 
 	if err := html.Execute(&buff, p); err != nil {
-		log.Err("SendCategoryMail", err)
+		return log.Err("SendCategoryMail", err)
 	}
 
 	buff.WriteString("\r\n")

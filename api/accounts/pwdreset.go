@@ -9,15 +9,20 @@ import (
 
 type PasswordReset struct{}
 
+type pwdResetBody struct {
+	Password string `json:"pwd"`
+	Token    string `json:"token"`
+}
+
 func (c PasswordReset) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// parse parameters
 	// ----------------------
 
-	pwd := r.FormValue("pwd")
-	token := r.FormValue("token")
+	var body pwdResetBody
+	api.ReadJsonBody(r, &body)
 
-	if len(pwd) == 0 || len(token) == 0 {
+	if len(body.Password) == 0 || len(body.Token) == 0 {
 		api.RenderBadParameters(w)
 		return
 	}
@@ -30,14 +35,12 @@ func (c PasswordReset) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var pwdc string
 	var err error
 
-	if pwdc, err = accounts.Crypt(pwd); err != nil {
+	if pwdc, err = accounts.Crypt(body.Password); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}
 
-	println(pwdc)
-
-	if err := accounts.DAO().PwdReset(token, pwdc); err != nil {
+	if _, err := accounts.DAO().PwdReset(body.Token, pwdc); err != nil {
 		api.RenderErrJson(w, err)
 		return
 	}
