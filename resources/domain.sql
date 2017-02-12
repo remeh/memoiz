@@ -22,8 +22,14 @@ INSERT INTO "domain" VALUES ('allocine', 9, 50);
 INSERT INTO "domain" VALUES ('hbo', 5, 20); -- movie
 INSERT INTO "domain" VALUES ('hbo', 9, 75); -- serie
 
+INSERT INTO "domain" VALUES ('hollywood', 5, 75); -- movie
+INSERT INTO "domain" VALUES ('hollywood', 9, 25); -- serie
+
 INSERT INTO "domain" VALUES ('film', 5, 50); -- movie
 INSERT INTO "domain" VALUES ('film', 9, 50); -- serie
+
+INSERT INTO "domain" VALUES ('filmsite', 5, 60); -- movie
+INSERT INTO "domain" VALUES ('filmsite', 9, 40); -- serie
 
 -- Hulu
 INSERT INTO "domain" VALUES ('hulu', 5, 50);
@@ -41,6 +47,8 @@ INSERT INTO "domain" VALUES ('iwannawatch', 9, 50);
 
 INSERT INTO "domain" VALUES ('justwatch', 5, 50);
 INSERT INTO "domain" VALUES ('justwatch', 9, 50);
+
+INSERT INTO "domain" VALUES ('kissanime', 9, 100);
 
 INSERT INTO "domain" VALUES ('locafilm', 5, 50); -- movie
 INSERT INTO "domain" VALUES ('locafilm', 9, 50); -- serie
@@ -121,6 +129,8 @@ INSERT INTO "domain" VALUES ('youtu', 6, 25); -- music
 INSERT INTO "domain" VALUES ('dailymotion', 10, 75); -- video
 INSERT INTO "domain" VALUES ('dailymotion', 6, 25); -- music
 
+INSERT INTO "domain" VALUES ('liveleak', 10, 100); -- video
+
 INSERT INTO "domain" VALUES ('vimeo', 10, 75); -- video
 INSERT INTO "domain" VALUES ('vimeo', 6, 25); -- music
 
@@ -129,6 +139,8 @@ INSERT INTO "domain" VALUES ('ted', 10, 100); -- video
 ----------------------
 -- VideoGames
 ----------------------
+
+INSERT INTO "domain" VALUES ('boardgamegeek', 11, 100); -- video game
 
 INSERT INTO "domain" VALUES ('coolrom', 11, 100); -- video game
 
@@ -204,11 +216,21 @@ INSERT INTO "domain" VALUES ('deezer', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('discogs', 6, 100); -- music
 
+INSERT INTO "domain" VALUES ('emusic', 6, 100); -- music
+
 INSERT INTO "domain" VALUES ('guitar', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('guitaretab', 6, 100); -- music
 
+INSERT INTO "domain" VALUES ('fatwreck', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('lyricstranslate', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('mixcloud', 6, 100); -- music
+
 INSERT INTO "domain" VALUES ('musicnotes', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('musicme', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('myspace', 6, 100); -- music
 
@@ -219,8 +241,11 @@ INSERT INTO "domain" VALUES ('napster', 5, 10); -- movie
 INSERT INTO "domain" VALUES ('napster', 9, 10); -- serie
 INSERT INTO "domain" VALUES ('napster', 10, 10); -- video
 INSERT INTO "domain" VALUES ('napster', 11, 10); -- video game
+INSERT INTO "domain" VALUES ('napster', 11, 10); -- video game
 
 INSERT INTO "domain" VALUES ('last', 6, 100); -- last.fm music
+
+INSERT INTO "domain" VALUES ('letssingit', 6, 100); -- last.fm music
 
 INSERT INTO "domain" VALUES ('lyricsfreak', 6, 100); -- music
 
@@ -229,6 +254,10 @@ INSERT INTO "domain" VALUES ('lyricsmode', 6, 100); -- music
 INSERT INTO "domain" VALUES ('lyrics007', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('pandora', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('punknews', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('radiofree', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('songkick', 6, 100); -- music
 
@@ -241,6 +270,10 @@ INSERT INTO "domain" VALUES ('songmeanings', 6, 100); -- music
 INSERT INTO "domain" VALUES ('ticketmaster', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('mtv', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('shazam', 6, 100); -- music
+
+INSERT INTO "domain" VALUES ('skyrock', 6, 100); -- music
 
 INSERT INTO "domain" VALUES ('spotify', 6, 100); -- music
 
@@ -256,13 +289,23 @@ INSERT INTO "domain" VALUES ('vevo', 6, 100); -- music
 -- Place
 ----------------------
 
+INSERT INTO "domain" VALUES ('barcelona', 8, 100); -- place
+
 INSERT INTO "domain" VALUES ('booking', 8, 100); -- place
 
+INSERT INTO "domain" VALUES ('citysearch', 8, 100); -- place
+
 INSERT INTO "domain" VALUES ('ebookers', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('foursquare', 8, 70); -- place
+
+INSERT INTO "domain" VALUES ('hotelscombined', 8, 50); -- place
 
 INSERT INTO "domain" VALUES ('lastminute', 8, 100); -- place
 
 INSERT INTO "domain" VALUES ('leclercvoyages', 8, 100); -- place
+
+INSERT INTO "domain" VALUES ('lonelyplanet', 8, 100); -- place
 
 INSERT INTO "domain" VALUES ('michelin', 8, 100); -- place
 
@@ -286,6 +329,7 @@ INSERT INTO "domain" VALUES ('wikivoyage', 8, 100); -- place
 
 INSERT INTO "domain" VALUES ('allrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('alloresto', 12, 100); -- food
+INSERT INTO "domain" VALUES ('bonappetour', 12, 100); -- food
 INSERT INTO "domain" VALUES ('cookingchanneltv', 12, 100); -- food
 INSERT INTO "domain" VALUES ('chowhound', 12, 100); -- food
 INSERT INTO "domain" VALUES ('deliaonline', 12, 100); -- food
@@ -293,10 +337,15 @@ INSERT INTO "domain" VALUES ('deliveroo', 12, 100); -- food
 INSERT INTO "domain" VALUES ('epicurious', 12, 100); -- food
 INSERT INTO "domain" VALUES ('food', 12, 100); -- food
 INSERT INTO "domain" VALUES ('foodora', 12, 100); -- food
+INSERT INTO "domain" VALUES ('foodandwine', 12, 100); -- food
+INSERT INTO "domain" VALUES ('foodpages', 12, 100); -- food
 INSERT INTO "domain" VALUES ('foodnetwork', 12, 100); -- food
+INSERT INTO "domain" VALUES ('foursquare', 12, 30); -- food
 INSERT INTO "domain" VALUES ('finecooking', 12, 100); -- food
 INSERT INTO "domain" VALUES ('kraftrecipes', 12, 100); -- food
+INSERT INTO "domain" VALUES ('lafourchette', 12, 100); -- food
 INSERT INTO "domain" VALUES ('myrecipes', 12, 100); -- food
+INSERT INTO "domain" VALUES ('opentable', 12, 100); -- food
 INSERT INTO "domain" VALUES ('resto-in', 12, 100); -- food
 INSERT INTO "domain" VALUES ('saveur', 12, 100); -- food
 INSERT INTO "domain" VALUES ('simplyrecipes', 12, 100); -- food
@@ -306,3 +355,21 @@ INSERT INTO "domain" VALUES ('tripadvisor', 12, 20); -- food
 INSERT INTO "domain" VALUES ('ubereats', 12, 100); -- food
 INSERT INTO "domain" VALUES ('yelp', 12, 20); -- food
 
+----------------------
+-- Book
+----------------------
+
+INSERT INTO "domain" VALUES ('audible', 3, 100); -- book
+INSERT INTO "domain" VALUES ('avxhome', 3, 100); -- book
+INSERT INTO "domain" VALUES ('bookddl', 3, 100); -- book
+INSERT INTO "domain" VALUES ('bookdepository', 3, 100); -- book
+INSERT INTO "domain" VALUES ('bookdownload', 3, 100); -- book
+INSERT INTO "domain" VALUES ('calameo', 3, 100); -- book
+INSERT INTO "domain" VALUES ('chapitre', 3, 100); -- book
+INSERT INTO "domain" VALUES ('ebook', 3, 100); -- book
+INSERT INTO "domain" VALUES ('ebookma', 3, 100); -- book
+INSERT INTO "domain" VALUES ('fanfiction', 3, 100); -- book
+INSERT INTO "domain" VALUES ('goodreads', 3, 100); -- book
+INSERT INTO "domain" VALUES ('literature', 3, 100); -- book
+INSERT INTO "domain" VALUES ('livreepub', 3, 100); -- book
+INSERT INTO "domain" VALUES ('safaribooksonline', 3, 100); -- book
