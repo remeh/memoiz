@@ -241,7 +241,6 @@ INSERT INTO "domain" VALUES ('napster', 5, 10); -- movie
 INSERT INTO "domain" VALUES ('napster', 9, 10); -- serie
 INSERT INTO "domain" VALUES ('napster', 10, 10); -- video
 INSERT INTO "domain" VALUES ('napster', 11, 10); -- video game
-INSERT INTO "domain" VALUES ('napster', 11, 10); -- video game
 
 INSERT INTO "domain" VALUES ('last', 6, 100); -- last.fm music
 
