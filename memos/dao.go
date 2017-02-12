@@ -200,8 +200,31 @@ func (d *MemosDAO) UpdateLastEmail(uid uuid.UUID, memoUids uuid.UUIDs, typ strin
 }
 
 // GetByUser returns the memos of the given user.
-func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState) ([]Memo, error) {
+func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState, search string) ([]Memo, error) {
 	rv := make([]Memo, 0)
+
+	// build the search clause and parameters
+	// ----------------------
+
+	var p []interface{}
+
+	searchClause := ""
+	if len(search) > 0 {
+		searchClause = `AND (
+				lower("text") LIKE lower($3)
+				OR
+				lower("r_title") LIKE lower($3)
+				OR
+				lower("r_url") LIKE lower($3)
+			)
+		`
+		p = storage.Values(uid, state, storage.BasicLike(search))
+	} else {
+		p = storage.Values(uid, state)
+	}
+
+	// run the query
+	// ----------------------
 
 	rows, err := d.DB.Query(`
 		SELECT "uid", "text", "position", "r_category", "r_image", "r_url", "r_title", "last_update"
@@ -210,8 +233,9 @@ func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState) ([]Memo, error) {
 			"owner_uid" = $1
 			AND
 			"state" = $2
+			`+searchClause+`
 		ORDER BY "position" DESC
-	`, uid, state)
+	`, p...)
 
 	if err != nil || rows == nil {
 		return rv, err

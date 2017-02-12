@@ -34,3 +34,22 @@ func Values(d ...interface{}) []interface{} {
 	}
 	return rv
 }
+
+func BasicLike(str string) string {
+	if len(str) == 0 {
+		return ""
+	}
+	return "%" + str + "%"
+}
+
+func FuzzyLike(str string) string {
+	if len(str) == 0 {
+		return ""
+	}
+
+	rv := ""
+	for _, k := range str {
+		rv += "%" + string(k)
+	}
+	return rv + "%"
+}

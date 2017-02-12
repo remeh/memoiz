@@ -18,6 +18,7 @@ func (c Get) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	s := r.Form.Get("s")
+	search := r.Form.Get("se")
 
 	memos.DAO()
 
@@ -29,7 +30,7 @@ func (c Get) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// get the memos
 	// ----------------------
 
-	cs, err := memos.DAO().GetByUser(uid, state)
+	cs, err := memos.DAO().GetByUser(uid, state, search)
 
 	// render the response
 	// ----------------------
