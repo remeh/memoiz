@@ -215,7 +215,7 @@ func (u *Url) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 		Format:   EnrichStandard,
 	}
 
-	if text == u.url {
+	if text == u.url && len(u.image) == 0 {
 		rv.Format = EnrichUrlNoImage
 	}
 

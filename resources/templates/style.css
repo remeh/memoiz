@@ -19,3 +19,11 @@ a.copyright {
   padding: 0.5em;
   margin-left: 0.5em;
 }
+
+@media screen and (max-width: 500px) {
+  .mui-container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0px;
+  }
+}

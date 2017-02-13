@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/smtp"
+	"sort"
 
 	"remy.io/memoiz/accounts"
 	"remy.io/memoiz/log"
@@ -25,6 +26,23 @@ type enrichedMemo struct {
 
 type enrichedMemos []enrichedMemo
 
+// ----------------------
+
+type ImageFirst enrichedMemos
+
+func (ms ImageFirst) Len() int          { return len(ms) }
+func (ms ImageFirst) Swap(i int, j int) { ms[i], ms[j] = ms[j], ms[i] }
+func (ms ImageFirst) Less(i int, j int) bool {
+	ii := ms[i].EnrichInfos
+	ij := ms[j].EnrichInfos
+
+	if len(ii.ImageUrl) != 0 && len(ij.ImageUrl) == 0 {
+		return true
+	}
+
+	return false
+}
+
 // SendEnrichedMemos sends to the given user the list of memos
 // enriched by the given infos.
 // It also stores the email in the dumpDir directory using
@@ -42,10 +60,20 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 		return fmt.Errorf("SendEnrichedMemos: len(ms) != len(infos)")
 	}
 
+	// if we have 2 memos and only one of them has
+	// an image, ensure it will be at the first position.
+	// ----------------------
+
+	em := buildEnrichedMemos(ms, infos)
+	sort.Sort(ImageFirst(em))
+
+	// build the email
+	// ----------------------
+
 	buff := bytes.Buffer{}
 
 	// headers
-	mailHeader(&buff, acc.Email, buildTitle(ms))
+	mailHeader(&buff, acc.Email, buildTitle(em))
 
 	// content
 	html := template.Root.Lookup("enriched_mail.html")
@@ -55,7 +83,7 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 
 	p := semParam{
 		SimpleUser: acc,
-		Memos:      buildEnrichedMemos(ms, infos),
+		Memos:      em,
 	}
 
 	if err := html.Execute(&buff, p); err != nil {
@@ -75,9 +103,9 @@ func SendEnrichedMemos(acc accounts.SimpleUser, ms memos.Memos, infos mind.Enric
 	return nil
 }
 
-func buildTitle(ms memos.Memos) string {
+func buildTitle(em enrichedMemos) string {
 	str := ""
-	for _, m := range ms {
+	for _, m := range em {
 		if len(str) >= 70 {
 			// avoid too long title
 			break
@@ -87,10 +115,10 @@ func buildTitle(ms memos.Memos) string {
 			str += " — "
 		}
 
-		if len(m.Title) != 0 {
-			str += cutText(m.Title, 70)
+		if len(m.Memo.Title) != 0 {
+			str += cutText(m.Memo.Title, 70)
 		} else {
-			str += cutText(m.Text, 70)
+			str += cutText(m.Memo.Text, 70)
 		}
 	}
 

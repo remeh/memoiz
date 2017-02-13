@@ -4,9 +4,7 @@
     <table style="border: 0; width: 100%;">
       <tr>
         <td style="width:100%">
-          <a href="https://app.memoiz.com" alt="Open on Memoiz">
-          <h2>
-            <a href="{{.Memo.MemoRichInfo.Url}}" alt="Go to link">
+          <h3>
             {{ if .Memo.MemoRichInfo.Title }}
               {{ .Memo.MemoRichInfo.Title }}
             {{ else }}
@@ -15,9 +13,7 @@
             {{if (ne .Memo.MemoRichInfo.Category.String "Uncategorized")}}
               <span class="tag">{{.Memo.MemoRichInfo.Category}}</span>
             {{end}}
-            </a>
-          </h2>
-          </a>
+          </h3>
         </td>
       </tr>
     </table>

@@ -4,10 +4,8 @@
     <table style="border: 0; width: 100%;">
       <tr>
         <td style="width:100%">
-          <a href="https://app.memoiz.com" alt="Open on Memoiz">
-          <h2>
+          <h3>
             {{ if .Memo.MemoRichInfo.Url }}
-            <a href="{{.Memo.MemoRichInfo.Url}}" alt="Go to link">
             {{ end }}
 
             {{ if .Memo.MemoRichInfo.Title }}
@@ -20,10 +18,8 @@
             {{end}}
 
             {{ if .Memo.MemoRichInfo.Url }}
-            </a>
             {{ end }}
-          </h2>
-          </a>
+          </h3>
         </td>
       </tr>
     </table>
