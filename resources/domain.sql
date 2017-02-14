@@ -4,10 +4,6 @@ DELETE FROM "domain";
 -- Movies and Series
 ----------------------
 
--- Critictoo
-INSERT INTO "domain" VALUES ('critictoo', 5, 40); -- movie
-INSERT INTO "domain" VALUES ('critictoo', 9, 60); -- serie
-
 -- BetaSeries
 INSERT INTO "domain" VALUES ('betaseries', 9, 100); -- serie
 
@@ -17,6 +13,19 @@ INSERT INTO "domain" VALUES ('123movies', 9, 50);
 -- Allocine
 INSERT INTO "domain" VALUES ('allocine', 5, 50);
 INSERT INTO "domain" VALUES ('allocine', 9, 50);
+
+INSERT INTO "domain" VALUES ('alticine', 5, 100);
+
+-- Critictoo
+INSERT INTO "domain" VALUES ('critictoo', 5, 40); -- movie
+INSERT INTO "domain" VALUES ('critictoo', 9, 60); -- serie
+
+INSERT INTO "domain" VALUES ('cinefil', 5, 100); -- movie
+
+INSERT INTO "domain" VALUES ('cinemotions', 5, 50); -- movie
+INSERT INTO "domain" VALUES ('cinemotions', 9, 50); -- serie
+
+INSERT INTO "domain" VALUES ('cinemasgaumontpathe', 5, 100);
 
 -- HBO
 INSERT INTO "domain" VALUES ('hbo', 5, 20); -- movie
@@ -77,6 +86,9 @@ INSERT INTO "domain" VALUES ('movieshub', 9, 50);
 INSERT INTO "domain" VALUES ('moviefull-hd', 5, 100);
 INSERT INTO "domain" VALUES ('moviefull-hd', 9, 100);
 
+INSERT INTO "domain" VALUES ('programmetv', 5, 50); -- movie
+INSERT INTO "domain" VALUES ('programmetv', 9, 50); -- serie
+
 -- Rottentomatoes
 INSERT INTO "domain" VALUES ('rottentomatoes', 5, 60); -- movie
 INSERT INTO "domain" VALUES ('rottentomatoes', 9, 40);
@@ -90,6 +102,9 @@ INSERT INTO "domain" VALUES ('sharetv', 9, 50);
 INSERT INTO "domain" VALUES ('streaming', 5, 50);
 INSERT INTO "domain" VALUES ('streaming', 9, 50);
 
+INSERT INTO "domain" VALUES ('streamcompletvf', 5, 50);
+INSERT INTO "domain" VALUES ('streamcompletvf', 9, 50);
+
 INSERT INTO "domain" VALUES ('streamingy', 5, 50);
 INSERT INTO "domain" VALUES ('streamingy', 9, 50);
 
@@ -101,9 +116,15 @@ INSERT INTO "domain" VALUES ('tv', 9, 50);
 INSERT INTO "domain" VALUES ('tvseries', 5, 50);
 INSERT INTO "domain" VALUES ('tvseries', 9, 50);
 
+INSERT INTO "domain" VALUES ('torrent', 5, 25);
+INSERT INTO "domain" VALUES ('torrent', 9, 25);
+
 -- TVGuide
 INSERT INTO "domain" VALUES ('tvguide', 5, 50);
 INSERT INTO "domain" VALUES ('tvguide', 9, 50);
+
+INSERT INTO "domain" VALUES ('universalpictures', 5, 70);
+INSERT INTO "domain" VALUES ('universalpictures', 9, 30);
 
 INSERT INTO "domain" VALUES ('ustream', 5, 50);
 INSERT INTO "domain" VALUES ('ustream', 9, 50);
@@ -329,8 +350,10 @@ INSERT INTO "domain" VALUES ('wikivoyage', 8, 100); -- place
 INSERT INTO "domain" VALUES ('allrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('alloresto', 12, 100); -- food
 INSERT INTO "domain" VALUES ('bonappetour', 12, 100); -- food
+INSERT INTO "domain" VALUES ('bullesdegourmandises', 12, 100); -- food
 INSERT INTO "domain" VALUES ('cookingchanneltv', 12, 100); -- food
 INSERT INTO "domain" VALUES ('chowhound', 12, 100); -- food
+INSERT INTO "domain" VALUES ('cuisineaz', 12, 100); -- food
 INSERT INTO "domain" VALUES ('deliaonline', 12, 100); -- food
 INSERT INTO "domain" VALUES ('deliveroo', 12, 100); -- food
 INSERT INTO "domain" VALUES ('epicurious', 12, 100); -- food
@@ -343,9 +366,13 @@ INSERT INTO "domain" VALUES ('foursquare', 12, 30); -- food
 INSERT INTO "domain" VALUES ('finecooking', 12, 100); -- food
 INSERT INTO "domain" VALUES ('kraftrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('lafourchette', 12, 100); -- food
+INSERT INTO "domain" VALUES ('marmiton', 12, 100); -- food
 INSERT INTO "domain" VALUES ('myrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('opentable', 12, 100); -- food
+INSERT INTO "domain" VALUES ('recette', 12, 100); -- food
+INSERT INTO "domain" VALUES ('recettes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('resto-in', 12, 100); -- food
+INSERT INTO "domain" VALUES ('ptitchef', 12, 100); -- food
 INSERT INTO "domain" VALUES ('saveur', 12, 100); -- food
 INSERT INTO "domain" VALUES ('simplyrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('takeeateasy', 12, 100); -- food
