@@ -179,7 +179,6 @@ func (u *Url) Store(uid uuid.UUID) error {
 		return log.Err("Url:", err)
 	}
 	if u.category != Uncategorized {
-		fmt.Println(u.category)
 		if _, err := storage.DB().Exec(`
 		UPDATE "memo"
 		SET "r_category" = $1
