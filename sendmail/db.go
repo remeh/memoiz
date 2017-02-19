@@ -180,6 +180,9 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 			em."owner_uid" = "memo"."owner_uid"
 			AND
 			em."uid" = "memo"."uid"
+			AND
+			-- we want all memos not send as "recently added"
+			em."type" = '`+CategoryRecentlyAddedEmail+`'
 		WHERE
 			"memo"."owner_uid" IN `+in+`
 			AND
