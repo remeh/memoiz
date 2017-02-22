@@ -4,9 +4,6 @@ DELETE FROM "domain";
 -- Movies and Series
 ----------------------
 
--- BetaSeries
-INSERT INTO "domain" VALUES ('betaseries', 9, 100); -- serie
-
 INSERT INTO "domain" VALUES ('123movies', 5, 50);
 INSERT INTO "domain" VALUES ('123movies', 9, 50);
 
@@ -15,6 +12,11 @@ INSERT INTO "domain" VALUES ('allocine', 5, 50);
 INSERT INTO "domain" VALUES ('allocine', 9, 50);
 
 INSERT INTO "domain" VALUES ('alticine', 5, 100);
+
+INSERT INTO "domain" VALUES ('animegg', 9, 100); -- serie
+
+-- BetaSeries
+INSERT INTO "domain" VALUES ('betaseries', 9, 100); -- serie
 
 -- Critictoo
 INSERT INTO "domain" VALUES ('critictoo', 5, 40); -- movie
@@ -347,8 +349,10 @@ INSERT INTO "domain" VALUES ('wikivoyage', 8, 100); -- place
 -- Food
 ----------------------
 
+INSERT INTO "domain" VALUES ('750g', 12, 100); -- food
 INSERT INTO "domain" VALUES ('allrecipes', 12, 100); -- food
 INSERT INTO "domain" VALUES ('alloresto', 12, 100); -- food
+INSERT INTO "domain" VALUES ('audreycuisine', 12, 100); -- food
 INSERT INTO "domain" VALUES ('bonappetour', 12, 100); -- food
 INSERT INTO "domain" VALUES ('bullesdegourmandises', 12, 100); -- food
 INSERT INTO "domain" VALUES ('cookingchanneltv', 12, 100); -- food
@@ -399,3 +403,56 @@ INSERT INTO "domain" VALUES ('goodreads', 3, 100); -- book
 INSERT INTO "domain" VALUES ('literature', 3, 100); -- book
 INSERT INTO "domain" VALUES ('livreepub', 3, 100); -- book
 INSERT INTO "domain" VALUES ('safaribooksonline', 3, 100); -- book
+
+----------------------
+-- News
+----------------------
+
+INSERT INTO "domain" VALUES ('01net', 4, 100); -- news
+INSERT INTO "domain" VALUES ('20minutes', 4, 100); -- news
+INSERT INTO "domain" VALUES ('androidauthority', 4, 100); -- news
+INSERT INTO "domain" VALUES ('animenewsnetwork', 4, 100); -- news
+INSERT INTO "domain" VALUES ('apcmag', 4, 100); -- news
+INSERT INTO "domain" VALUES ('aufeminin', 4, 100); -- news
+INSERT INTO "domain" VALUES ('autoblog', 4, 100); -- news
+INSERT INTO "domain" VALUES ('bbc', 4, 100); -- news
+INSERT INTO "domain" VALUES ('bbcamerica', 4, 100); -- news
+INSERT INTO "domain" VALUES ('blogspot', 4, 100); -- news
+INSERT INTO "domain" VALUES ('bmwblog', 4, 100); -- news
+INSERT INTO "domain" VALUES ('broadbandtvnews', 4, 100); -- news
+INSERT INTO "domain" VALUES ('businessnewsdaily', 4, 100); -- news
+INSERT INTO "domain" VALUES ('canalblog', 4, 100); -- news
+INSERT INTO "domain" VALUES ('cbsnews', 4, 100); -- news
+INSERT INTO "domain" VALUES ('cnet', 4, 100); -- news
+INSERT INTO "domain" VALUES ('digitaltrends', 4, 100); -- news
+INSERT INTO "domain" VALUES ('foxnews', 4, 100); -- news
+INSERT INTO "domain" VALUES ('foxsports', 4, 100); -- news
+INSERT INTO "domain" VALUES ('gawker', 4, 100); -- news
+INSERT INTO "domain" VALUES ('lactualite', 4, 100); -- news
+INSERT INTO "domain" VALUES ('ledauphine', 4, 100); -- news
+INSERT INTO "domain" VALUES ('leftlanenews', 4, 100); -- news
+INSERT INTO "domain" VALUES ('lemonde', 4, 100); -- news
+INSERT INTO "domain" VALUES ('leparisien', 4, 100); -- news
+INSERT INTO "domain" VALUES ('linuxfr', 4, 100); -- news
+INSERT INTO "domain" VALUES ('medium', 4, 100); -- news
+INSERT INTO "domain" VALUES ('nationalreview', 4, 100); -- news
+INSERT INTO "domain" VALUES ('newsarama', 4, 100); -- news
+INSERT INTO "domain" VALUES ('numerama', 4, 100); -- news
+INSERT INTO "domain" VALUES ('nouvelobs', 4, 100); -- news
+INSERT INTO "domain" VALUES ('nextinpact', 4, 100); -- news
+INSERT INTO "domain" VALUES ('nytimes', 4, 100); -- news
+INSERT INTO "domain" VALUES ('pcmag', 4, 100); -- news
+INSERT INTO "domain" VALUES ('pcinpact', 4, 100); -- news
+INSERT INTO "domain" VALUES ('prnewswire', 4, 100); -- news
+INSERT INTO "domain" VALUES ('reviewjournal', 4, 100); -- news
+INSERT INTO "domain" VALUES ('slashdot', 4, 100); -- news
+INSERT INTO "domain" VALUES ('techcrunch', 4, 100); -- news
+INSERT INTO "domain" VALUES ('techradar', 4, 100); -- news
+INSERT INTO "domain" VALUES ('theguardian', 4, 100); -- news
+INSERT INTO "domain" VALUES ('thinkgeek', 4, 100); -- news
+INSERT INTO "domain" VALUES ('time', 4, 100); -- news
+INSERT INTO "domain" VALUES ('usatoday', 4, 100); -- news
+INSERT INTO "domain" VALUES ('usnews', 4, 100); -- news
+INSERT INTO "domain" VALUES ('venturebeat', 4, 100); -- news
+INSERT INTO "domain" VALUES ('wired', 4, 100); -- news
+INSERT INTO "domain" VALUES ('zdnet', 4, 100); -- news

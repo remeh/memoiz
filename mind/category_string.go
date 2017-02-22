@@ -4,7 +4,7 @@ package mind
 
 import "fmt"
 
-const _Category_name = "UncategorizedArtistActorBookDateMovieMusicPersonPlaceSerieVideoVideoGameFood"
+const _Category_name = "UncategorizedArtistActorBookNewsMovieMusicPersonPlaceSerieVideoVideoGameFood"
 
 var _Category_index = [...]uint8{0, 13, 19, 24, 28, 32, 37, 42, 48, 53, 58, 63, 72, 76}
 

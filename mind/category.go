@@ -16,7 +16,7 @@ const (
 	Artist                 // 1
 	Actor                  // 2
 	Book                   // 3
-	Date                   // 4
+	News                   // 4
 	Movie                  // 5
 	Music                  // 6
 	Person                 // 7
