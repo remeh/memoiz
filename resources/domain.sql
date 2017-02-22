@@ -455,4 +455,5 @@ INSERT INTO "domain" VALUES ('usatoday', 4, 100); -- news
 INSERT INTO "domain" VALUES ('usnews', 4, 100); -- news
 INSERT INTO "domain" VALUES ('venturebeat', 4, 100); -- news
 INSERT INTO "domain" VALUES ('wired', 4, 100); -- news
+INSERT INTO "domain" VALUES ('ycombinator', 4, 100); -- news
 INSERT INTO "domain" VALUES ('zdnet', 4, 100); -- news
