@@ -302,6 +302,20 @@ func (d *MemosDAO) Delete(owner, uid uuid.UUID, t time.Time) error {
 	return nil
 }
 
+func (d *MemosDAO) UnsetCat(owner, uid uuid.UUID, t time.Time) error {
+	if _, err := d.DB.Exec(`
+		UPDATE "memo"
+		SET "r_category" = 0, "last_update" = $1
+		WHERE
+			"owner_uid" = $2
+			AND
+			"uid" = $3
+	`, t, owner, uid); err != nil {
+		return fmt.Errorf("memos.UnsetCategory: %v", err)
+	}
+	return nil
+}
+
 func (d *MemosDAO) SwitchPosition(left, right, owner uuid.UUID, t time.Time) error {
 	var tx *sql.Tx
 	var err error

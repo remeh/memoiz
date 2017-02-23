@@ -20,8 +20,6 @@ func (c Get) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s := r.Form.Get("s")
 	search := r.Form.Get("se")
 
-	memos.DAO()
-
 	state := memos.MemoActive
 	if s == "archived" {
 		state = memos.MemoArchived
