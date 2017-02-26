@@ -7,6 +7,7 @@ import (
 
 	"remy.io/memoiz/accounts"
 	"remy.io/memoiz/api"
+	"remy.io/memoiz/log"
 )
 
 type Login struct{}
@@ -18,6 +19,7 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Email    string
 		Password string
+		Timezone string
 	}
 
 	if err := api.ReadJsonBody(r, &body); err != nil {
@@ -53,6 +55,17 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !accounts.Check(hash, body.Password) {
 		api.RenderForbiddenJson(w)
 		return
+	}
+
+	// updates user timezone
+	// ----------------------
+
+	if len(body.Timezone) > 0 {
+		go func() {
+			if err := accounts.DAO().UpdateTz(su.Uid, body.Timezone); err != nil {
+				log.Warning("Login: while update user timezone:", err)
+			}
+		}()
 	}
 
 	// get the user subscription info

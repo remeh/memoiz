@@ -7,6 +7,7 @@ import (
 	"remy.io/memoiz/api"
 	"remy.io/memoiz/memos"
 	"remy.io/memoiz/mind"
+	"remy.io/memoiz/storage"
 	"remy.io/memoiz/uuid"
 )
 
@@ -20,9 +21,10 @@ func (c Put) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// ----------------------
 
 	var body struct {
-		MemoUid uuid.UUID `json:"memo_uid"`
-		Text    string    `json:"text"`
-		Enrich  bool      `json:"enrich"`
+		MemoUid  uuid.UUID      `json:"memo_uid"`
+		Text     string         `json:"text"`
+		Enrich   bool           `json:"enrich"`
+		Reminder storage.JSTime `json:"reminder"`
 	}
 
 	if err := api.ReadJsonBody(r, &body); err != nil {
@@ -39,7 +41,7 @@ func (c Put) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sc, err := memos.DAO().UpdateText(uid, body.MemoUid, body.Text, time.Now())
+	sc, err := memos.DAO().UpdateText(uid, body.MemoUid, body.Text, body.Reminder, time.Now())
 	if err != nil {
 		api.RenderErrJson(w, err)
 		return

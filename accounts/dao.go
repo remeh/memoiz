@@ -119,6 +119,27 @@ func (d *AccountDAO) Create(uid uuid.UUID, firstname, email, hash, unsubTok stri
 	return nil
 }
 
+// UpdateTz updates the timezone of the given user
+// only if different.
+func (d *AccountDAO) UpdateTz(uid uuid.UUID, tz string) error {
+	_, err := d.DB.Exec(`
+		UPDATE "user"
+		SET
+			"timezone" = $1,
+			"last_update" = now()
+		WHERE
+			"uid" = $2
+			AND
+			"timezone" != $1
+	`, tz, uid)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // UpdateStripeToken updates the Stripe token in database
 // for the given user.
 func (d *AccountDAO) UpdateStripeToken(u SimpleUser) error {
