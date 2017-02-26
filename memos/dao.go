@@ -287,6 +287,7 @@ func (d *MemosDAO) New(owner uuid.UUID, text string, reminder storage.JSTime, t 
 
 	rv.Uid = memoUid
 	rv.Text = text
+	rv.Reminder = reminder
 
 	return rv, nil
 }
