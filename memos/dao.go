@@ -48,17 +48,17 @@ func (d *MemosDAO) InitStmt() error {
 
 // Update updates the text of the given
 // memo. It also updates the last_update time.
-func (d *MemosDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (Memo, error) {
+func (d *MemosDAO) UpdateText(owner, uid uuid.UUID, text string, reminder storage.JSTime, t time.Time) (Memo, error) {
 	var position int
 
 	if err := d.DB.QueryRow(`
 		UPDATE "memo"
 		SET
-			"text" = $1, "last_update" = $2
+			"text" = $1, "last_update" = $2, reminder = $3
 		WHERE
-			"uid" = $3 AND "owner_uid" = $4
+			"uid" = $4 AND "owner_uid" = $5
 		RETURNING "position"
-	`, text, t, uid, owner).Scan(&position); err != nil {
+	`, text, t, reminder, uid, owner).Scan(&position); err != nil {
 		return Memo{}, log.Err("UpdateText:", err)
 	}
 
@@ -66,6 +66,7 @@ func (d *MemosDAO) UpdateText(owner, uid uuid.UUID, text string, t time.Time) (M
 		Uid:      uid,
 		Text:     text,
 		Position: position,
+		Reminder: reminder,
 	}, nil
 }
 
@@ -260,19 +261,21 @@ func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState, search string) ([]M
 
 // New creates a new memo for the given user
 // and returns its ID + position.
-func (d *MemosDAO) New(owner uuid.UUID, text string, t time.Time) (Memo, error) {
+func (d *MemosDAO) New(owner uuid.UUID, text string, reminder storage.JSTime, t time.Time) (Memo, error) {
 	var rv Memo
 
 	memoUid := uuid.New()
 
+	fmt.Println("new:", reminder)
+
 	if err := d.DB.QueryRow(`
 		INSERT INTO "memo"
-		("uid", "owner_uid", "text", "position", "creation_time", "last_update")
-		SELECT $1, $2, $3, coalesce(max("position"),0)+1, $4, $4
+		("uid", "owner_uid", "text", "position", "reminder", "creation_time", "last_update")
+		SELECT $1, $2, $3, coalesce(max("position"),0)+1, $4, $5, $5
 		FROM "memo"
 		WHERE "owner_uid" = $2
 		RETURNING "position"
-	`, memoUid, owner, text, t).Scan(&rv.Position); err != nil {
+	`, memoUid, owner, text, reminder, t).Scan(&rv.Position); err != nil {
 		if err == sql.ErrNoRows {
 			return rv, fmt.Errorf("memos.New: no position returned")
 		}

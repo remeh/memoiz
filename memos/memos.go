@@ -33,9 +33,10 @@ type Memos []Memo
 // to represent a memo.
 // RichInfo COULD be loaded.
 type Memo struct {
-	Uid      uuid.UUID `json:"uid"`
-	Text     string    `json:"text"`
-	Position int       `json:"-"`
+	Uid      uuid.UUID      `json:"uid"`
+	Text     string         `json:"text"`
+	Position int            `json:"-"`
+	Reminder storage.JSTime `json:"reminder"`
 
 	// NOTE(remy): everything in RichInfo is optional
 	MemoRichInfo
