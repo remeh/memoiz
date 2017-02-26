@@ -228,7 +228,7 @@ func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState, search string) ([]M
 	// ----------------------
 
 	rows, err := d.DB.Query(`
-		SELECT "uid", "text", "position", "r_category", "r_image", "r_url", "r_title", "last_update"
+		SELECT "uid", "text", "position", "reminder", "r_category", "r_image", "r_url", "r_title", "last_update"
 		FROM "memo"
 		WHERE
 			"owner_uid" = $1
@@ -244,16 +244,21 @@ func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState, search string) ([]M
 
 	defer rows.Close()
 	for rows.Next() {
-		var sc Memo
+		var rem pq.NullTime
+		var m Memo
 		var ri MemoRichInfo
 
-		if err := rows.Scan(&sc.Uid, &sc.Text, &sc.Position, &ri.Category, &ri.Image, &ri.Url, &ri.Title, &ri.LastUpdate); err != nil {
+		if err := rows.Scan(&m.Uid, &m.Text, &m.Position, &rem, &ri.Category, &ri.Image, &ri.Url, &ri.Title, &ri.LastUpdate); err != nil {
 			return rv, err
 		}
 
-		sc.MemoRichInfo = ri
+		if rem.Valid {
+			m.Reminder = storage.JSTime(rem.Time)
+		}
 
-		rv = append(rv, sc)
+		m.MemoRichInfo = ri
+
+		rv = append(rv, m)
 	}
 
 	return rv, nil
@@ -265,8 +270,6 @@ func (d *MemosDAO) New(owner uuid.UUID, text string, reminder storage.JSTime, t 
 	var rv Memo
 
 	memoUid := uuid.New()
-
-	fmt.Println("new:", reminder)
 
 	if err := d.DB.QueryRow(`
 		INSERT INTO "memo"

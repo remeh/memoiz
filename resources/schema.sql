@@ -76,7 +76,7 @@ CREATE TABLE "memo" (
     "text" text NOT NULL DEFAULT '',
     "position" int NOT NULL DEFAULT 0,
     "state" text NOT NULL DEFAULT 'MemoActive',
-    "reminder" timestamp with time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+    "reminder" timestamp with time zone,
 
     -- rich information
     -- could not be set

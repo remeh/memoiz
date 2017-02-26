@@ -36,7 +36,7 @@ type Memo struct {
 	Uid      uuid.UUID      `json:"uid"`
 	Text     string         `json:"text"`
 	Position int            `json:"-"`
-	Reminder storage.JSTime `json:"reminder"`
+	Reminder storage.JSTime `json:"reminder,omitempty"`
 
 	// NOTE(remy): everything in RichInfo is optional
 	MemoRichInfo

@@ -1,7 +1,6 @@
 package memos
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -28,7 +27,6 @@ func (c Post) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := api.ReadJsonBody(r, &body); err != nil {
-		fmt.Println(err.Error())
 		api.RenderBadParameters(w)
 		return
 	}
