@@ -14,10 +14,11 @@ import (
 const (
 	CategoryRecentlyAddedEmail = "CategoryRecentlyAddedEmail"
 	CategoryEnrichedEmail      = "CategoryEnrichedEmail"
+	CategoryReminderEmail      = "CategoryReminderEmail"
 
 	RunFrequency = time.Minute
 
-	// EmailFrequency is the frequency at which we send the recently
+	// RecentlyAddedFrequency is the frequency at which we send the recently
 	// added emails.
 	RecentlyAddedFrequency   = time.Hour * 24 * 3
 	RecentlyAddedFrequencyPg = "3 day"
@@ -47,6 +48,9 @@ func main() {
 			log.Error(err)
 		}
 		if err := enrichEmailing(t); err != nil {
+			log.Error(err)
+		}
+		if err := reminderEmailing(t); err != nil {
 			log.Error(err)
 		}
 	}

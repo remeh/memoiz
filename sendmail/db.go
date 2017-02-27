@@ -137,6 +137,69 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	return rv, nil
 }
 
+// getReminderToSend returns memos which must be send
+// due to the reminder.
+func getReminderToSend(t time.Time, limit int) (map[string]memos.Memos, error) {
+	var rows *sql.Rows
+	var err error
+
+	if rows, err = storage.DB().Query(`
+		SELECT "memo"."owner_uid", array_agg("memo"."uid"), array_agg("text"), array_agg("r_category")
+		FROM "memo"
+		JOIN "emailing_memo" ON
+			"emailing_memo"."uid" = "memo"."uid"
+			AND
+			"emailing_memo"."owner_uid" = "memo"."owner_uid"
+		WHERE
+			"reminder" IS NOT NULL
+			AND
+			COALESCE("last_sent", '1970-01-01 01:01'::timestamp with time zone) < "memo"."reminder"
+			AND
+			"reminder" < $1
+		GROUP BY "memo"."owner_uid";
+	`, t); err != nil {
+		return nil, err
+	}
+
+	if rows == nil {
+		return make(map[string]memos.Memos), nil
+	}
+
+	// read the results
+	// ----------------------
+
+	rv := make(map[string]memos.Memos)
+
+	defer rows.Close()
+	for rows.Next() {
+		var uid string
+		var uids uuid.UUIDs
+		var texts []string
+		var cats []int64
+
+		if err := rows.Scan(&uid, pq.Array(&uids), pq.Array(&texts), pq.Array(&cats)); err != nil {
+			log.Error("sendmail: getReminderToSend:", err, "Continuing.")
+			continue
+		}
+
+		if len(uids) != len(cats) || len(uids) != len(texts) {
+			log.Error("sendmail: getReminderToSend: len(uids) != len(cats) for", uid, "Continuing.")
+			continue
+		}
+
+		memos := make(memos.Memos, len(uids))
+		for i, uid := range uids {
+			memos[i].Uid = uid
+			memos[i].MemoRichInfo.Category = mind.Category(cats[i])
+			memos[i].Text = texts[i]
+		}
+
+		rv[uid] = memos
+	}
+
+	return rv, nil
+}
+
 // getRecentMemos returns recent memos per owners
 // recently created and not already sent to the owner.
 func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
@@ -144,7 +207,7 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 	var err error
 
 	if len(owners) == 0 {
-		return nil, fmt.Errorf("notify/email: getRecentMemos: called with len(owners) == 0")
+		return nil, fmt.Errorf("sendmail: getRecentMemos: called with len(owners) == 0")
 	}
 
 	// query
@@ -217,12 +280,12 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 		var cats []int64
 
 		if err := rows.Scan(&uid, pq.Array(&uids), pq.Array(&texts), pq.Array(&cats)); err != nil {
-			log.Error("notify/email: getRecentMemos:", err, "Continuing.")
+			log.Error("sendmail: getRecentMemos:", err, "Continuing.")
 			continue
 		}
 
 		if len(uids) != len(cats) || len(uids) != len(texts) {
-			log.Error("notify/email: getRecentMemos: len(uids) != len(cats) for", uid, "Continuing.")
+			log.Error("sendmail: getRecentMemos: len(uids) != len(cats) for", uid, "Continuing.")
 			continue
 		}
 
