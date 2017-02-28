@@ -139,14 +139,14 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 
 // getReminderToSend returns memos which must be send
 // due to the reminder.
-func getReminderToSend(t time.Time, limit int) (map[string]memos.Memos, error) {
+func getReminderToSend(t time.Time, limit int) (memos.MemosMap, error) {
 	var rows *sql.Rows
 	var err error
 
 	if rows, err = storage.DB().Query(`
 		SELECT "memo"."owner_uid", array_agg("memo"."uid"), array_agg("text"), array_agg("r_category")
 		FROM "memo"
-		JOIN "emailing_memo" ON
+		LEFT JOIN "emailing_memo" ON
 			"emailing_memo"."uid" = "memo"."uid"
 			AND
 			"emailing_memo"."owner_uid" = "memo"."owner_uid"
@@ -162,13 +162,13 @@ func getReminderToSend(t time.Time, limit int) (map[string]memos.Memos, error) {
 	}
 
 	if rows == nil {
-		return make(map[string]memos.Memos), nil
+		return make(memos.MemosMap), nil
 	}
 
 	// read the results
 	// ----------------------
 
-	rv := make(map[string]memos.Memos)
+	rv := make(memos.MemosMap)
 
 	defer rows.Close()
 	for rows.Next() {
@@ -202,7 +202,7 @@ func getReminderToSend(t time.Time, limit int) (map[string]memos.Memos, error) {
 
 // getRecentMemos returns recent memos per owners
 // recently created and not already sent to the owner.
-func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
+func getRecentMemos(owners uuid.UUIDs) (memos.MemosMap, error) {
 	var rows *sql.Rows
 	var err error
 
@@ -264,13 +264,13 @@ func getRecentMemos(owners uuid.UUIDs) (map[string]memos.Memos, error) {
 	}
 
 	if rows == nil {
-		return make(map[string]memos.Memos), nil
+		return make(memos.MemosMap), nil
 	}
 
 	// read the results
 	// ----------------------
 
-	rv := make(map[string]memos.Memos)
+	rv := make(memos.MemosMap)
 
 	defer rows.Close()
 	for rows.Next() {

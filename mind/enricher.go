@@ -11,6 +11,13 @@ type EnrichResult struct {
 	Format           EnrichFormat
 }
 
+func (e EnrichResult) Enriched() bool {
+	if len(e.Content) > 0 || len(e.ImageUrl) > 0 {
+		return true
+	}
+	return false
+}
+
 type EnrichFormat string
 
 var (

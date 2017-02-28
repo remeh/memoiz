@@ -29,6 +29,8 @@ var (
 
 type Memos []Memo
 
+type MemosMap map[string]Memos
+
 // Memo only contains necessary fields
 // to represent a memo.
 // RichInfo COULD be loaded.
