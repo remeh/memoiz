@@ -44,13 +44,13 @@ func main() {
 	}
 
 	for t := range ticker.C {
+		if err := reminderEmailing(t); err != nil {
+			log.Error(err)
+		}
 		if err := recentEmailing(t); err != nil {
 			log.Error(err)
 		}
 		if err := enrichEmailing(t); err != nil {
-			log.Error(err)
-		}
-		if err := reminderEmailing(t); err != nil {
 			log.Error(err)
 		}
 	}
