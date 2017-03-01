@@ -64,15 +64,24 @@ func reminderEmailing(t time.Time) error {
 			}
 		}
 
+		// update that we've sent this email
+		// ----------------------
+
 		if err := memos.DAO().UpdateLastEmail(uid, ms.Uids(), CategoryReminderEmail, t); err != nil {
-			log.Error("reminderEmailing:", err)
-			continue
+			return log.Err("reminderEmailing:", err)
 		}
 
 		sendUid := uuid.New()
 
 		if err := emailSent(acc, sendUid, CategoryReminderEmail, t); err != nil {
 			return log.Err("reminderEmailing", err)
+		}
+
+		// delete the reminder
+		// ----------------------
+
+		if err := memos.DAO().DeleteReminders(uid, ms.Uids()); err != nil {
+			return log.Err("reminderEmailing:", err)
 		}
 
 		// send the mail

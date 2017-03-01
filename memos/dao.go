@@ -128,6 +128,39 @@ func (d *MemosDAO) Archive(owner, uid uuid.UUID, t time.Time) error {
 	return nil
 }
 
+// DeleteReminders removes the reminders on the
+// given list of memos.
+func (d *MemosDAO) DeleteReminders(uid uuid.UUID, memoUids uuid.UUIDs) error {
+	switch {
+	case uid.IsNil():
+		return fmt.Errorf("DeleteReminders: uid.IsNil()")
+	case len(memoUids) == 0:
+		return fmt.Errorf("DeleteReminders: len(memoUids) == 0")
+	}
+
+	var err error
+
+	vals := storage.Values(uid)
+	for _, m := range memoUids {
+		vals = append(vals, m)
+	}
+
+	_, err = d.DB.Exec(`
+		UPDATE "memo"
+		SET
+			"reminder" = NULL
+		WHERE
+			"owner_uid" = $1
+			AND
+			"uid" IN `+storage.InClause(2, len(memoUids))+`
+	`, vals...)
+	if err != nil {
+		return log.Err("DeleteReminders", err)
+	}
+
+	return nil
+}
+
 // UpdateLastEmail updates the last email time of
 // each given memo for the given category.
 func (d *MemosDAO) UpdateLastEmail(uid uuid.UUID, memoUids uuid.UUIDs, typ string, t time.Time) error {
