@@ -1,0 +1,17 @@
+<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="mui-panel">
+  <div class="mui--text-body1">
+  <div>
+    <table style="border: 0; width: 100%;">
+      <tr>
+        <td style="width:100%">
+          <h3>
+            {{.Memo.Text}}
+            {{if (ne .Memo.MemoRichInfo.Category.String "Uncategorized")}}
+              <span class="tag">{{.Memo.MemoRichInfo.Category}}</span>
+            {{end}}
+          </h3>
+        </td>
+      </tr>
+    </table>
+  </div>
+</td></tr></table>

@@ -10,9 +10,7 @@
     {{ if .EnrichInfos.Enriched }}
       {{ template "enriched_memo_standard.html" . }}
     {{ else }}
-      <div>
-        <li>{{.Memo.Text}}</li>
-      </div>
+      {{ template "basic_memo.html" . }}
     {{ end }}
   {{ end }}
 
