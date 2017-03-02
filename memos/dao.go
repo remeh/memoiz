@@ -250,6 +250,8 @@ func (d *MemosDAO) GetByUser(uid uuid.UUID, state MemoState, search string) ([]M
 				lower("r_title") LIKE lower($3)
 				OR
 				lower("r_url") LIKE lower($3)
+				OR
+				lower("r_category") LIKE lower($3)
 			)
 		`
 		p = storage.Values(uid, state, storage.BasicLike(search))
