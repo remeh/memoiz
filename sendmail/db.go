@@ -116,7 +116,7 @@ func enrichableMemos(owner uuid.UUID, interval string) (memos.Memos, error) {
 	for rows.Next() {
 		var uid uuid.UUID
 		var text, url, title string
-		var cat int64
+		var cat mind.Category
 
 		if err := rows.Scan(&uid, &text, &cat, &title, &url); err != nil {
 			log.Error("sendmail: enrichableMemos:", err, "Continuing.")
@@ -174,8 +174,7 @@ func getReminderToSend(t time.Time, limit int) (memos.MemosMap, error) {
 	for rows.Next() {
 		var uid string
 		var uids uuid.UUIDs
-		var texts []string
-		var cats []int64
+		var texts, cats []string
 
 		if err := rows.Scan(&uid, pq.Array(&uids), pq.Array(&texts), pq.Array(&cats)); err != nil {
 			log.Error("sendmail: getReminderToSend:", err, "Continuing.")

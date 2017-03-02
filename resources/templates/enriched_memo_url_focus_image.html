@@ -13,7 +13,7 @@
             {{ else }}
               {{ .Memo.Text }}
             {{ end }}
-            {{if (ne .Memo.MemoRichInfo.Category.String "Uncategorized")}}
+            {{if (ne .Memo.MemoRichInfo.Category "Uncategorized")}}
               <span class="tag">{{.Memo.MemoRichInfo.Category}}</span>
             {{end}}
 
