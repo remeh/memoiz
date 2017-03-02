@@ -275,8 +275,7 @@ func getRecentMemos(owners uuid.UUIDs) (memos.MemosMap, error) {
 	for rows.Next() {
 		var uid string
 		var uids uuid.UUIDs
-		var texts []string
-		var cats []int64
+		var texts, cats []string
 
 		if err := rows.Scan(&uid, pq.Array(&uids), pq.Array(&texts), pq.Array(&cats)); err != nil {
 			log.Error("sendmail: getRecentMemos:", err, "Continuing.")
