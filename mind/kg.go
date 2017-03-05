@@ -27,8 +27,13 @@ const (
 type Kg struct {
 	text        string
 	types       []string
-	description string
+	googDesc    string
 	categories  Categories
+	img         string
+	imgLicense  string
+	desc        string
+	descLicense string
+	url         string
 }
 
 func (k *Kg) TryCache(text string) (bool, error) {
@@ -92,13 +97,42 @@ func (k *Kg) Fetch(text string) error {
 	}
 
 	jsonparser.ArrayEach(elements, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+
 		// description
 		desc, _, _, _ := jsonparser.Get(value, "result", "description")
-		k.description = strings.ToLower(string(desc))
+		k.googDesc = strings.ToLower(string(desc))
 
 		// types
 		result, _, _, _ := jsonparser.Get(value, "result")
 		t, _, _, _ := jsonparser.Get(result, "@type")
+
+		// image
+		img, _, _, err := jsonparser.Get(result, "image", "contentUrl")
+		if err == nil {
+			imgLicense, _, _, err := jsonparser.Get(result, "image", "license")
+			if err == nil {
+				k.img = string(img)
+				k.imgLicense = string(imgLicense)
+			}
+		}
+
+		// description
+		desc, _, _, err = jsonparser.Get(result, "detailedDescription", "articleBody")
+		if err == nil {
+			descLicense, _, _, err := jsonparser.Get(result, "detailedDescription", "license")
+			if err == nil {
+				k.desc = string(desc)
+				k.descLicense = string(descLicense)
+			}
+		}
+
+		// url
+		if url, _, _, err := jsonparser.Get(result, "url"); err == nil {
+			k.url = string(url)
+		} else if url, _, _, err := jsonparser.Get(result, "detailedDescription", "url"); err == nil {
+			k.url = string(url)
+		}
+
 		jsonparser.ArrayEach(t, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			// ignore "Thing" too vague
 			str := string(value)
@@ -120,7 +154,9 @@ func (k *Kg) Analyze() error {
 		return nil
 	}
 
-	// TODO(remy): use the description
+	// NOTE(remy): we could also use the description
+	// to put a category to this memo.
+
 	var c Category
 
 	if err := storage.DB().QueryRow(`
@@ -133,6 +169,19 @@ func (k *Kg) Analyze() error {
 			return err
 		}
 		c = Uncategorized
+	}
+
+	// check for licenses
+	// ----------------------
+
+	if !AcceptedLicense(k.descLicense) {
+		k.desc = ""
+		k.descLicense = ""
+	}
+
+	if !AcceptedLicense(k.imgLicense) && len(k.imgLicense) != 0 {
+		k.img = ""
+		k.imgLicense = ""
 	}
 
 	k.categories = Categories{c}
@@ -152,8 +201,26 @@ func (k *Kg) Store(memoUid uuid.UUID) error {
 		("uid", "memo_uid", "memo_text", "types", "description", "category", "creation_time")
 		VALUES
 		($1, $2, $3, $4, $5, $6, $7)
-	`, uid, memoUid, k.text, pq.Array(k.types), k.description, pq.Array(k.categories), time.Now()); err != nil {
+	`, uid, memoUid, k.text, pq.Array(k.types), k.googDesc, pq.Array(k.categories), time.Now()); err != nil {
 		return err
+	}
+
+	// enrich info
+	if len(k.desc) > 0 && len(k.url) > 0 {
+		if _, err := storage.DB().Exec(`
+		UPDATE "memo" SET "r_url" = $1, r_title = $2, "last_update" = now()
+		WHERE "uid" = $3
+	`, k.url, k.desc, memoUid); err != nil {
+			return err
+		}
+	}
+	if len(k.img) > 0 {
+		if _, err := storage.DB().Exec(`
+		UPDATE "memo" SET "r_url" = $1, r_title = $2, r_image = $3, "last_update" = now()
+		WHERE "uid" = $4
+	`, k.url, k.desc, k.img, memoUid); err != nil {
+			return err
+		}
 	}
 
 	// some log

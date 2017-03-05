@@ -28,10 +28,6 @@ type Wikipedia struct {
 
 var rxDelBrackets = regexp.MustCompile(`(\[.*?\]) *`)
 
-var licenses = []string{
-	"CC BY-SA 3.0",
-}
-
 func (w *Wikipedia) Enrich(text string, cat Category) (bool, EnrichResult, error) {
 
 	w.text = text
@@ -148,7 +144,7 @@ func (w *Wikipedia) extract() (bool, EnrichResult, error) {
 	}
 
 	for i, license := range w.imagesLicenses {
-		if !acceptedLicense(license) {
+		if !AcceptedLicense(license) {
 			continue
 		}
 
@@ -373,16 +369,6 @@ func (w *Wikipedia) escape(str string) string {
 }
 
 // ----------------------
-
-func acceptedLicense(license string) bool {
-	for _, l := range licenses {
-		if l == license {
-			return true
-		}
-	}
-	return false
-}
-
 func contentCopyright(str string) string {
 	// we do not want this part of the response
 	str = strings.Replace(str, " By using this site, you agree to the Terms of Use and Privacy Policy. Wikipedia® is a registered trademark of the Wikimedia Foundation, Inc., a non-profit organization.", "", -1)

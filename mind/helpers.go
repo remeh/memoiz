@@ -7,6 +7,21 @@ import (
 	"time"
 )
 
+var licenses = []string{
+	"CC BY-SA 3.0",
+	"http://creativecommons.org/licenses/by-sa/2.0",
+	"http://creativecommons.org/licenses/by-sa/2.5",
+	"http://creativecommons.org/licenses/by-sa/3.0",
+	"http://creativecommons.org/licenses/by-sa/4.0",
+	"http://creativecommons.org/licenses/by/2.0",
+	"http://creativecommons.org/licenses/by/2.5",
+	"http://creativecommons.org/licenses/by/3.0",
+	"http://creativecommons.org/licenses/by/4.0",
+	"https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License",
+}
+
+// ----------------------
+
 // fetch fetches the given URL. Returns nil response on 404.
 func Fetch(url string) (*http.Response, error) {
 	var err error
@@ -46,4 +61,15 @@ func Read(r *http.Response) ([]byte, error) {
 	}
 
 	return ioutil.ReadAll(r.Body)
+}
+
+// AcceptedLicense returns whether the given license
+// valid for us (meaning we can use the content).
+func AcceptedLicense(license string) bool {
+	for _, l := range licenses {
+		if l == license {
+			return true
+		}
+	}
+	return false
 }
