@@ -361,7 +361,7 @@ func (d *MemosDAO) UnsetCat(owner, uid uuid.UUID, t time.Time) error {
 func (d *MemosDAO) UnsetRich(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
 		UPDATE "memo"
-		SET "r_title" = NULL, "r_image" = NULL, "r_url" = NULL, "last_update" = $1
+		SET "r_title" = '', "r_image" = '', "r_url" = '', "last_update" = $1
 		WHERE
 			"owner_uid" = $2
 			AND
