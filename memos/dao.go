@@ -347,13 +347,27 @@ func (d *MemosDAO) Delete(owner, uid uuid.UUID, t time.Time) error {
 func (d *MemosDAO) UnsetCat(owner, uid uuid.UUID, t time.Time) error {
 	if _, err := d.DB.Exec(`
 		UPDATE "memo"
-		SET "r_category" = 0, "last_update" = $1
+		SET "r_category" = 'Uncategorized', "last_update" = $1
 		WHERE
 			"owner_uid" = $2
 			AND
 			"uid" = $3
 	`, t, owner, uid); err != nil {
-		return fmt.Errorf("memos.UnsetCategory: %v", err)
+		return fmt.Errorf("memos.UnsetCat: %v", err)
+	}
+	return nil
+}
+
+func (d *MemosDAO) UnsetRich(owner, uid uuid.UUID, t time.Time) error {
+	if _, err := d.DB.Exec(`
+		UPDATE "memo"
+		SET "r_title" = NULL, "r_image" = NULL, "r_url" = NULL, "last_update" = $1
+		WHERE
+			"owner_uid" = $2
+			AND
+			"uid" = $3
+	`, t, owner, uid); err != nil {
+		return fmt.Errorf("memos.UnsetRich: %v", err)
 	}
 	return nil
 }

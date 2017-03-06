@@ -72,6 +72,7 @@ func declareApiRoutes(s *Server) {
 	s.AddApi("/1.0/memos/{uid}/archive", log(auth(memos.Archive{})), "POST")
 	s.AddApi("/1.0/memos/{uid}/restore", log(auth(memos.Restore{})), "POST")
 	s.AddApi("/1.0/memos/{uid}/unsetcat", log(auth(memos.UnsetCat{})), "POST")
+	s.AddApi("/1.0/memos/{uid}/unrich", log(auth(memos.UnsetRich{})), "POST")
 	s.AddApi("/1.0/memos/{uid}/rich", log(auth(memos.Rich{})), "GET")
 
 }
