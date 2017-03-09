@@ -12,6 +12,10 @@ import (
 
 type Login struct{}
 
+type lr struct {
+	T string `json:"t"`
+}
+
 func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// read parameters
 	// ----------------------
@@ -92,5 +96,7 @@ func (c Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	s := accounts.NewSession(su.Uid, now, validUntil, plan)
 	accounts.SetSessionCookie(w, s)
-	api.RenderOk(w)
+	api.RenderJson(w, 200, lr{
+		T: s.Token,
+	})
 }

@@ -32,6 +32,14 @@ func ReadUser(r *http.Request) uuid.UUID {
 }
 
 func ReadSessionToken(r *http.Request) string {
+	// first test request param
+	r.ParseForm()
+	if len(r.Form.Get("st")) == (36-4)*3 {
+		return r.Form.Get("st")
+	}
+
+	// then cookie
+
 	c, err := r.Cookie(accounts.SessionToken)
 
 	if err != nil {
